@@ -101,8 +101,8 @@ def main():
     # #     print(app)
     #     if proc.pid < 2000:
 
-    # process = frida.get_usb_device().attach("Camera")
-    process = frida.get_usb_device().attach("Gadget")
+    process = frida.get_usb_device().attach("Camera")
+    # process = frida.get_usb_device().attach("Gadget")
 
     JSFile = open('transact_fuzzer.js')
     JsCodeFromfile = JSFile.read()
