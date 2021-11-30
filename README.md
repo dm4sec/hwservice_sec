@@ -1,8 +1,8 @@
-## 1. `transact_fuzzer` is used to fuzz transact.
+## 1. `transact_fuzzer` is used to fuzz (hw)service.
 
 ### 1.1 Design
 Considering that the owner of the `Parcel` is the client, I modified the parcel (context-aware) and replay it on-the-fly. 
-Since `hwbinder` is a copy of `binder`, this project can be used to fuzz `binder` as well.
+Since `hwbinder` is a copy of `binder`, this project can be used to fuzz service of `binder` as well.
 
 ### 1.1.1 Intercept
 

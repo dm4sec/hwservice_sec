@@ -2,6 +2,28 @@
 
 Java.perform(function () {
 
+    /*
+    system/libhwbinder/Parcel.cpp
+    /usr/include/linux/android/binder.h
+
+    enum {
+        BINDER_TYPE_BINDER	= B_PACK_CHARS('s', 'b', '*', B_TYPE_LARGE),
+        BINDER_TYPE_WEAK_BINDER	= B_PACK_CHARS('w', 'b', '*', B_TYPE_LARGE),
+        BINDER_TYPE_HANDLE	= B_PACK_CHARS('s', 'h', '*', B_TYPE_LARGE),
+        BINDER_TYPE_WEAK_HANDLE	= B_PACK_CHARS('w', 'h', '*', B_TYPE_LARGE),
+        BINDER_TYPE_FD		= B_PACK_CHARS('f', 'd', '*', B_TYPE_LARGE),
+        BINDER_TYPE_FDA		= B_PACK_CHARS('f', 'd', 'a', B_TYPE_LARGE),
+        BINDER_TYPE_PTR		= B_PACK_CHARS('p', 't', '*', B_TYPE_LARGE),
+    };
+    */
+    const BINDER_TYPE_BINDER          = 0x73622a85                // .*bs
+    const BINDER_TYPE_WEAK_BINDER     = 0x77622a85                // .*bw
+    const BINDER_TYPE_HANDLE          = 0x73682a85                // .*hs
+    const BINDER_TYPE_WEAK_HANDLE     = 0x77682a85                // .*hw
+    const BINDER_TYPE_FD              = 0x66642a85                // .*df
+    const BINDER_TYPE_FDA             = 0x66646185                // .adf
+    const BINDER_TYPE_PTR             = 0x70742a85                // .*tp
+
     // helper func to locate the mData, mDataSize, mObjects, mObjectsSize or sth else. May varies in different box, so run this helper func first.
     /* the output indicates that the:
     0x28: should be the member variable `mData`
@@ -110,23 +132,6 @@ Java.perform(function () {
                 header: true,
                 ansi: true
             }));
-
-            /*
-            system/libhwbinder/Parcel.cpp
-            /usr/include/linux/android/binder.h
-
-            enum {
-                BINDER_TYPE_BINDER	= B_PACK_CHARS('s', 'b', '*', B_TYPE_LARGE),
-                BINDER_TYPE_WEAK_BINDER	= B_PACK_CHARS('w', 'b', '*', B_TYPE_LARGE),
-                BINDER_TYPE_HANDLE	= B_PACK_CHARS('s', 'h', '*', B_TYPE_LARGE),
-                BINDER_TYPE_WEAK_HANDLE	= B_PACK_CHARS('w', 'h', '*', B_TYPE_LARGE),
-                BINDER_TYPE_FD		= B_PACK_CHARS('f', 'd', '*', B_TYPE_LARGE),
-                BINDER_TYPE_FDA		= B_PACK_CHARS('f', 'd', 'a', B_TYPE_LARGE),
-                BINDER_TYPE_PTR		= B_PACK_CHARS('p', 't', '*', B_TYPE_LARGE),
-            };
-            */
-            var BINDER_TYPE_PTR             = 0x70742a85                //.*tp
-            var BINDER_TYPE_BINDER          = 0x73622a85                //.*bs
 
             if (type_pos.readU32() == BINDER_TYPE_PTR)
             {
@@ -290,35 +295,32 @@ Java.perform(function () {
         return (((s)+3)&~3)
     }
 
-    function fuzzOneUInt()
+    function fuzzOneUInt(mData_pos, UInt_pos, code, data, reply, flags)
     {
-        //TODO
+        var org_value = mData_pos.add(UInt_pos).readU32();
+        var new_value = 0xffffffff - org_value;                 // to find a better solution.
+        console.log("|-----[i] original value: 0x" + org_value.toString(16) + ", new value: 0x" + new_value.toString(16));
+        mData_pos.add(UInt_pos).writeU32(new_value);
+
+        var func_IPCThreadState_self = new NativeFunction(IPCThreadState_self_p, 'pointer', []);
+        var IPCThreadState_Obj = func_IPCThreadState_self();
+        console.log("|-----IPCThreadState object: 0x" + IPCThreadState_Obj.toString(16));
+
+        var func_IPCThreadState_transact = new NativeFunction(IPCThreadState_transact_p, 'int32', ['pointer', 'int32', 'uint32', 'pointer', 'pointer', 'uint32']);
+        var ret = func_IPCThreadState_transact(
+            IPCThreadState_Obj,
+            mHandle,
+            code,
+            data,
+            reply,
+            flags);
+
+        mData_pos.add(UInt_pos).writeU32(org_value);
+        console.log("|-----[!] fuzz done, ret value: 0x" + ret.toString(16));
     }
 
     function getBinderObjectLen(BinderObjectPos)
     {
-            /*
-            system/libhwbinder/Parcel.cpp
-            /usr/include/linux/android/binder.h
-
-            enum {
-                BINDER_TYPE_BINDER	= B_PACK_CHARS('s', 'b', '*', B_TYPE_LARGE),
-                BINDER_TYPE_WEAK_BINDER	= B_PACK_CHARS('w', 'b', '*', B_TYPE_LARGE),
-                BINDER_TYPE_HANDLE	= B_PACK_CHARS('s', 'h', '*', B_TYPE_LARGE),
-                BINDER_TYPE_WEAK_HANDLE	= B_PACK_CHARS('w', 'h', '*', B_TYPE_LARGE),
-                BINDER_TYPE_FD		= B_PACK_CHARS('f', 'd', '*', B_TYPE_LARGE),
-                BINDER_TYPE_FDA		= B_PACK_CHARS('f', 'd', 'a', B_TYPE_LARGE),
-                BINDER_TYPE_PTR		= B_PACK_CHARS('p', 't', '*', B_TYPE_LARGE),
-            };
-            */
-            var BINDER_TYPE_BINDER          = 0x73622a85                // .*bs
-            var BINDER_TYPE_WEAK_BINDER     = 0x77622a85                // .*bw
-            var BINDER_TYPE_HANDLE          = 0x73682a85                // .*hs
-            var BINDER_TYPE_WEAK_HANDLE     = 0x77682a85                // .*hw
-            var BINDER_TYPE_FD              = 0x66642a85                // .*df
-            var BINDER_TYPE_FDA             = 0x66646185                // .adf
-            var BINDER_TYPE_PTR             = 0x70742a85                // .*tp
-
             var type_val = BinderObjectPos.readU32();
             if (type_val == BINDER_TYPE_BINDER ||
                 type_val == BINDER_TYPE_WEAK_BINDER ||
@@ -334,7 +336,7 @@ Java.perform(function () {
     }
 
     // fuzz the Peekhole in mData
-    function fuzzPeekhole(mData_pos, mDataSize, mObjects_pos, mObjectsSize){
+    function fuzzPeekhole(mData_pos, mDataSize, mObjects_pos, mObjectsSize, code, data, reply, flags){
         console.log("|---[i] start fuzzing peekhole in mData");
 
         // dump data for debugging
@@ -362,8 +364,7 @@ Java.perform(function () {
         }
         // pad i to next block
         i = PAD_SIZE_UNSAFE(i + 1)
-        console.log("|----[i] cur offset: 0x" + i.toString(16));
-        // console.log("type i " + typeof i)
+        // console.log("|----[i] cur offset: 0x" + i.toString(16));
 
         for (; i < mDataSize; i += 4 )      // likely all dataz are aligned, I have not check all of them.
         {
@@ -375,9 +376,9 @@ Java.perform(function () {
             else
             {
                 console.log("|----[i] fuzz offset: 0x" + i.toString(16));
+                fuzzOneUInt(mData_pos, i, code, data, reply, flags);
             }
         }
-
     }
 
     console.log('[*] Frida js is running.')
@@ -409,12 +410,44 @@ Java.perform(function () {
     //    return DEAD_OBJECT;
     //}
 
+    var IPCThreadState_self_p = Module.getExportByName("libhidlbase.so", '_ZN7android8hardware14IPCThreadState4selfEv');
+    console.log("[i] IPCThreadState::self addr: " + IPCThreadState_self_p)
+
+    var mHandle;
+    // for verifying the `mHandle`.
+    Interceptor.attach(IPCThreadState_transact_p, {
+        onEnter: function(args) {
+            // args[0], `this` argument
+            // args[1], mHandle argument
+            // console.log("|-[i] 2nd argument, mHandle: 0x" + args[1].toString(16))
+            if (mHandle != args[1])
+            {
+                console.log("|-[e] adjust mHandle offset")
+            }
+        },
+
+        onLeave: function(retval) {
+        }
+
+    });
+
     Interceptor.attach(BpHwBinder_transact_p, {
         onEnter: function(args) {
             console.log("[*] onEnter")
 
             // args[0], `this` argument
-            // console.log("[i] 1st argument, this: " + args[0].toInt32())
+            console.log("[i] 1st argument, this: 0x" + args[0].toString(16))
+            mHandle = args[0].add(0x8).readU32()
+            console.log("[i] mHandle value: 0x" + mHandle.toString(16))
+
+// mHandle is a member of BpHwBinder (system/libhwbinder/include/hwbinder/BpHwBinder.h),
+// by dumping `this`, I find the member locate at 0x8.
+//            console.log(hexdump(args[0], {
+//                offset: 0,
+//                length: 0x40,
+//                header: true,
+//                ansi: true
+//            }));
 
             // transact code
             console.log("|-[i] 2nd argument, transaction code: " + args[1].toInt32())
@@ -491,7 +524,7 @@ Java.perform(function () {
                     console.log("|---[i] Descriptor: ")
                     console.log(hexdump(mData_pos, {
                         offset: 0,
-                        length: i + 1,  // append a `0`
+                        length: PAD_SIZE_UNSAFE(i + 1),
                         header: true,
                         ansi: true
                     }));
@@ -499,9 +532,8 @@ Java.perform(function () {
                 }
             }
 
-
             // I would like to fuzz in runtime, such that I can covert back to the original mData.
-            fuzzPeekhole(mData_pos, mDataSize, mObjects_pos, mObjectsSize);
+            fuzzPeekhole(mData_pos, mDataSize, mObjects_pos, mObjectsSize, args[1].toInt32(), args[2], args[3], args[4].toInt32());
             // fuzzObject(mData_pos, mObjects_pos, mObjectsSize);
 
         },
