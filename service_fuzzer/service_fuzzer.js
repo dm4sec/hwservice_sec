@@ -192,6 +192,28 @@ Java.perform(function () {
     var IPCThreadState_self_p = Module.getExportByName("libbinder.so", '_ZN7android14IPCThreadState4selfEv');
     console.log("[i] IPCThreadState::self addr: " + IPCThreadState_self_p)
 
+    const black_interface_list = [
+        "android.content.pm.IPackageManager",
+        "android.os.IServiceManager",
+        "android.aps.IHwApsManager",
+        "android.content.IContentProvider",
+        "android.gui.DisplayEventConnection",
+        "android.gui.IGraphicBufferProducer",
+        "android.app.IActivityManager",
+        "android.app.INotificationManager",
+
+//        "android.app.IActivityTaskManager",
+        "android.app.IUiModeManager",
+
+        "com.android.internal.view.IInputMethodManager",
+        "android.view.IWindowManager",
+        "android.ui.ISurfaceComposer",
+        "android.hardware.display.IDisplayManager",
+        "android.view.IGraphicsStats",
+        "android.view.IWindowSession"
+
+        ];
+
     Interceptor.attach(BpBinder_transact_p, {
         onEnter: function(args) {
             console.log("[*] onEnter: service fuzzer")
@@ -217,6 +239,19 @@ Java.perform(function () {
             var mData_pos = mData_offset.readPointer();
             // var mData = ArrayBuffer.wrap(mData_pos, mDataSize);
             // var mData = mData_pos.readByteArray(mDataSize);
+
+            // for collecting the black list
+            var interface_str = mData_pos.add(0xc).readUtf16String();
+            // return
+
+            if (black_interface_list.includes(interface_str))
+            {
+                return;
+            }
+            else
+            {
+                console.log("|--[i] continue fuzzing interface: " + interface_str);
+            }
 
             console.log("|--[i] mData: ");
             console.log(hexdump(mData_pos, {
