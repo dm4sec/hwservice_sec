@@ -24,96 +24,61 @@ Java.perform(function () {
     const BINDER_TYPE_FDA             = 0x66646185                // .adf
     const BINDER_TYPE_PTR             = 0x70742a85                // .*tp
 
-    // helper func to locate the mData, mDataSize, mObjects, mObjectsSize or sth else. May varies in different box, so run this helper func first.
-    /* the output indicates that the:
-    0x28: should be the member variable `mData`
-    0x30: should be the member variable `mDataSize`
-    0x48: should be the member variable `mObjects`, which points to an array of offsets in `mData`.
-    0x50: should be the member variable `mObjectsSize`.
-    e.g.,
-                 0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F  0123456789ABCDEF
-    760c75ee30  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-    760c75ee40  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-    760c75ee50  00 00 00 00 76 00 00 00 20 7d c7 5c 76 00 00 00  ....v... }.\v...
-    760c75ee60  88 00 00 00 00 00 00 00 8a 00 00 00 00 00 00 00  ................
-    760c75ee70  88 00 00 00 00 00 00 00 80 98 c0 5c 76 00 00 00  ...........\v...
-    760c75ee80  02 00 00 00 00 00 00 00 03 00 00 00 00 00 00 00  ................
-    760c75ee90  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-    760c75eea0  01 00 01 0c 76 00 00 00 00 00 00 00 00 00 00 00  ....v...........
-    760c75eeb0  00 05 00 00 00 00 00 00 01 83 8b 35 01 00 00 00  ...........5....
-    760c75eec0  90 f0 75 0c 76 00 00 00 90 f0 75 0c 76 00 00 00  ..u.v.....u.v...
-    760c75eed0  20 00 76 0c 76 00 00 00 70 83 8b 35 fa 21 dd 74   .v.v...p..5.!.t
-    760c75eee0  a0 06 9b ed 76 00 00 00 00 05 00 00 00 00 00 00  ....v...........
-    760c75eef0  20 00 76 0c 76 00 00 00 c8 4b 17 58 76 00 00 00   .v.v....K.Xv...
-    760c75ef00  f0 4b 17 58 76 00 00 00 58 f0 75 0c 76 00 00 00  .K.Xv...X.u.v...
-    760c75ef10  00 00 00 00 00 00 00 00 30 00 00 00 00 00 00 00  ........0.......
-    760c75ef20  70 83 8b 35 fa 21 dd 74 54 a3 f1 eb 76 00 00 00  p..5.!.tT...v...
+    // retrieve these offsets by using IDA, e.g., by cross checking the corresponding method in IDA
+    /*
+    system/libhwbinder/Parcel.cpp
 
-    [i] Checking: 0x760c75ee58
-    [i] Probing: 0x765cc77d20
-    [i] Offset: 0x28
-    [i] Mumber data:
-                 0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F  0123456789ABCDEF
-    765cc77d20  61 6e 64 72 6f 69 64 2e 68 61 72 64 77 61 72 65  android.hardware
-    765cc77d30  2e 67 72 61 70 68 69 63 73 2e 61 6c 6c 6f 63 61  .graphics.alloca
-    765cc77d40  74 6f 72 40 32 2e 30 3a 3a 49 41 6c 6c 6f 63 61  tor@2.0::IAlloca
-    765cc77d50  74 6f 72 00 85 2a 74 70 00 00 00 00 80 f0 75 0c  tor..*tp......u.
-    [i] Checking: 0x760c75ee60
-    [i] Probing: 0x88
-    [i] Offset: 0x30
-
-    [i] Checking: 0x760c75ee78
-    [i] Probing: 0x765cc09880
-    [i] Offset: 0x48
-    [i] Mumber data:
-                 0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F  0123456789ABCDEF
-    765cc09880  34 00 00 00 00 00 00 00 5c 00 00 00 00 00 00 00  4.......\.......
-    765cc09890  22 00 00 00 00 01 02 00 00 00 00 00 30 00 00 00  "...........0...
-    765cc098a0  30 8a ff ea 76 00 00 00 00 00 00 00 00 00 00 00  0...v...........
-    765cc098b0  00 00 00 00 00 00 00 00 00 00 31 2e 30 00 00 00  ..........1.0...
-    [i] Checking: 0x760c75ee80
-    [i] Probing: 0x2
-    [i] Offset: 0x50
-
-    see also: system/libhwbinder/include/hwbinder/Parcel.h
-    */
-    function probeParcelData(parcel_data_pos){
-        var mem_block = 256
-        var parcel_data = hexdump(parcel_data_pos, {
-            offset: 0,
-            length: mem_block,
-            header: true,
-            ansi: true
-        });
-        console.log(parcel_data)
-
-        // probe the mData pos.
-        var cur_offset = 0;
-        var cur_pos = parcel_data_pos;
-        while (cur_offset < mem_block) {
-            console.log("[i] Checking: " + cur_pos);
-            var buf_pointer = cur_pos.readPointer();
-            console.log("[i] Probing: " + buf_pointer);
-
-            try {
-                console.log("[i] Offset: 0x" + cur_offset.toString(16));
-                var mumber_data = hexdump(buf_pointer, {
-                    offset: 0,
-                    length: 0x40,
-                    header: true,
-                    ansi: true
-                });
-                console.log("[i] Mumber data: ");
-                console.log(mumber_data);
-            }
-            catch(err) {
-                console.log("[e] Can't read: " + cur_pos + "(" + buf_pointer + ")");
-            }
-
-            cur_pos = cur_pos.add(0x8);
-            cur_offset += 0x8;
-        }
+    uintptr_t Parcel::ipcData() const
+    {
+        return reinterpret_cast<uintptr_t>(mData);
     }
+
+    size_t Parcel::ipcDataSize() const
+    {
+        return mDataSize > mDataPos ? mDataSize : mDataPos;
+    }
+
+    uintptr_t Parcel::ipcObjects() const
+    {
+        return reinterpret_cast<uintptr_t>(mObjects);
+    }
+
+    size_t Parcel::ipcObjectsCount() const
+    {
+        return mObjectsSize;
+    }
+
+    uint8_t*            mData;              this + 5 * (QWORD)
+    size_t              mDataSize;          this + 6 * (QWORD)
+    size_t              mDataCapacity;
+    mutable size_t      mDataPos;
+    binder_size_t*      mObjects;           this + 9 * (QWORD)
+    size_t              mObjectsSize;       this + 10 * (QWORD)
+
+    */
+
+    const mData_LOC         = 0x28;
+    const mDataSize_LOC     = 0x30;
+    const mObjects_LOC      = 0x48;
+    const mObjectsSize_LOC  = 0x50;
+
+    /*
+    status_t BpHwBinder::transact(
+    uint32_t code, const Parcel& data, Parcel* reply, uint32_t flags, TransactCallback)
+    {
+        // Once a binder has died, it will never come back to life.
+        if (mAlive) {
+            status_t status = IPCThreadState::self()->transact(         <- *((_DWORD *)this + 2) is the 2nd argument.
+                mHandle, code, data, reply, flags);
+            if (status == DEAD_OBJECT) mAlive = 0;
+            return status;
+        }
+
+        return DEAD_OBJECT;
+    }
+    */
+
+    const mHandle_LOC      = 0x8;
 
     // fuzz the object
     function fuzzObject(mData_pos, mObjects_pos, mObjectsSize){
@@ -295,7 +260,7 @@ Java.perform(function () {
         return (((s)+3)&~3)
     }
 
-    function fuzzOneSInt(mData_pos, SInt_pos, code, data, reply, flags)
+    function fuzzOneSInt(mData_pos, SInt_pos, mHandle, code, data, reply, flags)
     {
         var org_value = mData_pos.add(SInt_pos).readS32();
 //        console.log("|-----[i] original value: 0x" + org_value.toString(16) + ", new value: 0x" + (~org_value).toString(16));
@@ -331,7 +296,7 @@ Java.perform(function () {
             flags);
 
         mData_pos.add(SInt_pos).writeS32(org_value);
-        console.log("|-----[!] fuzz done, ret value: 0x" + ret.toString(16));
+        console.log("|-----[!] fuzz done, fuzzer ret value: 0x" + ret.toString(16));
     }
 
     function getBinderObjectLen(BinderObjectPos)
@@ -351,7 +316,7 @@ Java.perform(function () {
     }
 
     // fuzz the Peekhole in mData
-    function fuzzPeekhole(mData_pos, mDataSize, mObjects_pos, mObjectsSize, code, data, reply, flags){
+    function fuzzPeekhole(mData_pos, mDataSize, mObjects_pos, mObjectsSize, mHandle, code, data, reply, flags){
         console.log("|---[i] start fuzzing peekhole in mData");
 
         // dump data for debugging
@@ -391,7 +356,7 @@ Java.perform(function () {
             else
             {
                 console.log("|----[i] fuzz offset: 0x" + i.toString(16));
-                fuzzOneSInt(mData_pos, i, code, data, reply, flags);
+                fuzzOneSInt(mData_pos, i, mHandle, code, data, reply, flags);
             }
         }
     }
@@ -428,86 +393,56 @@ Java.perform(function () {
     var IPCThreadState_self_p = Module.getExportByName("libhidlbase.so", '_ZN7android8hardware14IPCThreadState4selfEv');
     console.log("[i] IPCThreadState::self addr: " + IPCThreadState_self_p)
 
-    var mHandle;
-    // for verifying the `mHandle`.
-    Interceptor.attach(IPCThreadState_transact_p, {
-        onEnter: function(args) {
-            // args[0], `this` argument
-            // args[1], mHandle argument
-            // console.log("|-[i] 2nd argument, mHandle: 0x" + args[1].toString(16))
-            if (mHandle != args[1])
-            {
-                console.log("|-[e] adjust mHandle offset")
-            }
-        },
-
-        onLeave: function(retval) {
-        }
-
-    });
-
     Interceptor.attach(BpHwBinder_transact_p, {
         onEnter: function(args) {
             console.log("[*] onEnter")
 
             // args[0], `this` argument
             console.log("[i] 1st argument, this: 0x" + args[0].toString(16))
-            mHandle = args[0].add(0x8).readU32()
+            var mHandle = args[0].add(mHandle_LOC).readU32()
             console.log("[i] mHandle value: 0x" + mHandle.toString(16))
-
-// mHandle is a member of BpHwBinder (system/libhwbinder/include/hwbinder/BpHwBinder.h),
-// by dumping `this`, I find the member locate at 0x8.
-//            console.log(hexdump(args[0], {
-//                offset: 0,
-//                length: 0x40,
-//                header: true,
-//                ansi: true
-//            }));
 
             // transact code
             console.log("|-[i] 2nd argument, transaction code: " + args[1].toInt32())
 
             // Parcel data
             console.log("|-[i] 3rd argument, Parcel addr: " + args[2])
-            // probeParcelData(args[2])
 
             // mDataSize
-            var mDataSize_pos = args[2].add(0x30);
+            var mDataSize_pos = args[2].add(mDataSize_LOC);
             var mDataSize = mDataSize_pos.readU64();
             console.log("|--[i] mDataSize: 0x" + mDataSize.toString(16));
 
             // mData
-            var mData_offset = args[2].add(0x28);
+            var mData_offset = args[2].add(mData_LOC);
             var mData_pos = mData_offset.readPointer();
             // var mData = ArrayBuffer.wrap(mData_pos, mDataSize);
             // var mData = mData_pos.readByteArray(mDataSize);
 
-            var mData = hexdump(mData_pos, {
+            console.log("|--[i] mData: ");
+            console.log(hexdump(mData_pos, {
                 offset: 0,
                 length: mDataSize,
                 header: true,
                 ansi: true
-            });
-            console.log("|--[i] mData: ");
-            console.log(mData);
+            }));
 
             // mObjectsSize
-            var mObjectsSize_pos = args[2].add(0x50);
+            var mObjectsSize_pos = args[2].add(mObjectsSize_LOC);
             var mObjectsSize = mObjectsSize_pos.readU64();
             console.log("|--[i] mObjectsSize: 0x" + mObjectsSize.toString(16));
 
-            var mObjects_offset = args[2].add(0x48);
+            // mObjects
+            var mObjects_offset = args[2].add(mObjects_LOC);
             var mObjects_pos = mObjects_offset.readPointer();
             // var mObjects = mObjects_pos.readByteArray(mObjectsSize * 0x8);
-
-            var mObjects = hexdump(mObjects_pos, {
+            console.log("|--[i] mObjects: ");
+            console.log(hexdump(mObjects_pos, {
                 offset: 0,
                 length: mObjectsSize * 0x8,
                 header: true,
                 ansi: true
-            });
-            console.log("|--[i] mObjects: ");
-            console.log(mObjects);
+            }));
 
             // start parsing the mData
             // the layout of mData is:
@@ -548,7 +483,7 @@ Java.perform(function () {
             }
 
             // I would like to fuzz in runtime, such that I can covert back to the original mData.
-            fuzzPeekhole(mData_pos, mDataSize, mObjects_pos, mObjectsSize, args[1].toInt32(), args[2], args[3], args[4].toInt32());
+            fuzzPeekhole(mData_pos, mDataSize, mObjects_pos, mObjectsSize, mHandle, args[1].toInt32(), args[2], args[3], args[4].toInt32());
             // fuzzObject(mData_pos, mObjects_pos, mObjectsSize);
 
         },
@@ -556,7 +491,7 @@ Java.perform(function () {
 
         onLeave: function(retval) {
             console.log("[*] onLeave");
-            console.log("\t[i] return value: " + retval);
+            console.log("|-[i] ret value: " + retval);
             // print the return value
         }
     });

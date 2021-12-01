@@ -8,7 +8,6 @@ from __future__ import print_function
 import frida
 import sys
 
-
 def main():
     '''
     find the target
@@ -53,7 +52,7 @@ def main():
     process = frida.get_usb_device().attach("Camera")
     # process = frida.get_usb_device().attach("Gadget")
 
-    JSFile = open('hwservice_fuzzer.js')
+    JSFile = open('service_fuzzer.js')
     JsCodeFromfile = JSFile.read()
     script = process.create_script(JsCodeFromfile)
 
