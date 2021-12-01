@@ -295,12 +295,27 @@ Java.perform(function () {
         return (((s)+3)&~3)
     }
 
-    function fuzzOneUInt(mData_pos, UInt_pos, code, data, reply, flags)
+    function fuzzOneSInt(mData_pos, SInt_pos, code, data, reply, flags)
     {
-        var org_value = mData_pos.add(UInt_pos).readU32();
-        var new_value = 0xffffffff - org_value;                 // to find a better solution.
-        console.log("|-----[i] original value: 0x" + org_value.toString(16) + ", new value: 0x" + new_value.toString(16));
-        mData_pos.add(UInt_pos).writeU32(new_value);
+        var org_value = mData_pos.add(SInt_pos).readS32();
+//        console.log("|-----[i] original value: 0x" + org_value.toString(16) + ", new value: 0x" + (~org_value).toString(16));
+
+//        console.log(hexdump(mData_pos.add(UInt_pos), {
+//            offset: 0,
+//            length: 0x10,
+//            header: true,
+//            ansi: true
+//        }));
+
+        mData_pos.add(SInt_pos).writeS32(~org_value);
+
+//        console.log(hexdump(mData_pos.add(UInt_pos), {
+//            offset: 0,
+//            length: 0x10,
+//            header: true,
+//            ansi: true
+//        }));
+
 
         var func_IPCThreadState_self = new NativeFunction(IPCThreadState_self_p, 'pointer', []);
         var IPCThreadState_Obj = func_IPCThreadState_self();
@@ -315,7 +330,7 @@ Java.perform(function () {
             reply,
             flags);
 
-        mData_pos.add(UInt_pos).writeU32(org_value);
+        mData_pos.add(SInt_pos).writeS32(org_value);
         console.log("|-----[!] fuzz done, ret value: 0x" + ret.toString(16));
     }
 
@@ -376,7 +391,7 @@ Java.perform(function () {
             else
             {
                 console.log("|----[i] fuzz offset: 0x" + i.toString(16));
-                fuzzOneUInt(mData_pos, i, code, data, reply, flags);
+                fuzzOneSInt(mData_pos, i, code, data, reply, flags);
             }
         }
     }

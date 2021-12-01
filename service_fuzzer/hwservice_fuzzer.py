@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # @Time    : 2021/9/23 15:54
 # @Author  : fy
-# @FileName: transact_fuzzer.py
+# @FileName: service_fuzzer.py
 
 from __future__ import print_function
 import frida
@@ -87,7 +87,7 @@ def main():
 
     # process = frida.get_usb_device().attach("netmgrd")
     #
-    # JSFile = open('transact_fuzzer.js')
+    # JSFile = open('hwservice_fuzzer.js')
     # JsCodeFromfile = JSFile.read()
     # script = process.create_script(JsCodeFromfile)
     #
@@ -104,7 +104,7 @@ def main():
     process = frida.get_usb_device().attach("Camera")
     # process = frida.get_usb_device().attach("Gadget")
 
-    JSFile = open('transact_fuzzer.js')
+    JSFile = open('hwservice_fuzzer.js')
     JsCodeFromfile = JSFile.read()
     script = process.create_script(JsCodeFromfile)
 
