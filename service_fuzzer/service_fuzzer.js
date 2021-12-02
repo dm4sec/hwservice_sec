@@ -202,7 +202,7 @@ Java.perform(function () {
         "android.app.IActivityManager",
         "android.app.INotificationManager",
 
-//        "android.app.IActivityTaskManager",
+        // "android.app.IActivityTaskManager",
         "android.app.IUiModeManager",
 
         "com.android.internal.view.IInputMethodManager",
@@ -210,7 +210,24 @@ Java.perform(function () {
         "android.ui.ISurfaceComposer",
         "android.hardware.display.IDisplayManager",
         "android.view.IGraphicsStats",
-        "android.view.IWindowSession"
+        "android.view.IWindowSession",
+
+        "android.pc.IHwPCManager",
+        "android.net.IConnectivityManager",
+        "android.utils.IMemory",
+        "android.utils.IMemoryHeap",
+        "com.android.internal.telephony.ISub",
+
+        "android.hardware.ICamera",
+        "android.hardware.ICameraService",
+        "android.media.IAudioService",
+        "com.android.internal.app.IAppOpsService",
+
+        "android.content.IContentService",
+        "android.ashmemd.IAshmemDeviceService",
+        "android.content.IBulkCursor",
+        "android.os.IUserManager",
+        "android.ui.ISurfaceComposerClient",
 
         ];
 

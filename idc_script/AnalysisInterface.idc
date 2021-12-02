@@ -86,7 +86,7 @@ static main()
 
   // search for the method in *BpHw* namespace with signature `*:*:BpHw*::_hidl_`
 
-  auto ea, func_name, end_ea, callee_ea, callee_name, c, inst_info;
+  auto ea, func_name, end_ea, callee_ea, callee_name, c, inst_info, mangle_func_name;
   ea = 0;
 
   // msg( "%s.\n", ARGV[1] );
@@ -100,6 +100,8 @@ static main()
   while( ea != BADADDR )
   {
     func_name = demangle_name(get_func_name(ea), get_inf_attr(INF_LONG_DN));
+    mangle_func_name = get_func_name(ea);
+
     if ( func_name == 0 )
     {
       ea = get_next_func(ea);
@@ -113,7 +115,8 @@ static main()
     )
     {
       end_ea = find_func_end(ea);
-      msg( "F: 0x%X - 0x%X: %s\n", ea, end_ea, func_name );
+      msg( "F: 0x%X - 0x%X: %s\n", ea, end_ea, func_name);
+      // msg( "%s\n", mangle_func_name);    // to distil mangle_name for interceptor
       if (ARGV.count != 1)
       {
         fprintf(logfile, "F: 0x%X - 0x%X: %s\n", ea, end_ea, func_name );
