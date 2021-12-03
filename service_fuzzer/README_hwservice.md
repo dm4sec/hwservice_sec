@@ -42,8 +42,21 @@ demo@demo:~/Downloads$ objdump -tT libhidlbase.so | grep "self"
 00000000000854e0 g    DF .text	0000000000000104  Base        _ZN7android8hardware14IPCThreadState4selfEv
 00000000000946dc g    DF .text	0000000000000068  Base        _ZN7android8hardware12ProcessState10selfOrNullEv
 0000000000094430 g    DF .text	00000000000000c4  Base        _ZN7android8hardware12ProcessState4selfEv
+
+demo@demo:~/Downloads$ adb pull /system/lib64/vndk-sp-29/libhidlbase.so 
+/system/lib64/vndk-sp-29/libhidlbase.so: 1 file pulled, 0 skipped. 31.6 MB/s (771744 bytes in 0.023s)
+demo@demo:~/Downloads$ objdump -tT libhidlbase.so | grep "transact"
+0000000000095cf0 g    DF .text	00000000000000b0  Base        _ZN7android8hardware9BHwBinder8transactEjRKNS0_6ParcelEPS2_jNSt3__18functionIFvRS2_EEE
+00000000000966cc g    DF .text	0000000000000078  Base        _ZN7android8hardware10BpHwBinder8transactEjRKNS0_6ParcelEPS2_jNSt3__18functionIFvRS2_EEE
+000000000009aa6c g    DF .text	00000000000010f4  Base        _ZN7android8hardware14IPCThreadState8transactEijRKNS0_6ParcelEPS2_j
+demo@demo:~/Downloads$ objdump -tT libhidlbase.so | grep "self"
+0000000000000000      DF *UND*	0000000000000000  Base        _ZN7android18IPCThreadStateBase4selfEv
+00000000000a7b24 g    DF .text	00000000000000c4  Base        _ZN7android8hardware12ProcessState4selfEv
+0000000000098bd4 g    DF .text	0000000000000104  Base        _ZN7android8hardware14IPCThreadState4selfEv
+00000000000a7dd0 g    DF .text	0000000000000068  Base        _ZN7android8hardware12ProcessState10selfOrNullEv
+0000000000098d2c g    DF .text	0000000000000034  Base        _ZN7android8hardware14IPCThreadState10selfOrNullEv
 ```
-**NOTE**: `libhidlbase.so` is the binary for my `pixel3` and `honor` boxes.
+**NOTE**: `libhidlbase.so` is the binary for my `pixel3` and `honor` boxes. By using [test_case1](https://github.com/dm4sec/hwservice_sec/blob/master/test_case/test_case1.py), I find `transact`s are thunked to different binaries. So I intercept them all.
 
 ### 1.2 Select the fuzz target
 The peekholes (e.g., the `mData` exclude `mObjects`) are good fields to fuzz, we should hack `mObjects` to find more targets to fuzz.

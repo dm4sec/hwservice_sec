@@ -4,6 +4,8 @@ Java.perform(function () {
 
     console.log('[*] Frida js is running.')
 
+    Module.load("/system/lib64/libhidlbase.so");
+
     var f1 = "_ZN6vendor6huawei8hardware2ai4V1_09BpHwAiASR15_hidl_createASREPN7android8hardware10IInterfaceEPNS6_7details16HidlInstrumentorERKNS3_13ASRInitParamsE";
     var f1_p = Module.getExportByName("vendor.huawei.hardware.ai@1.0.so", f1);
     console.log("[i] f1 addr: " + f1_p);
@@ -2227,13 +2229,64 @@ var f119 = "_ZN6vendor6huawei8hardware2ai4V1_219BpHwAiEngineService29_hidl_creat
     var f168 = "_ZN6vendor6huawei8hardware2ai4V1_319BpHwAiEngineService27_hidl_createAiModelMngr_1_3EPN7android8hardware10IInterfaceEPNS6_7details16HidlInstrumentorERKNS5_2spINS2_4V1_018IAiMMListenerProxyEEERKNSC_INS3_22IAiMMMemAllocatorProxyEEEj";
     var f168_p = Module.getExportByName("vendor.huawei.hardware.ai@1.3.so", f168);
     console.log("[i] f168 addr: " + f168_p);
+
+    var f168_1_p = f168_p.add(0x16CF8).sub(0x16B3C);
+    console.log("[i] f168_1 addr: " + f168_1_p + ", inst: " + Instruction.parse(f168_1_p).toString());
+
+//    var BpHwBinder_transact_p = Module.getExportByName("libhidlbase.so",
+//        '_ZN7android8hardware10BpHwBinder8transactEjRKNS0_6ParcelEPS2_jNSt3__18functionIFvRS2_EEE');
+    var BpHwBinder_transact_p = Module.getExportByName("/system/lib64/vndk-sp-29/libhidlbase.so",
+        '_ZN7android8hardware10BpHwBinder8transactEjRKNS0_6ParcelEPS2_jNSt3__18functionIFvRS2_EEE');
+    console.log("[i] BpHwBinder::transact addr: " + BpHwBinder_transact_p)
+
+    Interceptor.attach(f168_1_p, {
+        onEnter: function(args) {
+            console.log("[*] onEnter: f168_1");
+            // blr x8
+
+            console.log("[i] belongs to module: " + Process.getModuleByAddress(BpHwBinder_transact_p).name)
+
+            console.log(hexdump(BpHwBinder_transact_p, {
+                offset: 0,
+                length: 0x40,
+                header: true,
+                ansi: true
+            }));
+
+            console.log(hexdump(this.context.x8, {
+                offset: 0,
+                length: 0x40,
+                header: true,
+                ansi: true
+            }));
+
+            console.log("[i] x8 value: " + this.context.x8);
+            var module = Process.getModuleByAddress(this.context.x8)
+            console.log("[i] belongs to module: " + module.name)
+
+            var exports = module.enumerateExports();
+            console.log("[i] export length: " + exports.length);
+            for (var i = 0; i < exports.length; i ++)
+            {
+                console.log(exports[i].address + ": " + exports[i].name);
+            }
+
+            // Memory.readCString(this.context.r7)
+
+        },
+
+        onLeave: function(retval) {
+            console.log("[*] onLeave: f168_1");
+        }
+    });
+
+
     Interceptor.attach(f168_p, {
         onEnter: function(args) {
             console.log("[*] onEnter: f168")
             console.log('f168 called from:\n' +
                 Thread.backtrace(this.context, Backtracer.ACCURATE)
                 .map(DebugSymbol.fromAddress).join('\n') + '\n');
-
         },
 
         onLeave: function(retval) {

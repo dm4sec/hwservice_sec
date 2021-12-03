@@ -260,7 +260,7 @@ Java.perform(function () {
         return (((s)+3)&~3)
     }
 
-    function fuzzOneSInt(mData_pos, SInt_pos, mHandle, code, data, reply, flags)
+    function fuzzOneSInt(mData_pos, SInt_pos, mHandle, code, data, reply, flags, isVendor)
     {
         var org_value = mData_pos.add(SInt_pos).readS32();
 //        console.log("|-----[i] original value: 0x" + org_value.toString(16) + ", new value: 0x" + (~org_value).toString(16));
@@ -282,18 +282,38 @@ Java.perform(function () {
 //        }));
 
 
-        var func_IPCThreadState_self = new NativeFunction(IPCThreadState_self_p, 'pointer', []);
-        var IPCThreadState_Obj = func_IPCThreadState_self();
-        console.log("|-----IPCThreadState object: 0x" + IPCThreadState_Obj.toString(16));
+        if (isVendor == false)
+        {
+            console.log("|-----[i] fuzz system Parcel");
+            var func_IPCThreadState_self = new NativeFunction(IPCThreadState_self_p, 'pointer', []);
+            var IPCThreadState_Obj = func_IPCThreadState_self();
+            // console.log("|-----IPCThreadState object: 0x" + IPCThreadState_Obj.toString(16));
 
-        var func_IPCThreadState_transact = new NativeFunction(IPCThreadState_transact_p, 'int32', ['pointer', 'int32', 'uint32', 'pointer', 'pointer', 'uint32']);
-        var ret = func_IPCThreadState_transact(
-            IPCThreadState_Obj,
-            mHandle,
-            code,
-            data,
-            reply,
-            flags);
+            var func_IPCThreadState_transact = new NativeFunction(IPCThreadState_transact_p, 'int32', ['pointer', 'int32', 'uint32', 'pointer', 'pointer', 'uint32']);
+            var ret = func_IPCThreadState_transact(
+                IPCThreadState_Obj,
+                mHandle,
+                code,
+                data,
+                reply,
+                flags);
+        }
+        else
+        {
+            console.log("|-----[i] fuzz vendor Parcel");
+            var func_IPCThreadState_self_vendor = new NativeFunction(IPCThreadState_self_vendor_p, 'pointer', []);
+            var IPCThreadState_Obj = func_IPCThreadState_self_vendor();
+            // console.log("|-----IPCThreadState object: 0x" + IPCThreadState_Obj.toString(16));
+
+            var func_IPCThreadState_transact_vendor = new NativeFunction(IPCThreadState_transact_vendor_p, 'int32', ['pointer', 'int32', 'uint32', 'pointer', 'pointer', 'uint32']);
+            var ret = func_IPCThreadState_transact_vendor(
+                IPCThreadState_Obj,
+                mHandle,
+                code,
+                data,
+                reply,
+                flags);
+        }
 
         mData_pos.add(SInt_pos).writeS32(org_value);
         console.log("|-----[!] fuzz done, fuzzer ret value: 0x" + ret.toString(16));
@@ -316,7 +336,7 @@ Java.perform(function () {
     }
 
     // fuzz the Peekhole in mData
-    function fuzzPeekhole(mData_pos, mDataSize, mObjects_pos, mObjectsSize, mHandle, code, data, reply, flags){
+    function fuzzPeekhole(mData_pos, mDataSize, mObjects_pos, mObjectsSize, mHandle, code, data, reply, flags, isVendor){
         console.log("|---[i] start fuzzing peekhole in mData");
 
         // dump data for debugging
@@ -356,15 +376,109 @@ Java.perform(function () {
             else
             {
                 console.log("|----[i] fuzz offset: 0x" + i.toString(16));
-                fuzzOneSInt(mData_pos, i, mHandle, code, data, reply, flags);
+                fuzzOneSInt(mData_pos, i, mHandle, code, data, reply, flags, isVendor);
             }
         }
+    }
+
+    function parseParcel(args, isVendor){
+        // args[0], `this` argument
+        console.log("[i] 1st argument, this: 0x" + args[0].toString(16))
+        var mHandle = args[0].add(mHandle_LOC).readU32()
+        console.log("[i] mHandle value: 0x" + mHandle.toString(16))
+
+        // transact code
+        console.log("|-[i] 2nd argument, transaction code: " + args[1].toInt32())
+
+        // Parcel data
+        console.log("|-[i] 3rd argument, Parcel addr: " + args[2])
+
+        // mDataSize
+        var mDataSize_pos = args[2].add(mDataSize_LOC);
+        var mDataSize = mDataSize_pos.readU64();
+        console.log("|--[i] mDataSize: 0x" + mDataSize.toString(16));
+
+        // mData
+        var mData_offset = args[2].add(mData_LOC);
+        var mData_pos = mData_offset.readPointer();
+        // var mData = ArrayBuffer.wrap(mData_pos, mDataSize);
+        // var mData = mData_pos.readByteArray(mDataSize);
+
+        if (isVendor == false)
+            console.log("|--[i] mData (system): ");
+        else
+            console.log("|--[i] mData (vendor): ");
+        console.log(hexdump(mData_pos, {
+            offset: 0,
+            length: mDataSize,
+            header: true,
+            ansi: true
+        }));
+
+        // mObjectsSize
+        var mObjectsSize_pos = args[2].add(mObjectsSize_LOC);
+        var mObjectsSize = mObjectsSize_pos.readU64();
+        console.log("|--[i] mObjectsSize: 0x" + mObjectsSize.toString(16));
+
+        // mObjects
+        var mObjects_offset = args[2].add(mObjects_LOC);
+        var mObjects_pos = mObjects_offset.readPointer();
+        // var mObjects = mObjects_pos.readByteArray(mObjectsSize * 0x8);
+        console.log("|--[i] mObjects: ");
+        console.log(hexdump(mObjects_pos, {
+            offset: 0,
+            length: mObjectsSize * 0x8,
+            header: true,
+            ansi: true
+        }));
+
+        // start parsing the mData
+        // the layout of mData is:
+        // |--descriptor--|--peekhole--|--Object--|--peekhole--|--peekhole--|--Object--|...
+        // the mObjects[x] indicates the start of each `Object`
+        // all Objects are defined in `/usr/include/linux/android/binder.h`
+
+        // e.g., binder_buffer_object
+        /*
+        struct binder_buffer_object {
+          struct binder_object_header hdr;
+          __u32 flags;
+          binder_uintptr_t buffer;
+          binder_size_t length;
+          binder_size_t parent;
+          binder_size_t parent_offset;
+        };
+
+        struct binder_object_header {
+          __u32 type;
+        };
+        */
+
+        // find the descriptor, scan the memory until `00`
+        for (var i = 0; i < mDataSize; i ++)
+        {
+            if (mData_pos.add(i).readU8() == 0)
+            {
+                console.log("|---[i] Descriptor: ")
+                console.log(hexdump(mData_pos, {
+                    offset: 0,
+                    length: PAD_SIZE_UNSAFE(i + 1),
+                    header: true,
+                    ansi: true
+                }));
+                break;
+            }
+        }
+
+        // I would like to fuzz in runtime, such that I can covert back to the original mData.
+        fuzzPeekhole(mData_pos, mDataSize, mObjects_pos, mObjectsSize, mHandle, args[1].toInt32(), args[2], args[3], args[4].toInt32(), isVendor);
+        // fuzzObject(mData_pos, mObjects_pos, mObjectsSize);
     }
 
     console.log('[*] Frida js is running.')
 
     // Use the mangled name
-    var BpHwBinder_transact_p = Module.getExportByName("libhidlbase.so", '_ZN7android8hardware10BpHwBinder8transactEjRKNS0_6ParcelEPS2_jNSt3__18functionIFvRS2_EEE');
+    var BpHwBinder_transact_p = Module.getExportByName("/system/lib64/libhidlbase.so", '_ZN7android8hardware10BpHwBinder8transactEjRKNS0_6ParcelEPS2_jNSt3__18functionIFvRS2_EEE');
     console.log("[i] BpHwBinder::transact addr: " + BpHwBinder_transact_p)
     // system/libhwbinder/IPCThreadState.cpp
     //status_t IPCThreadState::transact(int32_t handle,
@@ -372,7 +486,7 @@ Java.perform(function () {
     //                             Parcel* reply, uint32_t flags)
 
     // In order to reach this function, I need to invoke `IPCThreadState::self()` firstly (as the 1st argument) and locate the `mHandle` variable.
-    var IPCThreadState_transact_p = Module.getExportByName("libhidlbase.so", '_ZN7android8hardware14IPCThreadState8transactEijRKNS0_6ParcelEPS2_j');
+    var IPCThreadState_transact_p = Module.getExportByName("/system/lib64/libhidlbase.so", '_ZN7android8hardware14IPCThreadState8transactEijRKNS0_6ParcelEPS2_j');
     console.log("[i] IPCThreadState::transact addr: " + IPCThreadState_transact_p)
 
     // system/libhwbinder/BpHwBinder.cpp
@@ -390,110 +504,43 @@ Java.perform(function () {
     //    return DEAD_OBJECT;
     //}
 
-    var IPCThreadState_self_p = Module.getExportByName("libhidlbase.so", '_ZN7android8hardware14IPCThreadState4selfEv');
+    var IPCThreadState_self_p = Module.getExportByName("/system/lib64/libhidlbase.so", '_ZN7android8hardware14IPCThreadState4selfEv');
     console.log("[i] IPCThreadState::self addr: " + IPCThreadState_self_p)
 
     Interceptor.attach(BpHwBinder_transact_p, {
         onEnter: function(args) {
-            console.log("[*] onEnter")
-
-            // args[0], `this` argument
-            console.log("[i] 1st argument, this: 0x" + args[0].toString(16))
-            var mHandle = args[0].add(mHandle_LOC).readU32()
-            console.log("[i] mHandle value: 0x" + mHandle.toString(16))
-
-            // transact code
-            console.log("|-[i] 2nd argument, transaction code: " + args[1].toInt32())
-
-            // Parcel data
-            console.log("|-[i] 3rd argument, Parcel addr: " + args[2])
-
-            // mDataSize
-            var mDataSize_pos = args[2].add(mDataSize_LOC);
-            var mDataSize = mDataSize_pos.readU64();
-            console.log("|--[i] mDataSize: 0x" + mDataSize.toString(16));
-
-            // mData
-            var mData_offset = args[2].add(mData_LOC);
-            var mData_pos = mData_offset.readPointer();
-            // var mData = ArrayBuffer.wrap(mData_pos, mDataSize);
-            // var mData = mData_pos.readByteArray(mDataSize);
-
-            console.log("|--[i] mData: ");
-            console.log(hexdump(mData_pos, {
-                offset: 0,
-                length: mDataSize,
-                header: true,
-                ansi: true
-            }));
-
-            // mObjectsSize
-            var mObjectsSize_pos = args[2].add(mObjectsSize_LOC);
-            var mObjectsSize = mObjectsSize_pos.readU64();
-            console.log("|--[i] mObjectsSize: 0x" + mObjectsSize.toString(16));
-
-            // mObjects
-            var mObjects_offset = args[2].add(mObjects_LOC);
-            var mObjects_pos = mObjects_offset.readPointer();
-            // var mObjects = mObjects_pos.readByteArray(mObjectsSize * 0x8);
-            console.log("|--[i] mObjects: ");
-            console.log(hexdump(mObjects_pos, {
-                offset: 0,
-                length: mObjectsSize * 0x8,
-                header: true,
-                ansi: true
-            }));
-
-            // start parsing the mData
-            // the layout of mData is:
-            // |--descriptor--|--peekhole--|--Object--|--peekhole--|--peekhole--|--Object--|...
-            // the mObjects[x] indicates the start of each `Object`
-            // all Objects are defined in `/usr/include/linux/android/binder.h`
-
-            // e.g., binder_buffer_object
-            /*
-            struct binder_buffer_object {
-              struct binder_object_header hdr;
-              __u32 flags;
-              binder_uintptr_t buffer;
-              binder_size_t length;
-              binder_size_t parent;
-              binder_size_t parent_offset;
-            };
-
-            struct binder_object_header {
-              __u32 type;
-            };
-            */
-
-            // find the descriptor, scan the memory until `00`
-            for (var i = 0; i < mDataSize; i ++)
-            {
-                if (mData_pos.add(i).readU8() == 0)
-                {
-                    console.log("|---[i] Descriptor: ")
-                    console.log(hexdump(mData_pos, {
-                        offset: 0,
-                        length: PAD_SIZE_UNSAFE(i + 1),
-                        header: true,
-                        ansi: true
-                    }));
-                    break;
-                }
-            }
-
-            // I would like to fuzz in runtime, such that I can covert back to the original mData.
-            fuzzPeekhole(mData_pos, mDataSize, mObjects_pos, mObjectsSize, mHandle, args[1].toInt32(), args[2], args[3], args[4].toInt32());
-            // fuzzObject(mData_pos, mObjects_pos, mObjectsSize);
-
+            console.log("[*] onEnter: BpHwBinder::transact");
+            parseParcel(args, false);
         },
 
-
         onLeave: function(retval) {
-            console.log("[*] onLeave");
+            console.log("[*] onLeave: BpHwBinder::transact");
             console.log("|-[i] ret value: " + retval);
             // print the return value
         }
     });
+
+    var BpHwBinder_transact_vendor_p = Module.getExportByName("/system/lib64/vndk-sp-29/libhidlbase.so", '_ZN7android8hardware10BpHwBinder8transactEjRKNS0_6ParcelEPS2_jNSt3__18functionIFvRS2_EEE');
+    console.log("[i] Vendor BpHwBinder::transact addr: " + BpHwBinder_transact_vendor_p)
+
+    var IPCThreadState_transact_vendor_p = Module.getExportByName("/system/lib64/vndk-sp-29/libhidlbase.so", '_ZN7android8hardware14IPCThreadState8transactEijRKNS0_6ParcelEPS2_j');
+    console.log("[i] Vendor IPCThreadState::transact addr: " + IPCThreadState_transact_vendor_p)
+
+    var IPCThreadState_self_vendor_p = Module.getExportByName("/system/lib64/vndk-sp-29/libhidlbase.so", '_ZN7android8hardware14IPCThreadState4selfEv');
+    console.log("[i] Vendor IPCThreadState::self addr: " + IPCThreadState_self_vendor_p)
+
+    Interceptor.attach(BpHwBinder_transact_vendor_p, {
+        onEnter: function(args) {
+            console.log("[*] onEnter: Vendor BpHwBinder::transact");
+            parseParcel(args, true);
+        },
+
+        onLeave: function(retval) {
+            console.log("[*] onLeave: Vendor BpHwBinder::transact");
+            console.log("|-[i] ret value: " + retval);
+            // print the return value
+        }
+    });
+
 });
 
