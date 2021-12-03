@@ -354,16 +354,8 @@ Java.perform(function () {
         }
         console.log("|----[i] binder_object offset: " + object_offset_lst);
 
-        // skip the descriptor
-        for (var i = 0; i < mDataSize; i ++)
-        {
-            if (mData_pos.add(i).readU8() == 0)
-            {
-                break;
-            }
-        }
-        // pad i to next block
-        i = PAD_SIZE_UNSAFE(i + 1)
+        // skip the descriptor and pad i to next block
+        i = PAD_SIZE_UNSAFE(mData_pos.readUtf8String().length);
         // console.log("|----[i] cur offset: 0x" + i.toString(16));
 
         for (; i < mDataSize; i += 4 )      // likely all dataz are aligned, I have not check all of them.
@@ -415,6 +407,16 @@ Java.perform(function () {
             ansi: true
         }));
 
+        // dump the descriptor
+        var descriptor = mData_pos.readUtf8String();
+        console.log("|---[i] Descriptor: ");
+        console.log(hexdump(mData_pos, {
+            offset: 0,
+            length: descriptor.length,
+            header: true,
+            ansi: true
+        }));
+
         // mObjectsSize
         var mObjectsSize_pos = args[2].add(mObjectsSize_LOC);
         var mObjectsSize = mObjectsSize_pos.readU64();
@@ -453,22 +455,6 @@ Java.perform(function () {
           __u32 type;
         };
         */
-
-        // find the descriptor, scan the memory until `00`
-        for (var i = 0; i < mDataSize; i ++)
-        {
-            if (mData_pos.add(i).readU8() == 0)
-            {
-                console.log("|---[i] Descriptor: ")
-                console.log(hexdump(mData_pos, {
-                    offset: 0,
-                    length: PAD_SIZE_UNSAFE(i + 1),
-                    header: true,
-                    ansi: true
-                }));
-                break;
-            }
-        }
 
         // I would like to fuzz in runtime, such that I can covert back to the original mData.
         fuzzPeekhole(mData_pos, mDataSize, mObjects_pos, mObjectsSize, mHandle, args[1].toInt32(), args[2], args[3], args[4].toInt32(), isVendor);
