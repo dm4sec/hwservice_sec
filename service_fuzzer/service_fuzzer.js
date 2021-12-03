@@ -134,7 +134,7 @@ Java.perform(function () {
             else if (type_val == BINDER_TYPE_FD)                // flat_binder_object
                 return 0x18;
             else if (type_val == BINDER_TYPE_FDA)               // binder_fd_array_object
-                return 0x28;
+                return 0x20;
             else if (type_val == BINDER_TYPE_PTR)               // binder_buffer_object
                 return 0x28;
     }

@@ -78,19 +78,23 @@ Java.perform(function () {
     }
     */
 
-    const mHandle_LOC      = 0x8;
+    const mHandle_LOC       = 0x8;
+
+    const fuzzInterface     = "vendor.huawei.hardware.ai";
 
     // fuzz the object
-    function fuzzObject(mData_pos, mObjects_pos, mObjectsSize){
+    function fuzzObject(mData_pos, mObjects_pos, mObjectsSize, mHandle, code, data, reply, flags, isVendor){
+        console.log("|---[i] start fuzzing binder objects in mData");
+
         // parse each Object
         for (var i = 0; i < mObjectsSize; i ++)
         {
-            console.log("\t\t\t[i] dumping binder_object: " + i);
-            var binder_object_offset = mObjects_pos.add(i * 0x8).readU64();
-            var binder_object_pos = mData_pos.add(binder_object_offset);
-            var type_pos = binder_object_pos;
+            console.log("|---[i] dumping binder_object: " + (i + 1) + " / " + mObjectsSize);
+            var binder_object_offset    = mObjects_pos.add(i * 0x8).readU64();
+            var binder_object_pos       = mData_pos.add(binder_object_offset);
+            var type_pos                = binder_object_pos;
 
-            console.log("\t\t\t\t[-] type:");
+            console.log("|----[i] type:");
             console.log(hexdump(type_pos, {
                 offset: 0,
                 length: 0x4,
@@ -100,9 +104,10 @@ Java.perform(function () {
 
             if (type_pos.readU32() == BINDER_TYPE_PTR)
             {
-                console.log("\t\t\t\t[i] identified as BINDER_TYPE_PTR, parse by following struct `binder_buffer_object`.");
-                var BINDER_BUFFER_FLAG_HAS_PARENT   = 0x01;
-                var BINDER_BUFFER_FLAG_REF          = 0x1 << 1;
+                console.log("|----[i] identified as BINDER_TYPE_PTR, parse by following struct `binder_buffer_object`.");
+
+                const BINDER_BUFFER_FLAG_HAS_PARENT   = 0x01;
+                const BINDER_BUFFER_FLAG_REF          = 0x1 << 1;
 
                 /*
                 struct binder_object_header {
@@ -117,22 +122,22 @@ Java.perform(function () {
                     binder_size_t			parent_offset;
                 };
                 */
-                var flags_pos = binder_object_pos.add(0x4);
-                var buffer_pos = binder_object_pos.add(0x8);
-                var length_pos = binder_object_pos.add(0x10);
-                var parent_pos = binder_object_pos.add(0x18);
-                var parent_offset_pos = binder_object_pos.add(0x20);
+                var flags_pos           = binder_object_pos.add(0x4);
+                var buffer_pos          = binder_object_pos.add(0x8);
+                var length_pos          = binder_object_pos.add(0x10);
+                var parent_pos          = binder_object_pos.add(0x18);
+                var parent_offset_pos   = binder_object_pos.add(0x20);
 
-                console.log("\t\t\t\t[-] flags: 0x" + flags_pos.readU32().toString(16));
+                console.log("|----[i] flags: 0x" + flags_pos.readU32().toString(16));
 
                 if (flags_pos.readU32() == BINDER_BUFFER_FLAG_HAS_PARENT)
                 {
                     // writeEmbeddedBuffer
-                    console.log("\t\t\t\t[-] assembled by `writeEmbeddedBuffer`");
-                    console.log("\t\t\t\t[-] buffer: " + buffer_pos.readPointer());
+                    console.log("|----[i] assembled by `writeEmbeddedBuffer`");
+                    console.log("|----[i] buffer: " + buffer_pos.readPointer());
                     if(length_pos.readU64() != 0)
                     {
-                        console.log("\t\t\t\t[-] buffer content: ");
+                        console.log("|----[i] buffer content: ");
                         console.log(hexdump(buffer_pos.readPointer(), {
                             offset: 0,
                             length: length_pos.readU64(),
@@ -146,18 +151,18 @@ Java.perform(function () {
                         // check validateBufferParent to find out how they are used.
                         // used to point to another BINDER_TYPE_PTR, such that modify one of them is enough.
                     }
-                    console.log("\t\t\t\t[-] length: 0x" + length_pos.readU64().toString(16));
-                    console.log("\t\t\t\t[-] parent: 0x" + parent_pos.readU64().toString(16));
-                    console.log("\t\t\t\t[-] parent_offset: 0x" + parent_offset_pos.readU64().toString(16));
+                    console.log("|----[i] length: 0x" + length_pos.readU64().toString(16));
+                    console.log("|----[i] parent: 0x" + parent_pos.readU64().toString(16));
+                    console.log("|----[i] parent_offset: 0x" + parent_offset_pos.readU64().toString(16));
                 }
                 else if (flags_pos.readU32() == 0)
                 {
                     // writeBuffer
-                    console.log("\t\t\t\t[-] assembled by `writeBuffer`");
-                    console.log("\t\t\t\t[-] buffer: " + buffer_pos.readPointer());
+                    console.log("|----[i] assembled by `writeBuffer`");
+                    console.log("|----[i] buffer: " + buffer_pos.readPointer());
                     if(length_pos.readU64() != 0)
                     {
-                        console.log("\t\t\t\t[-] buffer content: ");
+                        console.log("|-----[i] buffer content: ");
                         console.log(hexdump(buffer_pos.readPointer(), {
                             offset: 0,
                             length: length_pos.readU64(),
@@ -167,9 +172,9 @@ Java.perform(function () {
                     }
                     else
                     {
-                        console.log("\t\t\t\t[e] never run ME");
+                        console.log("|-----[e] never run ME");
                     }
-                    console.log("\t\t\t\t[-] length: 0x" + length_pos.readU64().toString(16));
+                    console.log("|----[i] length: 0x" + length_pos.readU64().toString(16));
                 }
                 else if (flags_pos.readU32() == BINDER_BUFFER_FLAG_REF)
                 {
@@ -178,28 +183,28 @@ Java.perform(function () {
                     // have not tested.
                     if (buffer_pos.readU64() == 0)
                     {
-                        console.log("\t\t\t\t[-] assembled by `writeNullReference`");
+                        console.log("|----[i] assembled by `writeNullReference`");
                     }
                     else
                     {
-                        console.log("\t\t\t\t[-] assembled by `writeReference`");
-                        console.log("\t\t\t\t[-] buffer (child_buffer_handle): 0x" + buffer_pos.readU64().toString(16));
-                        console.log("\t\t\t\t[-] length (child_offset): 0x" + length_pos.readU64().toString(16));
+                        console.log("|----[i] assembled by `writeReference`");
+                        console.log("|----[i] buffer (child_buffer_handle): 0x" + buffer_pos.readU64().toString(16));
+                        console.log("|----[i] length (child_offset): 0x" + length_pos.readU64().toString(16));
                     }
                 }
                 else if (flags_pos.readU32() == BINDER_BUFFER_FLAG_REF | BINDER_BUFFER_FLAG_HAS_PARENT)
                 {
                     // writeEmbeddedReference
                     // have not tested.
-                    console.log("\t\t\t\t[-] assembled by `writeEmbeddedReference`");
-                    console.log("\t\t\t\t[-] buffer (child_buffer_handle): 0x" + buffer_pos.readU64().toString(16));
-                    console.log("\t\t\t\t[-] length (child_offset): 0x" + length_pos.readU64().toString(16));
-                    console.log("\t\t\t\t[-] parent (parent_buffer_handle): 0x" + parent_pos.readU64().toString(16));
-                    console.log("\t\t\t\t[-] parent_offset (parent_offset): 0x" + parent_offset_pos.readU64().toString(16));
+                    console.log("|----[i] assembled by `writeEmbeddedReference`");
+                    console.log("|----[i] buffer (child_buffer_handle): 0x" + buffer_pos.readU64().toString(16));
+                    console.log("|----[i] length (child_offset): 0x" + length_pos.readU64().toString(16));
+                    console.log("|----[i] parent (parent_buffer_handle): 0x" + parent_pos.readU64().toString(16));
+                    console.log("|----[i] parent_offset (parent_offset): 0x" + parent_offset_pos.readU64().toString(16));
                 }
                 else
                 {
-                    console.log("\t\t\t\t[e] TODO:: unknown BINDER_TYPE_PTR");
+                    console.log("|----[e] TODO:: unknown BINDER_TYPE_PTR");
                 }
 
                 // I would like that you should check the flags in advance to know how this data is assembled (e.g., by using writeEmbeddedBuffer or writeBuffer).
@@ -207,7 +212,7 @@ Java.perform(function () {
             else if (type_pos.readU32() == BINDER_TYPE_BINDER)
             {
                 // check `BHwBinder` in system/libhwbinder/include/hwbinder/Binder.h, I don't think there are any thing we can fuzz.
-                console.log("\t\t\t\t[i] identified as BINDER_TYPE_BINDER, parse by following struct `flat_binder_object`.");
+                console.log("|----[i] identified as BINDER_TYPE_BINDER, parse by following struct `flat_binder_object`.");
 
                 /*
                 struct binder_object_header {
@@ -227,30 +232,28 @@ Java.perform(function () {
                 };
                 */
 
-                var flags_pos = binder_object_pos.add(0x4);
-                var binder_or_handle_pos = binder_object_pos.add(0x8);
-                var cookie_pos = binder_object_pos.add(0x10);
+                var flags_pos               = binder_object_pos.add(0x4);
+                var binder_or_handle_pos    = binder_object_pos.add(0x8);
+                var cookie_pos              = binder_object_pos.add(0x10);
 
-                console.log("\t\t\t\t[-] flags: 0x" + flags_pos.readU32().toString(16));
+                console.log("|----[i] flags: 0x" + flags_pos.readU32().toString(16));
 
                 if (binder_or_handle_pos.readU64() == 0)
                 {
-                    console.log("\t\t\t\t[-] assembled by `writeStrongBinder->flatten_binder->binder == null` or `writeWeakBinder->flatten_binder->binder == null / real == null`");
+                    console.log("|-----[i] assembled by `writeStrongBinder->flatten_binder->binder == null` or `writeWeakBinder->flatten_binder->binder == null / real == null`");
                 }
                 else
                 {
-                    console.log("\t\t\t\t[-] assembled by `writeStrongBinder->flatten_binder->local binder`");
-
-                    console.log("\t\t\t\t[-] binder_or_handle (binder): 0x" + binder_or_handle_pos.readU64().toString(16));     // weak / strong reference
-                    console.log("\t\t\t\t[-] cookie: 0x" + cookie_pos.readU64().toString(16));                                  // binder object
+                    console.log("|-----[i] assembled by `writeStrongBinder->flatten_binder->local binder`");
+                    console.log("|-----[i] binder_or_handle (binder): 0x" + binder_or_handle_pos.readU64().toString(16));     // weak / strong reference
+                    console.log("|-----[i] cookie: 0x" + cookie_pos.readU64().toString(16));                                  // binder object
                 }
 
             }
             else
             {
-                console.log("\t\t\t\t[e] TODO:: Unknown BINDER_TYPE");
+                console.log("|----[e] TODO:: Unknown BINDER_TYPE");
             }
-            console.log("\t\t\t[i] end dumping binder_object: " + i);
         }
     }
 
@@ -330,14 +333,14 @@ Java.perform(function () {
             else if (type_val == BINDER_TYPE_FD)                // flat_binder_object
                 return 0x18;
             else if (type_val == BINDER_TYPE_FDA)               // binder_fd_array_object
-                return 0x28;
+                return 0x20;
             else if (type_val == BINDER_TYPE_PTR)               // binder_buffer_object
                 return 0x28;
     }
 
     // fuzz the Peekhole in mData
     function fuzzPeekhole(mData_pos, mDataSize, mObjects_pos, mObjectsSize, mHandle, code, data, reply, flags, isVendor){
-        console.log("|---[i] start fuzzing peekhole in mData");
+        console.log("|---[i] start fuzzing peekholes in mData");
 
         // dump data for debugging
         console.log(hexdump(mData_pos, {
@@ -407,15 +410,18 @@ Java.perform(function () {
             ansi: true
         }));
 
+
         // dump the descriptor
         var descriptor = mData_pos.readUtf8String();
-        console.log("|---[i] Descriptor: ");
+        console.log("|--[i] Descriptor: ");
         console.log(hexdump(mData_pos, {
             offset: 0,
             length: descriptor.length,
             header: true,
             ansi: true
         }));
+//        if (descriptor.indexOf(fuzzInterface) == -1)
+//            return
 
         // mObjectsSize
         var mObjectsSize_pos = args[2].add(mObjectsSize_LOC);
@@ -458,7 +464,10 @@ Java.perform(function () {
 
         // I would like to fuzz in runtime, such that I can covert back to the original mData.
         fuzzPeekhole(mData_pos, mDataSize, mObjects_pos, mObjectsSize, mHandle, args[1].toInt32(), args[2], args[3], args[4].toInt32(), isVendor);
-        // fuzzObject(mData_pos, mObjects_pos, mObjectsSize);
+
+        // console.log("|---[i] target: " + descriptor.indexOf("vendor.huawei.hardware.ai"));
+//        if (mObjectsSize != 0)
+//            fuzzObject(mData_pos, mObjects_pos, mObjectsSize, mHandle, args[1].toInt32(), args[2], args[3], args[4].toInt32(), isVendor);
     }
 
     console.log('[*] Frida js is running.')
