@@ -160,7 +160,7 @@ static main()
             // -> vendor::huawei::hardware::jpegdec::V1_0::writeEmbeddedToParcel(vendor::huawei::hardware::jpegdec::V1_0::jpeg_decompress_hidl_t const&, android::hardware::Parcel*, unsigned long, unsigned long)
             // -> android::hardware::Parcel::writeBuffer(void const*, unsigned long, unsigned long *)
 
-            msg( "G: *** Vendor's implementation, shall verify the below result ***: 0x%X -> 0x%X: %s\n", ea, callee_ea, callee_name );
+            msg( "G: *** Vendor's implementation, shall verify the below result ***:\n\t 0x%X -> 0x%X: %s\n", ea, callee_ea, callee_name );
             collect_f(callee_ea, logfile);
           }
           else if (strstr(callee_name, "android::hardware::") != -1 && strstr(callee_name, "::write") != -1)

@@ -7,7 +7,6 @@ This is just a PoC to prove that this project can work on service as well.
 
 The transact process located at `frameworks/native/libs/binder/BpBinder.cpp`.
 
-`system/libhwbinder/BpHwBinder.cpp`
 ```cpp
 status_t BpBinder::transact( <- intercept here.
     uint32_t code, const Parcel& data, Parcel* reply, uint32_t flags)

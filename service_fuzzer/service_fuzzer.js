@@ -84,43 +84,52 @@ Java.perform(function () {
         return (((s)+3)&~3)
     }
 
-    function fuzzOneSInt(mData_pos, SInt_pos, mHandle, code, data, reply, flags)
+    function fuzzOneSInt(fuzzPos, mHandle, code, data, reply, flags)
     {
-        var org_value = mData_pos.add(SInt_pos).readS32();
+        var org_value = fuzzPos.readS32();
+        var new_value = [0,
+                        0x7f, 0x7fff, 0x7fffffff,
+                        0x80, 0x8000, 0x80000000,
+                        0xff, 0xffff, 0xffffffff,
+                        org_value + 1,
+                        ~org_value]
 //        console.log("|-----[i] original value: 0x" + org_value.toString(16) + ", new value: 0x" + (~org_value).toString(16));
 
-//        console.log(hexdump(mData_pos.add(UInt_pos), {
+//        console.log(hexdump(mData_pos.add(SInt_pos), {
 //            offset: 0,
 //            length: 0x10,
 //            header: true,
 //            ansi: true
 //        }));
 
-        mData_pos.add(SInt_pos).writeS32(~org_value);
+        for (var i = 0; i < new_value.length; i ++)
+        {
+            fuzzPos.writeS32(new_value[i]);
 
-//        console.log(hexdump(mData_pos.add(UInt_pos), {
+//        console.log(hexdump(mData_pos.add(SInt_pos), {
 //            offset: 0,
 //            length: 0x10,
 //            header: true,
 //            ansi: true
 //        }));
+            console.log("|-----[i] fuzz Parcel: " + org_value + " -> " + new_value[i]);
 
+            var func_IPCThreadState_self = new NativeFunction(IPCThreadState_self_p, 'pointer', []);
+            var IPCThreadState_Obj = func_IPCThreadState_self();
+            // console.log("|-----[i] IPCThreadState object: 0x" + IPCThreadState_Obj.toString(16));
 
-        var func_IPCThreadState_self = new NativeFunction(IPCThreadState_self_p, 'pointer', []);
-        var IPCThreadState_Obj = func_IPCThreadState_self();
-        console.log("|-----IPCThreadState object: 0x" + IPCThreadState_Obj.toString(16));
+            var func_IPCThreadState_transact = new NativeFunction(IPCThreadState_transact_p, 'int32', ['pointer', 'int32', 'uint32', 'pointer', 'pointer', 'uint32']);
+            var ret = func_IPCThreadState_transact(
+                IPCThreadState_Obj,
+                mHandle,
+                code,
+                data,
+                reply,
+                flags);
 
-        var func_IPCThreadState_transact = new NativeFunction(IPCThreadState_transact_p, 'int32', ['pointer', 'int32', 'uint32', 'pointer', 'pointer', 'uint32']);
-        var ret = func_IPCThreadState_transact(
-            IPCThreadState_Obj,
-            mHandle,
-            code,
-            data,
-            reply,
-            flags);
-
-        mData_pos.add(SInt_pos).writeS32(org_value);
-        console.log("|-----[!] fuzz done, ret value: 0x" + ret.toString(16));
+            console.log("|-----[i] done, ret value: 0x" + ret.toString(16));
+        }
+        fuzzPos.writeS32(org_value);
     }
 
     function getBinderObjectLen(BinderObjectPos)
@@ -174,7 +183,7 @@ Java.perform(function () {
             else
             {
                 console.log("|----[i] fuzz offset: 0x" + i.toString(16));
-                fuzzOneSInt(mData_pos, i, mHandle, code, data, reply, flags);
+                fuzzOneSInt(mData_pos.add(i), mHandle, code, data, reply, flags);
             }
         }
     }

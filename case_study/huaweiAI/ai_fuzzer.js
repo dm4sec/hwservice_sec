@@ -80,27 +80,64 @@ Java.perform(function () {
 
     const mHandle_LOC       = 0x8;
 
-    const fuzzInterface     = "vendor.huawei.hardware.ai";
+
+    function fuzz_hidl_startModelFromMem2(mData_pos, mObjects_pos, mObjectsSize, mHandle, code, data, reply, flags, isVendor)
+    {
+// The parcel layout:
+//        0          0x2c    0x30    0x34                     0x5c                     0x84                     0xac 0xb0 0xb4                     0xdc                     0xfc
+//        |-----------|-------|-------|------------------------|------------------------|------------------------|----|----|------------------------|------------------------|
+//        | interface |  int  |  int  | BINDER_TYPE_PTR (0x28) | BINDER_TYPE_PTR (0x28) | BINDER_TYPE_PTR (0x28) | Uint64  | BINDER_TYPE_PTR (0x28) | BINDER_TYPE_FDA (0x20) |
+
+// The 2nd object layout:
+//        0          0x08        0x0c    0x10          0x18    0x20      0x24    0x28                     0xdc                     0xfc
+//        |-------------|---------|-------|-------------|-------|---------|-------|
+//        | str pointer | str len |  N/A  | mem pointer |  N/A  | mem len |  N/A  |
+//        |       hidl_string object      |           Model Buffer                |
+//        ```
+
+
+        var binder_object_offset    = mObjects_pos.add(1 * 0x8).readU64();
+        var binder_object_pos       = mData_pos.add(binder_object_offset);
+
+        var buffer_pos          = binder_object_pos.add(0x8);
+        var length_pos          = binder_object_pos.add(0x10);
+        var parent_pos          = binder_object_pos.add(0x18);
+        var parent_offset_pos   = binder_object_pos.add(0x20);
+
+        console.log("|----[i] buffer: " + buffer_pos.readPointer());
+        if(length_pos.readU64() != 0)
+        {
+            console.log("|----[i] buffer content: ");
+            console.log(hexdump(buffer_pos.readPointer(), {
+                offset: 0,
+                length: length_pos.readU64(),
+                header: true,
+                ansi: true
+            }));
+        }
+
+
+    }
 
     // fuzz the object
-    function fuzzObject(mData_pos, mObjects_pos, mObjectsSize, mHandle, code, data, reply, flags, isVendor){
-        console.log("|---[i] start fuzzing binder objects in mData");
+    function studyObject(mData_pos, mObjects_pos, mObjectsSize, mHandle, code, data, reply, flags, isVendor){
+        console.log("|---[i] start dumping binder objects in mData");
 
         // parse each Object
         for (var i = 0; i < mObjectsSize; i ++)
         {
-            console.log("|---[i] dumping binder_object: " + (i + 1) + " / " + mObjectsSize);
+            console.log("|---[i] dumping binder_object: " + (i + 1) + " (" + i + ") / " + mObjectsSize);
             var binder_object_offset    = mObjects_pos.add(i * 0x8).readU64();
             var binder_object_pos       = mData_pos.add(binder_object_offset);
             var type_pos                = binder_object_pos;
 
-            console.log("|----[i] type:");
-            console.log(hexdump(type_pos, {
-                offset: 0,
-                length: 0x4,
-                header: true,
-                ansi: true
-            }));
+//            console.log("|----[i] type:");
+//            console.log(hexdump(type_pos, {
+//                offset: 0,
+//                length: 0x4,
+//                header: true,
+//                ansi: true
+//            }));
 
             if (type_pos.readU32() == BINDER_TYPE_PTR)
             {
@@ -137,13 +174,27 @@ Java.perform(function () {
                     console.log("|----[i] buffer: " + buffer_pos.readPointer());
                     if(length_pos.readU64() != 0)
                     {
-                        console.log("|----[i] buffer content: ");
+                        console.log("|-----[i] buffer content: ");
                         console.log(hexdump(buffer_pos.readPointer(), {
                             offset: 0,
                             length: length_pos.readU64(),
                             header: true,
                             ansi: true
                         }));
+
+                        console.log("|-----[i] real buffer content: ");
+                        try{
+                            console.log(hexdump(buffer_pos.readPointer().readPointer(), {
+                                offset: 0,
+                                length: 0x80,
+                                header: true,
+                                ansi: true
+                            }));
+                        }
+                        catch(err) {
+                            console.log("|-----[e] can't read");
+                        }
+
                     }
                     else
                     {
@@ -171,14 +222,17 @@ Java.perform(function () {
                         }));
 
                         console.log("|-----[i] real buffer content: ");
-                        console.log(hexdump(buffer_pos.readPointer().readPointer(), {
-                            offset: 0,
-                            length: 0x80,
-                            header: true,
-                            ansi: true
-                        }));
-
-
+                        try{
+                            console.log(hexdump(buffer_pos.readPointer().readPointer(), {
+                                offset: 0,
+                                length: 0x80,
+                                header: true,
+                                ansi: true
+                            }));
+                        }
+                        catch(err) {
+                            console.log("|-----[e] can't read");
+                        }
                     }
                     else
                     {
@@ -290,6 +344,8 @@ Java.perform(function () {
                 console.log("|----[e] TODO:: Unknown BINDER_TYPE");
             }
         }
+
+        console.log("|---[i] end dumping binder objects in mData");
     }
 
     // defined in system/libhwbinder/Parcel.cpp
@@ -298,63 +354,75 @@ Java.perform(function () {
         return (((s)+3)&~3)
     }
 
-    function fuzzOneSInt(mData_pos, SInt_pos, mHandle, code, data, reply, flags, isVendor)
+
+    function fuzzOneSInt(fuzzPos, mHandle, code, data, reply, flags, isVendor)
     {
-        var org_value = mData_pos.add(SInt_pos).readS32();
+        var org_value = fuzzPos.readS32();
+        var new_value = [//org_value,           // replay (test double-free?)
+                        ~org_value,
+                        0,
+                        0x7f, 0x7fff, 0x7fffffff,
+                        0x80, 0x8000, 0x80000000,
+                        0xff, 0xffff, 0xffffffff,
+                        org_value + 1
+                        ]
+//        var new_value = org_value | 0xffff;
 //        console.log("|-----[i] original value: 0x" + org_value.toString(16) + ", new value: 0x" + (~org_value).toString(16));
 
-//        console.log(hexdump(mData_pos.add(UInt_pos), {
+//        console.log(hexdump(mData_pos.add(SInt_pos), {
 //            offset: 0,
 //            length: 0x10,
 //            header: true,
 //            ansi: true
 //        }));
 
-        mData_pos.add(SInt_pos).writeS32(~org_value);
-
-//        console.log(hexdump(mData_pos.add(UInt_pos), {
-//            offset: 0,
-//            length: 0x10,
-//            header: true,
-//            ansi: true
-//        }));
-
-
-        if (isVendor == false)
+        for (var i = 0; i < new_value.length; i ++)
         {
-            console.log("|-----[i] fuzz system Parcel");
-            var func_IPCThreadState_self = new NativeFunction(IPCThreadState_self_p, 'pointer', []);
-            var IPCThreadState_Obj = func_IPCThreadState_self();
-            // console.log("|-----IPCThreadState object: 0x" + IPCThreadState_Obj.toString(16));
+            fuzzPos.writeS32(new_value[i]);
+    //        mData_pos.add(SInt_pos).writeS32(org_value | 0xffff);
+    //        console.log(hexdump(mData_pos.add(SInt_pos), {
+    //            offset: 0,
+    //            length: 0x10,
+    //            header: true,
+    //            ansi: true
+    //        }));
 
-            var func_IPCThreadState_transact = new NativeFunction(IPCThreadState_transact_p, 'int32', ['pointer', 'int32', 'uint32', 'pointer', 'pointer', 'uint32']);
-            var ret = func_IPCThreadState_transact(
-                IPCThreadState_Obj,
-                mHandle,
-                code,
-                data,
-                reply,
-                flags);
+
+            if (isVendor == false)
+            {
+                console.log("|-----[i] fuzz system Parcel (" + fuzzPos + "): 0x" + org_value.toString(16) + " -> 0x" + new_value[i].toString(16));
+                var func_IPCThreadState_self = new NativeFunction(IPCThreadState_self_p, 'pointer', []);
+                var IPCThreadState_Obj = func_IPCThreadState_self();
+                // console.log("|-----IPCThreadState object: 0x" + IPCThreadState_Obj.toString(16));
+
+                var func_IPCThreadState_transact = new NativeFunction(IPCThreadState_transact_p, 'int32', ['pointer', 'int32', 'uint32', 'pointer', 'pointer', 'uint32']);
+                var ret = func_IPCThreadState_transact(
+                    IPCThreadState_Obj,
+                    mHandle,
+                    code,
+                    data,
+                    reply,
+                    flags);
+            }
+            else
+            {
+                console.log("|-----[i] fuzz vendor Parcel: (" + fuzzPos + "): 0x" + org_value.toString(16) + " -> 0x" + new_value[i].toString(16));
+                var func_IPCThreadState_self_vendor = new NativeFunction(IPCThreadState_self_vendor_p, 'pointer', []);
+                var IPCThreadState_Obj = func_IPCThreadState_self_vendor();
+                // console.log("|-----IPCThreadState object: 0x" + IPCThreadState_Obj.toString(16));
+
+                var func_IPCThreadState_transact_vendor = new NativeFunction(IPCThreadState_transact_vendor_p, 'int32', ['pointer', 'int32', 'uint32', 'pointer', 'pointer', 'uint32']);
+                var ret = func_IPCThreadState_transact_vendor(
+                    IPCThreadState_Obj,
+                    mHandle,
+                    code,
+                    data,
+                    reply,
+                    flags);
+            }
+            console.log("|-----[i] done, ret value: 0x" + ret.toString(16));
         }
-        else
-        {
-            console.log("|-----[i] fuzz vendor Parcel");
-            var func_IPCThreadState_self_vendor = new NativeFunction(IPCThreadState_self_vendor_p, 'pointer', []);
-            var IPCThreadState_Obj = func_IPCThreadState_self_vendor();
-            // console.log("|-----IPCThreadState object: 0x" + IPCThreadState_Obj.toString(16));
-
-            var func_IPCThreadState_transact_vendor = new NativeFunction(IPCThreadState_transact_vendor_p, 'int32', ['pointer', 'int32', 'uint32', 'pointer', 'pointer', 'uint32']);
-            var ret = func_IPCThreadState_transact_vendor(
-                IPCThreadState_Obj,
-                mHandle,
-                code,
-                data,
-                reply,
-                flags);
-        }
-
-        mData_pos.add(SInt_pos).writeS32(org_value);
-        console.log("|-----[!] fuzz done, fuzzer ret value: 0x" + ret.toString(16));
+        fuzzPos.writeS32(org_value);
     }
 
     function getBinderObjectLen(BinderObjectPos)
@@ -385,12 +453,13 @@ Java.perform(function () {
             ansi: true
         }));
 
-        var object_offset_lst = new Array();;
+        var object_offset_lst = new Array();
         for (var i = 0; i < mObjectsSize; i ++)
         {
-            object_offset_lst[i] = mObjects_pos.add(i * 0x8).readU64().toNumber();
+            var object_offset = mObjects_pos.add(i * 0x8).readU64();
+            console.log("|----[i] binder_object offset: 0x" + object_offset.toString(16));
+            object_offset_lst[i] = object_offset.toNumber();
         }
-        console.log("|----[i] binder_object offset: " + object_offset_lst);
 
         // skip the descriptor and pad i to next block
         i = PAD_SIZE_UNSAFE(mData_pos.readUtf8String().length);
@@ -406,21 +475,33 @@ Java.perform(function () {
             else
             {
                 console.log("|----[i] fuzz offset: 0x" + i.toString(16));
-                fuzzOneSInt(mData_pos, i, mHandle, code, data, reply, flags, isVendor);
+                fuzzOneSInt(mData_pos.add(i), mHandle, code, data, reply, flags, isVendor);
             }
         }
     }
 
-    const white_transaction_code = [
-        19
+    const whiteTransactionCode = [
+        // 11,                                 // vendor.huawei.hardware.ai@2.1::IModelManagerService_hidl         _hidl_BuildModel
+        11,                                 // vendor.huawei.hardware.ai@1.1::IAiModelMngr                      _hidl_startModelFromMem2
+        // 12                                  // vendor.huawei.hardware.ai@1.1::IAiModelMngr                      _hidl_runModel2
     ];
+    // const fuzzInterface     = "vendor.huawei.hardware.ai";
+    const fuzzInterface             = "vendor.huawei.hardware.ai@1.1::IAiModelMngr"
 
-    function parseParcel(args, isVendor){
-        // remove to enable all transaction.
-        if (white_transaction_code.includes(args[1].toInt32()) == false)
+    function parseParcel(args, that, isVendor){
+        // remove to enable all transactions.
+        if (whiteTransactionCode.includes(args[1].toInt32()) == false)
             return;
 
-        // args[0], `this` argument
+        // remove to enable all interfaces.
+        if (args[2].add(mData_LOC).readPointer().readUtf8String().indexOf(fuzzInterface) == -1)
+            return
+
+        console.log('[i] call stack:\n' +
+            Thread.backtrace(that.context, Backtracer.ACCURATE)
+            .map(DebugSymbol.fromAddress).join('\n') + '\n');
+
+        // args[0], `this` argument (should not depend on `args[0]`, use `this` instead.)
         console.log("[i] 1st argument, this: 0x" + args[0].toString(16))
         var mHandle = args[0].add(mHandle_LOC).readU32()
         console.log("[i] mHandle value: 0x" + mHandle.toString(16))
@@ -463,8 +544,6 @@ Java.perform(function () {
             header: true,
             ansi: true
         }));
-        if (descriptor.indexOf(fuzzInterface) == -1)
-            return
 
         // mObjectsSize
         var mObjectsSize_pos = args[2].add(mObjectsSize_LOC);
@@ -505,16 +584,16 @@ Java.perform(function () {
         };
         */
 
+        // return;
         // I would like to fuzz in runtime, such that I can covert back to the original mData.
         // fuzzPeekhole(mData_pos, mDataSize, mObjects_pos, mObjectsSize, mHandle, args[1].toInt32(), args[2], args[3], args[4].toInt32(), isVendor);
-
-        // console.log("|---[i] target: " + descriptor.indexOf("vendor.huawei.hardware.ai"));
         if (mObjectsSize != 0)
-            fuzzObject(mData_pos, mObjects_pos, mObjectsSize, mHandle, args[1].toInt32(), args[2], args[3], args[4].toInt32(), isVendor);
+            studyObject(mData_pos, mObjects_pos, mObjectsSize, mHandle, args[1].toInt32(), args[2], args[3], args[4].toInt32(), isVendor);
+            // fuzz_hidl_startModelFromMem2(mData_pos, mObjects_pos, mObjectsSize, mHandle, args[1].toInt32(), args[2], args[3], args[4].toInt32(), isVendor);
     }
 
     console.log('[*] Frida js is running.')
-
+    // return
     // Use the mangled name
     var BpHwBinder_transact_p = Module.getExportByName("/system/lib64/libhidlbase.so", '_ZN7android8hardware10BpHwBinder8transactEjRKNS0_6ParcelEPS2_jNSt3__18functionIFvRS2_EEE');
     console.log("[i] BpHwBinder::transact addr: " + BpHwBinder_transact_p)
@@ -548,7 +627,11 @@ Java.perform(function () {
     Interceptor.attach(BpHwBinder_transact_p, {
         onEnter: function(args) {
             console.log("[*] onEnter: BpHwBinder::transact");
-            parseParcel(args, false);
+            console.log('[i] called from:\n' +
+                Thread.backtrace(this.context, Backtracer.ACCURATE)
+                .map(DebugSymbol.fromAddress).join('\n') + '\n');
+
+            parseParcel(args, this, false);
         },
 
         onLeave: function(retval) {
@@ -570,7 +653,7 @@ Java.perform(function () {
     Interceptor.attach(BpHwBinder_transact_vendor_p, {
         onEnter: function(args) {
             console.log("[*] onEnter: Vendor BpHwBinder::transact");
-            parseParcel(args, true);
+            parseParcel(args, this, true);
         },
 
         onLeave: function(retval) {
@@ -579,6 +662,125 @@ Java.perform(function () {
             // print the return value
         }
     });
+
+
+    /**
+
+    //    Used for testing
+    // Use the mangled name
+    var startModelFromMem2_p = Module.getExportByName("vendor.huawei.hardware.ai@1.1.so", '_ZN6vendor6huawei8hardware2ai4V1_115BpHwAiModelMngr24_hidl_startModelFromMem2EPN7android8hardware10IInterfaceEPNS6_7details16HidlInstrumentorEiiRKNS6_8hidl_vecINS2_4V1_011ModelBufferEEE');
+    console.log("[i] BpHwAiModelMngr::_hidl_startModelFromMem2 addr: " + startModelFromMem2_p)
+
+//    vendor::huawei::hardware::ai::V1_1::BpHwAiModelMngr::_hidl_startModelFromMem2(
+//        android::hardware::IInterface *,
+//        android::hardware::details::HidlInstrumentor *,
+//        int,
+//        int,
+//        android::hardware::hidl_vec<vendor::huawei::hardware::ai::V1_0::ModelBuffer> const&
+//        )
+
+    Interceptor.attach(startModelFromMem2_p, {
+        onEnter: function(args) {
+            console.log("[*] onEnter: BpHwAiModelMngr::_hidl_startModelFromMem2");
+            console.log('[i] called from:\n' +
+                Thread.backtrace(this.context, Backtracer.ACCURATE)
+                .map(DebugSymbol.fromAddress).join('\n') + '\n');
+
+            console.log("[i] the first argument, int: 0x" + args[0].toString(16))
+            console.log("[i] the second argument, int: 0x" + args[1].toString(16))
+            console.log("[i] the third argument, int: 0x" + args[2].toString(16))
+            console.log("[i] the forth argument, int: 0x" + args[3].toString(16))
+            console.log("[i] the fifth argument, int: 0x" + args[4].toString(16))
+
+            console.log(hexdump(args[4], {
+                offset: 0,
+                length: 0x8,
+                header: true,
+                ansi: true
+            }));
+
+            console.log(hexdump(args[4].readPointer(), {
+                offset: 0,
+                length: 0x200,
+                header: true,
+                ansi: true
+            }));
+
+            console.log("[i] the fifth argument, obj: 0x" + args[5].toString(16))
+
+
+        },
+
+        onLeave: function(retval) {
+            console.log("[*] onLeave: BpHwAiModelMngr::_hidl_startModelFromMem2");
+            console.log("|-[i] ret value: " + retval);
+            // print the return value
+        }
+    });
+
+
+//demo@demo:~/Downloads$ adb pull /vendor/lib64/vendor.huawei.hardware.ai@1.0.so
+///vendor/lib64/vendor.huawei.hardware.ai@1.0.so: 1 file pulled, 0 skipped. 26.3 MB/s (777000 bytes in 0.028s)
+//demo@demo:~/Downloads$ objdump -tT vendor.huawei.hardware.ai@1.0.so  | grep "writeEmbeddedToParcel"
+//0000000000000000      DF *UND*	0000000000000000  Base        _ZN7android8hardware21writeEmbeddedToParcelERKNS0_11hidl_stringEPNS0_6ParcelEmm
+//0000000000000000      DF *UND*	0000000000000000  Base        _ZN7android8hardware21writeEmbeddedToParcelERKNS0_11hidl_handleEPNS0_6ParcelEmm
+//00000000000a7b40 g    DF .text	000000000000000c  Base        _ZN6vendor6huawei8hardware2ai4V1_021writeEmbeddedToParcelERKNS3_16ASRRuntimeParamsEPN7android8hardware6ParcelEmm
+//00000000000a7a64 g    DF .text	00000000000000d0  Base        _ZN6vendor6huawei8hardware2ai4V1_021writeEmbeddedToParcelERKNS3_13ASRInitParamsEPN7android8hardware6ParcelEmm
+//00000000000a7ed4 g    DF .text	00000000000000c0  Base        _ZN6vendor6huawei8hardware2ai4V1_021writeEmbeddedToParcelERKNS3_16ModelDescriptionEPN7android8hardware6ParcelEmm
+//00000000000a7d9c g    DF .text	0000000000000078  Base        _ZN6vendor6huawei8hardware2ai4V1_021writeEmbeddedToParcelERKNS3_9ModelInfoEPN7android8hardware6ParcelEmm
+//00000000000a8058 g    DF .text	0000000000000004  Base        _ZN6vendor6huawei8hardware2ai4V1_021writeEmbeddedToParcelERKNS3_21AINeuralNetworkBufferEPN7android8hardware6ParcelEmm
+//00000000000a8048 g    DF .text	0000000000000004  Base        _ZN6vendor6huawei8hardware2ai4V1_021writeEmbeddedToParcelERKNS3_13AIImageBufferEPN7android8hardware6ParcelEmm
+//00000000000a7c38 g    DF .text	00000000000000ec  Base        _ZN6vendor6huawei8hardware2ai4V1_021writeEmbeddedToParcelERKNS3_9ASRResultEPN7android8hardware6ParcelEmm
+//00000000000a7fec g    DF .text	0000000000000058  Base        _ZN6vendor6huawei8hardware2ai4V1_021writeEmbeddedToParcelERKNS3_11ModelBufferEPN7android8hardware6ParcelEmm
+//00000000000a8050 g    DF .text	0000000000000004  Base        _ZN6vendor6huawei8hardware2ai4V1_021writeEmbeddedToParcelERKNS3_8ICResultEPN7android8hardware6ParcelEmm
+
+    // Use the mangled name
+    var writeEmbeddedToParcel_p = Module.getExportByName("vendor.huawei.hardware.ai@1.0.so",
+    '_ZN6vendor6huawei8hardware2ai4V1_021writeEmbeddedToParcelERKNS3_11ModelBufferEPN7android8hardware6ParcelEmm');
+    console.log("[i] writeEmbeddedToParcel addr: " + writeEmbeddedToParcel_p)
+
+    Interceptor.attach(writeEmbeddedToParcel_p, {
+        onEnter: function(args) {
+            console.log("[*] onEnter: V1_0::writeEmbeddedToParcel");
+            console.log('[i] called from:\n' +
+                Thread.backtrace(this.context, Backtracer.ACCURATE)
+                .map(DebugSymbol.fromAddress).join('\n') + '\n');
+
+            console.log("[i] the 0 argument, int: 0x" + args[0].toString(16))
+            console.log("[i] the 1 argument, int: 0x" + args[1].toString(16))
+            console.log("[i] the 2 argument, int: 0x" + args[2].toString(16))
+            console.log("[i] the 3 argument, int: 0x" + args[3].toString(16))
+
+            console.log(hexdump(args[0], {
+                offset: 0,
+                length: 0x28,
+                header: true,
+                ansi: true
+            }));
+
+            console.log(hexdump(args[0].readPointer(), {
+                offset: 0,
+                length: 0x2a,
+                header: true,
+                ansi: true
+            }));
+
+            console.log(hexdump(args[0].add(0x10).readPointer(), {
+                offset: 0,
+                length: 0x16c07,
+                header: true,
+                ansi: true
+            }));
+
+        },
+
+        onLeave: function(retval) {
+            console.log("[*] onLeave: V1_0::writeEmbeddedToParcel");
+            console.log("|-[i] ret value: " + retval);
+            // print the return value
+        }
+    });
+    */
 
 });
 
