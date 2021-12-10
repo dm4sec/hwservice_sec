@@ -9,7 +9,7 @@ It's commonly known that in order to use a model, the ML framework should 1) loa
 These are two ideal places to perform file (data) fuzzing.
 
 ### 1.2 Collecting Information
-A. Use the [Frida Gadget](https://frida.re/docs/gadget/) to process the [Demo](https://developer.huawei.com/consumer/cn/doc/development/hiai-Examples/sample-code-0000001050265470). \
+A. Use the [Frida Gadget](https://frida.re/docs/gadget/) to process the [Sample](https://developer.huawei.com/consumer/cn/doc/development/hiai-Examples/sample-code-0000001050265470), e.g., [Vision Demo](https://github.com/HMS-Core/hms-ml-demo/tree/master/MLKit-Sample/module-vision). \
 B. Distill `vendor.huawei.hardware.ai@*` from device, then use [idc_scirpt](https://github.com/dm4sec/hwservice_sec/idc_script) to parse these binaries.
 ```commandline
 demo@demo:~/Downloads$ adb shell ls /vendor/lib64/vendor.huawei.hardware.ai@*
@@ -42,34 +42,71 @@ C. After exploring `文字图像超分` activity, I find the following methods a
 From the `interface method` names, I would like to fuzz #6, #7, and #8 interfaces.
 
 ### 1.3 Start fuzzing
-I take #7 as an example to perform both peekhole and object fuzz. The `mData` of the Parcel is depicted as below.
+I take #7 as an example to perform both peekhole and object fuzz. 
+
+#### 1.3.1 Collecting information
+
+I) An instance of `mData` in the Parcel is depicted as below.
 ```
 0          0x2c    0x30    0x34                     0x5c                     0x84                     0xac 0xb0 0xb4                     0xdc                     0xfc
 |-----------|-------|-------|------------------------|------------------------|------------------------|----|----|------------------------|------------------------| 
 | interface |  int  |  int  | BINDER_TYPE_PTR (0x28) | BINDER_TYPE_PTR (0x28) | BINDER_TYPE_PTR (0x28) | Uint64  | BINDER_TYPE_PTR (0x28) | BINDER_TYPE_FDA (0x20) |
 
              0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F  0123456789ABCDEF
-7a39846240  76 65 6e 64 6f 72 2e 68 75 61 77 65 69 2e 68 61  vendor.huawei.ha
-7a39846250  72 64 77 61 72 65 2e 61 69 40 31 2e 31 3a 3a 49  rdware.ai@1.1::I
-7a39846260  41 69 4d 6f 64 65 6c 4d 6e 67 72 00 01 00 00 00  AiModelMngr.....
-7a39846270  a1 01 00 00 85 2a 74 70 00 00 00 00 08 3b ff cd  .....*tp.....;..
-7a39846280  7f 00 00 00 10 00 00 00 00 00 00 00 00 00 00 00  ................
-7a39846290  00 00 00 00 00 00 00 00 00 00 00 00 85 2a 74 70  .............*tp
-7a398462a0  01 00 00 00 f8 2d 58 3b 7a 00 00 00 28 00 00 00  .....-X;z...(...
-7a398462b0  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-7a398462c0  00 00 00 00 85 2a 74 70 01 00 00 00 80 2e 58 3b  .....*tp......X;
-7a398462d0  7a 00 00 00 2b 00 00 00 00 00 00 00 01 00 00 00  z...+...........
-7a398462e0  00 00 00 00 00 00 00 00 00 00 00 00 1c 00 00 00  ................
-7a398462f0  00 00 00 00 85 2a 74 70 01 00 00 00 80 38 bc 39  .....*tp.....8.9
-7a39846300  7a 00 00 00 1c 00 00 00 00 00 00 00 01 00 00 00  z...............
-7a39846310  00 00 00 00 10 00 00 00 00 00 00 00 85 61 64 66  .............adf
-7a39846320  00 00 00 00 01 00 00 00 00 00 00 00 03 00 00 00  ................
-7a39846330  00 00 00 00 0c 00 00 00 00 00 00 00              ............
+75dbac08c0  76 65 6e 64 6f 72 2e 68 75 61 77 65 69 2e 68 61  vendor.huawei.ha
+75dbac08d0  72 64 77 61 72 65 2e 61 69 40 31 2e 31 3a 3a 49  rdware.ai@1.1::I
+75dbac08e0  41 69 4d 6f 64 65 6c 4d 6e 67 72 00 02 00 00 00  AiModelMngr.....
+75dbac08f0  12 00 00 00 85 2a 74 70 00 00 00 00 88 bb 9a e8  .....*tp........
+75dbac0900  7f 00 00 00 10 00 00 00 00 00 00 00 00 00 00 00  ................
+75dbac0910  00 00 00 00 00 00 00 00 00 00 00 00 85 2a 74 70  .............*tp
+75dbac0920  01 00 00 00 28 0d a2 e9 75 00 00 00 28 00 00 00  ....(...u...(...
+75dbac0930  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+75dbac0940  00 00 00 00 85 2a 74 70 01 00 00 00 b0 0d a2 e9  .....*tp........
+75dbac0950  75 00 00 00 2e 00 00 00 00 00 00 00 01 00 00 00  u...............
+75dbac0960  00 00 00 00 00 00 00 00 00 00 00 00 1c 00 00 00  ................
+75dbac0970  00 00 00 00 85 2a 74 70 01 00 00 00 e0 d8 b2 db  .....*tp........
+75dbac0980  75 00 00 00 1c 00 00 00 00 00 00 00 01 00 00 00  u...............
+75dbac0990  00 00 00 00 10 00 00 00 00 00 00 00 85 61 64 66  .............adf
+75dbac09a0  00 00 00 00 01 00 00 00 00 00 00 00 03 00 00 00  ................
+75dbac09b0  00 00 00 00 0c 00 00 00 00 00 00 00              ............
 ```
 
-#### 1.3.1 fuzzPeekhole
-fuzzPeekhole find nothing. 
-**Note**, the [idc_scirpt](https://github.com/dm4sec/hwservice_sec/idc_script) issues: 
+II) Buffers of each `binder_buffer_object` object are depicted as: \
+~~\#1. 0x34 - 0x5c~~, assembled by `writeBuffer`, which write the object of `hidl_vec`:
+```
+             0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F  0123456789ABCDEF
+7fe89abb88  28 0d a2 e9 75 00 00 00 01 00 00 00 01 00 00 00  (...u...........
+```
+\#2. 0x5c - 0x84, assembled by `writeEmbeddedBuffer`, which write the object of `hidl_vect<t>`:
+```
+             0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F  0123456789ABCDEF
+75e9a20d28  b0 0d a2 e9 75 00 00 00 2d 00 00 00 01 00 00 00  ....u...-.......
+75e9a20d38  e0 d8 b2 db 75 00 00 00 01 00 00 00 00 00 00 00  ....u...........
+75e9a20d48  e2 42 00 00 03 00 00 00                          .B......
+```
+\#3. 0x84 - 0xac, assembled by `writeEmbeddedToParcel(const hidl_string &string`:
+```
+             0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F  0123456789ABCDEF
+75e9a20db0  6d 6c 5f 74 65 78 74 73 75 70 65 72 72 65 73 6f  ml_textsuperreso
+75e9a20dc0  6c 75 74 69 6f 6e 36 30 30 3a 63 6f 6d 2e 6d 6c  lution600:com.ml
+75e9a20dd0  6b 69 74 2e 73 61 6d 70 6c 65 2e 63 6e 00        kit.sample.cn.
+```
+\#4. 0xb4 - 0xdc, `status_t writeEmbeddedToParcel(const hidl_handle &handle,` -> `status_t Parcel::writeEmbeddedNativeHandle(const native_handle_t *handle,` -> `status_t Parcel::writeNativeHandleNoDup(const native_handle_t *handle,
+` -> `status_t Parcel::writeEmbeddedBuffer(`
+```
+             0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F  0123456789ABCDEF
+75dbb2d8e0  0c 00 00 00 01 00 00 00 03 00 00 00 6d 00 00 00  ............m...
+75dbb2d8f0  92 15 14 03 03 00 00 00 e2 42 00 00              .........B..
+```
+\#5. The last object (in between 0xdc - 0xfc) is a `binder_fd_array_object` object, 
+`status_t writeEmbeddedToParcel(const hidl_handle &handle,` -> `status_t Parcel::writeEmbeddedNativeHandle(const native_handle_t *handle,` -> `status_t Parcel::writeNativeHandleNoDup(const native_handle_t *handle,
+`, it has properties of: 
+```
+|----[i] num_fds: 0x1
+|----[i] parent: 0x3
+|----[i] parent_offset: 0xc 
+```
+III) The [idc_scirpt](https://github.com/dm4sec/hwservice_sec/idc_script) issues: 
 
 ```
 F: 0x69028 - 0x69398: vendor::huawei::hardware::ai::V1_1::BpHwAiModelMngr::_hidl_startModelFromMem2(android::hardware::IInterface *, android::hardware::details::HidlInstrumentor *, int, int, android::hardware::hidl_vec<vendor::huawei::hardware::ai::V1_0::ModelBuffer> const&)
@@ -82,114 +119,176 @@ G: *** Vendor's implementation, shall verify the below result ***: 0x69150 -> 0x
 T: Transaction code at 0x69190: 11
 ```
 And the last invocation is thunked to:
-```cpp
-// vendor::huawei::hardware::ai::V1_0::writeEmbeddedToParcel(vendor::huawei::hardware::ai::V1_0::ModelBuffer const&, android::hardware::Parcel *, unsigned long, unsigned long)
-__int64 __fastcall vendor::huawei::hardware::ai::V1_0::writeEmbeddedToParcel(android::hardware *a1, const android::hardware::hidl_string *a2, android::hardware::Parcel *a3, unsigned __int64 a4, unsigned __int64 a5)
-{
-  __int64 result; // x0
-
-  result = android::hardware::writeEmbeddedToParcel(a1, a2, a3, a4, a5);
-  if ( !(_DWORD)result )
-    result = android::hardware::writeEmbeddedToParcel();
-  return result;
-}
 ```
-1) This method delivers 3 parameters, two `Int32`(s) and one `android::hardware::hidl_vec<vendor::huawei::hardware::ai::V1_0::ModelBuffer>`
-2) This indicates there are 2 units can be fuzzed. However, offset 0x2c, 0x30, 0xac and 0xb0 of the above memory are fuzzed actually.
+.text:00000000000A7FEC ; vendor::huawei::hardware::ai::V1_0::writeEmbeddedToParcel(vendor::huawei::hardware::ai::V1_0::ModelBuffer const&, android::hardware::Parcel *, unsigned long, unsigned long)
+.text:00000000000A7FEC                 EXPORT _ZN6vendor6huawei8hardware2ai4V1_021writeEmbeddedToParcelERKNS3_11ModelBufferEPN7android8hardware6ParcelEmm
+.text:00000000000A7FEC _ZN6vendor6huawei8hardware2ai4V1_021writeEmbeddedToParcelERKNS3_11ModelBufferEPN7android8hardware6ParcelEmm
+.text:00000000000A7FEC                                         ; CODE XREF: vendor::huawei::hardware::ai::V1_0::writeEmbeddedToParcel(vendor::huawei::hardware::ai::V1_0::ModelBuffer const&,android::hardware::Parcel *,ulong,ulong)+C↓j
+.text:00000000000A7FEC                                         ; DATA XREF: LOAD:00000000000078A8↑o ...
+.text:00000000000A7FEC
+.text:00000000000A7FEC var_20          = -0x20
+.text:00000000000A7FEC var_10          = -0x10
+.text:00000000000A7FEC var_s0          =  0
+.text:00000000000A7FEC
+.text:00000000000A7FEC ; __unwind {
+.text:00000000000A7FEC                 STP             X22, X21, [SP,#-0x10+var_20]!
+.text:00000000000A7FF0                 STP             X20, X19, [SP,#0x20+var_10]
+.text:00000000000A7FF4                 STP             X29, X30, [SP,#0x20+var_s0]
+.text:00000000000A7FF8                 ADD             X29, SP, #0x20
+.text:00000000000A7FFC                 MOV             X21, X3
+.text:00000000000A8000                 MOV             X19, X2
+.text:00000000000A8004                 MOV             X20, X1
+.text:00000000000A8008                 MOV             X22, X0
+.text:00000000000A800C                 BL              ._ZN7android8hardware21writeEmbeddedToParcelERKNS0_11hidl_stringEPNS0_6ParcelEmm ; android::hardware::writeEmbeddedToParcel(android::hardware::hidl_string const&,android::hardware::Parcel *,ulong,ulong)
+.text:00000000000A8010                 CBZ             W0, loc_A8024
+.text:00000000000A8014                 LDP             X29, X30, [SP,#0x20+var_s0]
+.text:00000000000A8018                 LDP             X20, X19, [SP,#0x20+var_10]
+.text:00000000000A801C                 LDP             X22, X21, [SP+0x20+var_20],#0x30
+.text:00000000000A8020                 RET
+.text:00000000000A8024 ; ---------------------------------------------------------------------------
+.text:00000000000A8024
+.text:00000000000A8024 loc_A8024                               ; CODE XREF: vendor::huawei::hardware::ai::V1_0::writeEmbeddedToParcel(vendor::huawei::hardware::ai::V1_0::ModelBuffer const&,android::hardware::Parcel *,ulong,ulong)+24↑j
+.text:00000000000A8024                 MOV             X1, X20
+.text:00000000000A8028                 MOV             X2, X19
+.text:00000000000A802C                 LDP             X29, X30, [SP,#0x20+var_s0]
+.text:00000000000A8030                 LDP             X20, X19, [SP,#0x20+var_10]
+.text:00000000000A8034                 ADD             X0, X22, #0x10
+.text:00000000000A8038                 ADD             X3, X21, #0x10
+.text:00000000000A803C                 LDP             X22, X21, [SP+0x20+var_20],#0x30
+.text:00000000000A8040                 B               ._ZN7android8hardware21writeEmbeddedToParcelERKNS0_11hidl_handleEPNS0_6ParcelEmm ; android::hardware::writeEmbeddedToParcel(android::hardware::hidl_handle const&,android::hardware::Parcel *,ulong,ulong)
+.text:00000000000A8040 ; } // starts at A7FEC
+.text:00000000000A8040 ; End of function vendor::huawei::hardware::ai::V1_0::writeEmbeddedToParcel(vendor::huawei::hardware::ai::V1_0::ModelBuffer const&,android::hardware::Parcel *,ulong,ulong)
+```
+
+#### 1.3.1 fuzzPeekhole
+fuzzPeekhole find nothing. This method delivers 3 parameters, two `Int32`(s) and one `android::hardware::hidl_vec<vendor::huawei::hardware::ai::V1_0::ModelBuffer>`.
+This indicates there are 2 units can be fuzzed. However, offset 0x2c, 0x30, 0xac and 0xb0 of the above memory are fuzzed actually.
 After going through `status_t writeEmbeddedToParcel(const hidl_memory &memory,
         Parcel *parcel, size_t parentHandle, size_t parentOffset)` (system/libhidl/transport/HidlBinderSupport.cpp), I find there is one leading `Uint64` inserted when performing `writeNativeHandleNoDup`. Anyway, it's doesn't matter if I fuzz one unit each time.
-3) The workflow of delivering a `hidl_vec` is: \
-A) `writeBuffer (VectorType::emitReaderWriter)` firstly, \
-B) then assemble `writeEmbeddedToParcel (Type::emitReaderWriterEmbeddedForTypeName)`, \
-C) assemble others (depending on the implementation of `emitReaderWriterEmbedded` of `type` in `mElementType`, c.f., system/tools/hidl/hidl-gen_y.yy) in a loop. \
-D) goto step B) according to the next `type` in `mElementType`. \
-An example which deliver a `hidl_vec` of `hidl_string` is given below. \
-**NOTE**: I have gone through the source code of [hidl](https://android.googlesource.com/platform/system/tools/hidl/), but can't find out how `writeEmbeddedBuffer` is generated. 
-Anyway, `writeEmbeddedToParcel` is equal to `writeEmbeddedBuffer` when processing `hidl_string`. 
-```cpp
-    hidl_vec<hidl_string> vec_str = {"a", "b", "c"};
-    demo->t2(vec_str);
-
-::android::hardware::Return<void> BpHwDemo::_hidl_t2(::android::hardware::IInterface *_hidl_this, ::android::hardware::details::HidlInstrumentor *_hidl_this_instrumentor, const ::android::hardware::hidl_vec<::android::hardware::hidl_string>& a) {
-    // ...
-
-    size_t _hidl_a_parent;
-
-    _hidl_err = _hidl_data.writeBuffer(&a, sizeof(a), &_hidl_a_parent);
-    if (_hidl_err != ::android::OK) { goto _hidl_error; }
-
-    size_t _hidl_a_child;
-
-    _hidl_err = ::android::hardware::writeEmbeddedToParcel(
-            a,
-            &_hidl_data,
-            _hidl_a_parent,
-            0 /* parentOffset */, &_hidl_a_child);
-
-    if (_hidl_err != ::android::OK) { goto _hidl_error; }
-
-    for (size_t _hidl_index_0 = 0; _hidl_index_0 < a.size(); ++_hidl_index_0) {
-        _hidl_err = ::android::hardware::writeEmbeddedToParcel(
-                a[_hidl_index_0],
-                &_hidl_data,
-                _hidl_a_child,
-                _hidl_index_0 * sizeof(::android::hardware::hidl_string));
-
-        if (_hidl_err != ::android::OK) { goto _hidl_error; }
-
-    }
-    // ...
-```
 
 #### 1.3.2 fuzzObject
-###### Assemble a valid parcel
+
 In order to fuzz object, I have to hack each object to assemble a valid Parcel to reach the server side. 
 The most important thing is to tell apart user data from system data.
-Buffers of each `binder_buffer_object` object are depicted below: \
-~~\#1. 0x34 - 0x5c~~, assembled by `writeBuffer`, which write the object of `android::hardware::hidl_vec<vendor::huawei::hardware::ai::V1_0::ModelBuffer>`:
-```
-             0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F  0123456789ABCDEF
-7fcdff3b08  f8 2d 58 3b 7a 00 00 00 01 00 00 00 01 00 00 00  .-X;z...........
-```
-\#2. 0x5c - 0x84, assembled by `writeEmbeddedToParcel`:
-```
-             0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F  0123456789ABCDEF
-7a3b582df8  80 2e 58 3b 7a 00 00 00 2a 00 00 00 01 00 00 00  ..X;z...*.......
-7a3b582e08  80 38 bc 39 7a 00 00 00 01 00 00 00 00 00 00 00  .8.9z...........
-7a3b582e18  07 6c 01 00 03 00 00 00                          .l......
-```
-\#3. 0x84 - 0xac, assembled by `writeEmbeddedBuffer` ?:
-```
-             0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F  0123456789ABCDEF
-7a3b582e80  67 65 5f 64 65 66 61 75 6c 74 5f 73 75 62 5f 67  ge_default_sub_g
-7a3b582e90  72 61 70 68 5f 30 3a 63 6f 6d 2e 6d 6c 6b 69 74  raph_0:com.mlkit
-7a3b582ea0  2e 73 61 6d 70 6c 65 2e 63 6e 00                 .sample.cn.
-```
-\#4. 0xb4 - 0xdc, `writeEmbeddedToParcel(const hidl_handle &handle` -> `writeNativeHandleNoDup(const native_handle_t *handle` -> `writeEmbeddedBuffer`
-```
-             0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F  0123456789ABCDEF
-7a39bc3880  0c 00 00 00 01 00 00 00 03 00 00 00 71 00 00 00  ............q...
-7a39bc3890  92 15 14 03 03 00 00 00 07 6c 01 00              .........l..
-```
-The object (in between 0xdc - 0xfc) is a `binder_fd_array_object` object, 
-`writeEmbeddedToParcel(const hidl_handle &handle` -> `writeNativeHandleNoDup(const native_handle_t *handle`,
-it has properties of: 
-```
-|----[i] num_fds: 0x1
-|----[i] parent: 0x3
-|----[i] parent_offset: 0xc 
-```
 
-There are inconsistency between the information generated by [idc_scirpt](https://github.com/dm4sec/hwservice_sec/idc_script) and the real-time parser.
-But I believe the \#2, \#4, \#5 blocks are very important as it is the object of `ModelBuffer`. 
+The workflow of delivering a `hidl_vec` is: 
+A) `writeBuffer (VectorType::emitReaderWriter)` firstly (\#1), 
+B) then assemble `writeEmbeddedToParcel (Type::emitReaderWriterEmbeddedForTypeName)`(\#2), 
+C) assemble others (depending on the implementation of `emitReaderWriterEmbedded` of `type` in `mElementType`, c.f., system/tools/hidl/hidl-gen_y.yy) in a loop (\#3, \#4, \#5). \
+**NOTE**: I have gone through the source code of [hidl](https://android.googlesource.com/platform/system/tools/hidl/), but can't find out how `writeEmbeddedBuffer` is generated. 
+Anyway, `writeEmbeddedToParcel` is equal to `writeEmbeddedBuffer` when processing `hidl_vec`. 
+
 ###### Profile the `ModelBuffer` object
 The challenge is that the object is self organized (unknown to third-party).
-By observation (e.g., the output of logcat, the layout of the 5 objects) and some assumption, I profile the layout of the `ModelBuffer` as:
+By observation (e.g., by cross referencing the libai_client.so, vendor.huawei.hardware.ai@1.0.so, the output of logcat, and some testcases), I profile the layout of the `ModelBuffer` (\#2) as:
 ```
-0          0x08        0x0c    0x10          0x18    0x20      0x24    0x28                     0xdc                     0xfc
-|-------------|---------|-------|-------------|-------|---------|-------| 
-| str pointer | str len |  N/A  | mem pointer |  N/A  | mem len |  N/A  |
-|       hidl_string object      |           Model Buffer                |
-```
-Ok, we take a long journey to reach here, now, let's roll.
+             0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F  0123456789ABCDEF
+75e9a20d28  b0 0d a2 e9 75 00 00 00 2d 00 00 00 01 00 00 00  ....u...-.......
+75e9a20d38  e0 d8 b2 db 75 00 00 00 01 00 00 00 00 00 00 00  ....u...........
+75e9a20d48  e2 42 00 00 03 00 00 00                          .B......
 
+0        0x08    0x0c    0x10      0x18    0x1c    0x20      0x24      0x28
+|---------|-------|-------|---------|-------|-------|---------|---------| 
+| mBuffer |   -   |   -   | mHandle |   -   |   -   |    V1   |    V2   |
+|   hidl_string object    |   hidl_handle object    | 1st int | 2nd int |     
+```
+
+The `hidl_handle` object is a variant-length object, the instance of \#4 can be read as:
+
+```
+             0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F  0123456789ABCDEF
+75dbb2d8e0  0c 00 00 00 01 00 00 00 03 00 00 00 6d 00 00 00  ............m...
+75dbb2d8f0  92 15 14 03 03 00 00 00 e2 42 00 00              .........B..
+
+0                        0x04     0x08      0x0c      0x10      0x14      0x18      0x2c
+|-------------------------|--------|---------|---------|---------|---------|---------|
+| sizeof(native_handle_t) | numFds | numInts | 1st fds | 1st int |    V2   |    V1   |
+```
+
+I conclude that the overall `ModelBuffer` is assembled by a `hidl_string` object, a `hidl_handle` object and 2 additional `int`(s).
+The `hidl_handle` object contains 1 `fd` and 3 `int`(s). After inspecting all these information, I narrow down the target from the `ModelBuffer` to the four elements in \#4.
+By referring the information of logcat, I found the `V1` is the `size` and `V2` is the `perf` field, e.g., 
+```
+12-10 15:31:34.273  4419  4419 I aiclient: HIAI_GetVersion_Config ERROR __system_property_get <= 0
+12-10 15:31:34.273  4419  4419 I aiclient: success
+12-10 15:31:34.274  4419  4419 I aiclient: CreateAshmemFd done, name: ion_alloc, size: 17007, fd: 107
+12-10 15:31:34.279  4419  4419 I aiclient: CreateAshmemFd done, name: ion_alloc, size: 16989, fd: 107
+12-10 15:31:34.279  4419  4419 I aiclient: CreateAshmemFd done, name: ion_alloc, size: 6, fd: 108
+12-10 15:31:34.285  4419  4419 I aiclient: CreateAshmemFd done, name: ion_alloc, size: 17052, fd: 107
+12-10 15:31:34.286  4419  4419 I aiclient: CreateAshmemFd done, name: ion_alloc, size: 6, fd: 108
+12-10 15:31:34.286  4419  4419 I aiclient: CreateAshmemFd done, name: ion_alloc, size: 1, fd: 109
+12-10 15:31:34.305  4419  4419 I aiclient: AiModelManagerImpl::CreateInstanceID create instance id: 1
+12-10 15:31:34.305  4419  4419 I aiclient: AiModelManagerImpl::Register: clientID:0x75ca9b4450(sync), total client num:2
+12-10 15:31:34.305  4419  4419 I aiclient: success
+12-10 15:31:34.305  4419  4419 I aiclient: HIAI_TensorBuffer_create: N[979972] C[1] H[1] W[1].
+12-10 15:31:34.306  4419  4419 I aiclient: NativeHandleWrapper::AllocMemory : AllocMemory size:3919888, IonSizeCeil(size):3923968
+12-10 15:31:34.306  4419  4419 I aiclient: N[979972] C[1] H[1] W[1] data[0x75ec0e8000] size[3919888] name[]
+12-10 15:31:34.306  4419  4419 I aiclient: HIAI_TensorBuffer_create: N[516] C[1] H[1] W[1].
+12-10 15:31:34.306  4419  4419 I aiclient: NativeHandleWrapper::AllocMemory : AllocMemory size:2064, IonSizeCeil(size):4096
+12-10 15:31:34.306  4419  4419 I aiclient: N[516] C[1] H[1] W[1] data[0x76ce93d000] size[2064] name[]
+12-10 15:31:34.307  4419  4419 I aiclient: CreateAshmemFd done, name: ion_alloc, size: 1112630, fd: 109
+12-10 15:31:34.309  4419  4419 I aiclient: ~NativeHandleWrapper   fd:107.
+12-10 15:31:34.310  4419  4419 I aiclient: success
+12-10 15:31:34.310  4419  4419 I aiclient: ~NativeHandleWrapper   fd:108.
+12-10 15:31:34.310  4419  4419 I aiclient: success
+12-10 15:31:34.310  4419  4419 I aiclient: AiModelManagerImpl::Unregister: clientID:0x75ca9b4450, total client num:1
+12-10 15:31:34.310  4419  4419 I aiclient: success
+12-10 15:31:34.312  4419  4419 I aiclient: AiModelManagerImpl::CreateInstanceID create instance id: 1
+12-10 15:31:34.312  4419  4419 I aiclient: AiModelManagerImpl::Register: clientID:0x75ca9b4420(sync), total client num:2
+12-10 15:31:34.312  4419  4419 I aiclient: success
+12-10 15:31:34.312  4419  4419 I aiclient: CreateAshmemFd done, name: handle_wrap_buffer, size: 17122, fd: 107
+12-10 15:31:34.313  4419  4419 I aiclient: ModelBufferWrapper::createFromModelBuf [ok]
+12-10 15:31:34.313  4419  4419 I aiclient: ModelBufferWrapper::ModelBufferWrapper
+12-10 15:31:34.313  4419  4419 I aiclient: ModelBufferWrapper::getModelBuf
+12-10 15:31:34.313  4419  4419 I aiclient: name[ml_textsuperresolution400], buff[0x75cb18ff00], perf[3], size[17122]
+12-10 15:31:34.313  4419  4419 I aiclient: buff0 name[ml_textsuperresolution400] path[] perf[3] size[17122]
+12-10 15:31:34.313  4419  4419 I aiclient: ModelBufferWrapper::getModelBuf
+12-10 15:31:34.313  4419  4419 I aiclient: AiModelManagerImpl::isModelBufferValid [ok]
+12-10 15:31:34.313  4419  4419 I aiclient: AiModelManagerImpl::CheckModelBufferVecValid [ok]
+12-10 15:31:34.367  4419  4419 I aiclient: name[ml_textsuperresolution400], path[], perf[3], size[17122]
+12-10 15:31:34.369  4419  4419 I aiclient: HIAI_GetVersion_Config ERROR __system_property_get <= 0
+12-10 15:31:34.369  4419  4419 I aiclient: success
+12-10 15:31:34.369  4419  4419 I aiclient: CreateAshmemFd done, name: ion_alloc, size: 17007, fd: 107
+12-10 15:31:34.373  4419  4419 I aiclient: CreateAshmemFd done, name: ion_alloc, size: 16989, fd: 107
+12-10 15:31:34.373  4419  4419 I aiclient: CreateAshmemFd done, name: ion_alloc, size: 6, fd: 108
+12-10 15:31:34.378  4419  4419 I aiclient: CreateAshmemFd done, name: ion_alloc, size: 17053, fd: 107
+12-10 15:31:34.378  4419  4419 I aiclient: CreateAshmemFd done, name: ion_alloc, size: 6, fd: 108
+12-10 15:31:34.378  4419  4419 I aiclient: CreateAshmemFd done, name: ion_alloc, size: 1, fd: 109
+12-10 15:31:34.395  4419  4419 I aiclient: AiModelManagerImpl::CreateInstanceID create instance id: 2
+12-10 15:31:34.395  4419  4419 I aiclient: AiModelManagerImpl::Register: clientID:0x75ca9b4480(sync), total client num:3
+12-10 15:31:34.395  4419  4419 I aiclient: success
+12-10 15:31:34.395  4419  4419 I aiclient: HIAI_TensorBuffer_create: N[2189828] C[1] H[1] W[1].
+12-10 15:31:34.395  4419  4419 I aiclient: NativeHandleWrapper::AllocMemory : AllocMemory size:8759312, IonSizeCeil(size):8761344
+12-10 15:31:34.395  4419  4419 I aiclient: N[2189828] C[1] H[1] W[1] data[0x75af1a5000] size[8759312] name[]
+12-10 15:31:34.395  4419  4419 I aiclient: HIAI_TensorBuffer_create: N[516] C[1] H[1] W[1].
+12-10 15:31:34.396  4419  4419 I aiclient: NativeHandleWrapper::AllocMemory : AllocMemory size:2064, IonSizeCeil(size):4096
+12-10 15:31:34.396  4419  4419 I aiclient: N[516] C[1] H[1] W[1] data[0x76ce93d000] size[2064] name[]
+12-10 15:31:34.396  4419  4419 I aiclient: CreateAshmemFd done, name: ion_alloc, size: 2338900, fd: 109
+12-10 15:31:34.398  4419  4419 I aiclient: ~NativeHandleWrapper   fd:107.
+12-10 15:31:34.398  4419  4419 I aiclient: success
+12-10 15:31:34.398  4419  4419 I aiclient: ~NativeHandleWrapper   fd:108.
+12-10 15:31:34.398  4419  4419 I aiclient: success
+12-10 15:31:34.398  4419  4419 I aiclient: AiModelManagerImpl::Unregister: clientID:0x75ca9b4480, total client num:2
+12-10 15:31:34.398  4419  4419 I aiclient: success
+12-10 15:31:34.400  4419  4419 I aiclient: AiModelManagerImpl::CreateInstanceID create instance id: 2
+12-10 15:31:34.400  4419  4419 I aiclient: AiModelManagerImpl::Register: clientID:0x75ca9b4450(sync), total client num:3
+12-10 15:31:34.400  4419  4419 I aiclient: success
+12-10 15:31:34.400  4419  4419 I aiclient: CreateAshmemFd done, name: handle_wrap_buffer, size: 17122, fd: 107
+12-10 15:31:34.400  4419  4419 I aiclient: ModelBufferWrapper::createFromModelBuf [ok]
+12-10 15:31:34.400  4419  4419 I aiclient: ModelBufferWrapper::ModelBufferWrapper
+12-10 15:31:34.400  4419  4419 I aiclient: ModelBufferWrapper::getModelBuf
+12-10 15:31:34.400  4419  4419 I aiclient: name[ml_textsuperresolution600], buff[0x75ca5785c0], perf[3], size[17122]
+12-10 15:31:34.400  4419  4419 I aiclient: buff0 name[ml_textsuperresolution600] path[] perf[3] size[17122]
+12-10 15:31:34.400  4419  4419 I aiclient: ModelBufferWrapper::getModelBuf
+12-10 15:31:34.400  4419  4419 I aiclient: AiModelManagerImpl::isModelBufferValid [ok]
+12-10 15:31:34.400  4419  4419 I aiclient: AiModelManagerImpl::CheckModelBufferVecValid [ok]
+12-10 15:31:34.471  4419  4419 I aiclient: name[ml_textsuperresolution600], path[], perf[3], size[17122]
+```
+It's hard to tease out the relationship of the output. 
+However, I think the `CreateAshmemFd` is vital for parsing the relationship between the `Ashmem` and `fd`. So, I turn to `libai_client.so` to find the answer.
+
+
+Ok, I took a few days to reach here, now, let's roll.
+
+
+https://source.android.com/devices/architecture/hidl/memoryblock?hl=zh-cn

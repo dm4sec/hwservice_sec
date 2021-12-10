@@ -88,12 +88,6 @@ Java.perform(function () {
 //        |-----------|-------|-------|------------------------|------------------------|------------------------|----|----|------------------------|------------------------|
 //        | interface |  int  |  int  | BINDER_TYPE_PTR (0x28) | BINDER_TYPE_PTR (0x28) | BINDER_TYPE_PTR (0x28) | Uint64  | BINDER_TYPE_PTR (0x28) | BINDER_TYPE_FDA (0x20) |
 
-// The 2nd object layout:
-//        0          0x08        0x0c    0x10          0x18    0x20      0x24    0x28                     0xdc                     0xfc
-//        |-------------|---------|-------|-------------|-------|---------|-------|
-//        | str pointer | str len |  N/A  | mem pointer |  N/A  | mem len |  N/A  |
-//        |       hidl_string object      |           Model Buffer                |
-//        ```
 
 
         var binder_object_offset    = mObjects_pos.add(1 * 0x8).readU64();
