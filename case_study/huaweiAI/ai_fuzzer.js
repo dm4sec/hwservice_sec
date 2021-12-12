@@ -80,7 +80,6 @@ Java.perform(function () {
 
     const mHandle_LOC       = 0x8;
 
-
     function fuzz_hidl_startModelFromMem2(mData_pos, mObjects_pos, mObjectsSize, mHandle, code, data, reply, flags, isVendor)
     {
 // The parcel layout:
@@ -88,15 +87,11 @@ Java.perform(function () {
 //        |-----------|-------|-------|------------------------|------------------------|------------------------|----|----|------------------------|------------------------|
 //        | interface |  int  |  int  | BINDER_TYPE_PTR (0x28) | BINDER_TYPE_PTR (0x28) | BINDER_TYPE_PTR (0x28) | Uint64  | BINDER_TYPE_PTR (0x28) | BINDER_TYPE_FDA (0x20) |
 
-// The 2nd object layout:
-//        0          0x08        0x0c    0x10          0x18    0x20      0x24    0x28                     0xdc                     0xfc
-//        |-------------|---------|-------|-------------|-------|---------|-------|
-//        | str pointer | str len |  N/A  | mem pointer |  N/A  | mem len |  N/A  |
-//        |       hidl_string object      |           Model Buffer                |
-//        ```
+//        0                        0x04     0x08      0x0c      0x10      0x14      0x18      0x2c
+//        |-------------------------|--------|---------|---------|---------|---------|---------|
+//        | sizeof(native_handle_t) | numFds | numInts | 1st fds | 1st int |    V2   |    V1   |
 
-
-        var binder_object_offset    = mObjects_pos.add(1 * 0x8).readU64();
+        var binder_object_offset    = mObjects_pos.add(3 * 0x8).readU64();
         var binder_object_pos       = mData_pos.add(binder_object_offset);
 
         var buffer_pos          = binder_object_pos.add(0x8);
@@ -116,10 +111,39 @@ Java.perform(function () {
             }));
         }
 
+        var this_fd = buffer_pos.readPointer().add(0x0c).readU32();
+        console.log("|----[i] this_fd: 0x" + this_fd.toString(16));
+        var this_size = buffer_pos.readPointer().add(0x18).readU32();
+        console.log("|----[i] this_size: 0x" + this_size.toString(16));
 
+        console.log("|----[i] fd info: " + mem_info.get(this_fd));
+        var this_fd_size = mem_info.get(this_fd)[0];
+        console.log("|----[i] size info: 0x" + this_fd_size.toString(16));
+        var this_fd_buffer = ptr("0x" + mem_info.get(this_fd)[1]);
+        console.log("|----[i] buffer info: 0x" + this_fd_buffer.toString(16));
+
+        try{
+            console.log(hexdump(this_fd_buffer, {
+                offset: 0,
+                length: 0x40,
+                header: true,
+                ansi: true
+            }));
+        }
+        catch(err)
+        {
+            console.log("|----[e] can't read");
+            return;
+        }
+
+//        for (var i = 0; i < this_fd_size; i += 4 )
+//        {
+//            console.log("|----[i] fuzz offset: 0x" + this_fd_buffer.add(i).toString(16));
+//            fuzzOneSInt(this_fd_buffer.add(i), mHandle, code, data, reply, flags, isVendor);
+//        }
     }
 
-    // fuzz the object
+    // study the object
     function studyObject(mData_pos, mObjects_pos, mObjectsSize, mHandle, code, data, reply, flags, isVendor){
         console.log("|---[i] start dumping binder objects in mData");
 
@@ -141,7 +165,7 @@ Java.perform(function () {
 
             if (type_pos.readU32() == BINDER_TYPE_PTR)
             {
-                console.log("|----[i] identified as BINDER_TYPE_PTR, parse by following struct `binder_buffer_object`.");
+                console.log("|----[i] identified as BINDER_TYPE_PTR, parse by struct `binder_buffer_object`.");
 
                 const BINDER_BUFFER_FLAG_HAS_PARENT   = 0x01;
                 const BINDER_BUFFER_FLAG_REF          = 0x1 << 1;
@@ -276,7 +300,7 @@ Java.perform(function () {
             else if (type_pos.readU32() == BINDER_TYPE_BINDER)
             {
                 // check `BHwBinder` in system/libhwbinder/include/hwbinder/Binder.h, I don't think there are any thing we can fuzz.
-                console.log("|----[i] identified as BINDER_TYPE_BINDER, parse by following struct `flat_binder_object`.");
+                console.log("|----[i] identified as BINDER_TYPE_BINDER, parse by struct `flat_binder_object`.");
 
                 /*
                 struct binder_object_header {
@@ -317,7 +341,7 @@ Java.perform(function () {
             else if (type_pos.readU32() == BINDER_TYPE_FDA)
             {
 
-                console.log("|----[i] identified as BINDER_TYPE_FDA, parse by following struct `binder_fd_array_object`.");
+                console.log("|----[i] identified as BINDER_TYPE_FDA, parse by struct `binder_fd_array_object`.");
                 console.log("|----[i] assembled by `writeNativeHandleNoDup`");
 
                 /*
@@ -336,7 +360,6 @@ Java.perform(function () {
                 console.log("|----[i] num_fds: 0x" + num_fds_pos.readU64().toString(16));
                 console.log("|----[i] parent: 0x" + parent_pos.readU64().toString(16));
                 console.log("|----[i] parent_offset: 0x" + parent_offset_pos.readU64().toString(16));
-
 
             }
             else
@@ -365,7 +388,7 @@ Java.perform(function () {
                         0x80, 0x8000, 0x80000000,
                         0xff, 0xffff, 0xffffffff,
                         org_value + 1
-                        ]
+                        ];
 //        var new_value = org_value | 0xffff;
 //        console.log("|-----[i] original value: 0x" + org_value.toString(16) + ", new value: 0x" + (~org_value).toString(16));
 
@@ -497,6 +520,11 @@ Java.perform(function () {
         if (args[2].add(mData_LOC).readPointer().readUtf8String().indexOf(fuzzInterface) == -1)
             return
 
+        console.log("[i] memory information:");
+        for (let [key, value] of mem_info.entries()) {
+            console.log("0x" + key.toString(16) + " = " + "0x" + value[0].toString(16) + ", 0x" + value[1].toString(16));
+        }
+
         console.log('[i] call stack:\n' +
             Thread.backtrace(that.context, Backtracer.ACCURATE)
             .map(DebugSymbol.fromAddress).join('\n') + '\n');
@@ -588,8 +616,8 @@ Java.perform(function () {
         // I would like to fuzz in runtime, such that I can covert back to the original mData.
         // fuzzPeekhole(mData_pos, mDataSize, mObjects_pos, mObjectsSize, mHandle, args[1].toInt32(), args[2], args[3], args[4].toInt32(), isVendor);
         if (mObjectsSize != 0)
-            studyObject(mData_pos, mObjects_pos, mObjectsSize, mHandle, args[1].toInt32(), args[2], args[3], args[4].toInt32(), isVendor);
-            // fuzz_hidl_startModelFromMem2(mData_pos, mObjects_pos, mObjectsSize, mHandle, args[1].toInt32(), args[2], args[3], args[4].toInt32(), isVendor);
+            // studyObject(mData_pos, mObjects_pos, mObjectsSize, mHandle, args[1].toInt32(), args[2], args[3], args[4].toInt32(), isVendor);
+            fuzz_hidl_startModelFromMem2(mData_pos, mObjects_pos, mObjectsSize, mHandle, args[1].toInt32(), args[2], args[3], args[4].toInt32(), isVendor);
     }
 
     console.log('[*] Frida js is running.')
@@ -627,9 +655,9 @@ Java.perform(function () {
     Interceptor.attach(BpHwBinder_transact_p, {
         onEnter: function(args) {
             console.log("[*] onEnter: BpHwBinder::transact");
-            console.log('[i] called from:\n' +
-                Thread.backtrace(this.context, Backtracer.ACCURATE)
-                .map(DebugSymbol.fromAddress).join('\n') + '\n');
+//            console.log('[i] called from:\n' +
+//                Thread.backtrace(this.context, Backtracer.ACCURATE)
+//                .map(DebugSymbol.fromAddress).join('\n') + '\n');
 
             parseParcel(args, this, false);
         },
@@ -663,6 +691,64 @@ Java.perform(function () {
         }
     });
 
+    // collect the <fd, [size, buffer]> pair
+    var mem_info = new Map();
+    var g_fd;
+    var g_size;
+    var g_buffer;
+
+    var mmap_p = Module.getExportByName("libai_client.so",
+    'mmap');
+    console.log("[i] mmap addr: " + mmap_p);
+
+    Interceptor.attach(mmap_p, {
+        onEnter: function(args) {
+            console.log("[*] onEnter: mmap");
+            console.log("[i] the 1 argument, size: 0x" + args[1].toString(16));
+            console.log("[i] the 4 argument, fd: 0x" + args[4].toString(16));
+            g_fd = args[4].toInt32();
+            g_size = args[1].toInt32();
+        },
+
+        onLeave: function(retval) {
+            console.log("[*] onLeave: mmap");
+            console.log("|-[i] ret value: " + retval);
+            console.log(hexdump(retval, {
+                offset: 0,
+                length: 0x40,
+                header: true,
+                ansi: true
+            }));
+
+            // as stated in frida's document, the `retval` is a NativePointer.
+            // I have no idea about how to covert the `NativePointer` to an UInt64 value.
+            // So I convert it to a string temporarily.
+            g_buffer = retval.toString(16);
+            mem_info.set(g_fd, [g_size, g_buffer]);
+        }
+    });
+
+
+//    var ashmem_create_region_p = Module.getExportByName("libai_client.so",
+//    'CreateAshmemRegionFd');
+//    console.log("[i] CreateAshmemRegionFd addr: " + ashmem_create_region_p)
+//
+//    Interceptor.attach(ashmem_create_region_p, {
+//        onEnter: function(args) {
+//            console.log("[*] onEnter: CreateAshmemRegionFd");
+//            console.log("[i] the 0 argument, name: " + args[0].readUtf8String())
+//            console.log("[i] the 1 argument, size: 0x" + args[1].toString(16))
+//        },
+//
+//        onLeave: function(retval) {
+//            console.log("[*] onLeave: CreateAshmemRegionFd");
+//            console.log("|-[i] ret value: " + retval);
+//
+//            var this_fd = retval.toInt32();
+//            console.log("typeof this_fd: " + typeof this_fd);
+//            mem_info.set(this_fd, []);
+//        }
+//    });
 
     /**
 
@@ -781,6 +867,7 @@ Java.perform(function () {
         }
     });
     */
+
 
 });
 
