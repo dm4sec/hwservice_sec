@@ -136,11 +136,33 @@ Java.perform(function () {
             return;
         }
 
-//        for (var i = 0; i < this_fd_size; i += 4 )
-//        {
-//            console.log("|----[i] fuzz offset: 0x" + this_fd_buffer.add(i).toString(16));
-//            fuzzOneSInt(this_fd_buffer.add(i), mHandle, code, data, reply, flags, isVendor);
+        for (var i = 0; i < this_fd_size; i += 4 )
+        {
+            console.log("|----[i] fuzz offset: 0x" + this_fd_buffer.add(i).toString(16));
+            fuzzOneSInt(this_fd_buffer.add(i), mHandle, code, data, reply, flags, isVendor);
+        }
+
+
+//        try{
+//            console.log(hexdump(g_model_buf, {
+//                offset: 0,
+//                length: 0x100,
+//                header: true,
+//                ansi: true
+//            }));
 //        }
+//        catch(err)
+//        {
+//            console.log("|----[e] can't read");
+//            return;
+//        }
+//
+//        for (var i = 0; i < g_model_size; i += 4 )
+//        {
+//            console.log("|----[i] fuzz offset: 0x" + i + ", addr: " + g_model_buf.add(i).toString(16));
+//            fuzzOneSInt(g_model_buf.add(i), mHandle, code, data, reply, flags, isVendor);
+//        }
+
     }
 
     // study the object
@@ -429,7 +451,7 @@ Java.perform(function () {
             }
             else
             {
-                console.log("|-----[i] fuzz vendor Parcel: (" + fuzzPos + "): 0x" + org_value.toString(16) + " -> 0x" + new_value[i].toString(16));
+                // console.log("|-----[i] fuzz vendor Parcel: (" + fuzzPos + "): 0x" + org_value.toString(16) + " -> 0x" + new_value[i].toString(16));
                 var func_IPCThreadState_self_vendor = new NativeFunction(IPCThreadState_self_vendor_p, 'pointer', []);
                 var IPCThreadState_Obj = func_IPCThreadState_self_vendor();
                 // console.log("|-----IPCThreadState object: 0x" + IPCThreadState_Obj.toString(16));
@@ -443,7 +465,7 @@ Java.perform(function () {
                     reply,
                     flags);
             }
-            console.log("|-----[i] done, ret value: 0x" + ret.toString(16));
+            // console.log("|-----[i] done, ret value: 0x" + ret.toString(16));
         }
         fuzzPos.writeS32(org_value);
     }
@@ -563,9 +585,9 @@ Java.perform(function () {
         }));
 
 
-        // dump the descriptor
+        // dump the InterfaceToken
         var descriptor = mData_pos.readUtf8String();
-        console.log("|--[i] Descriptor: ");
+        console.log("|--[i] Interface Token: ");
         console.log(hexdump(mData_pos, {
             offset: 0,
             length: descriptor.length,
@@ -620,7 +642,20 @@ Java.perform(function () {
             fuzz_hidl_startModelFromMem2(mData_pos, mObjects_pos, mObjectsSize, mHandle, args[1].toInt32(), args[2], args[3], args[4].toInt32(), isVendor);
     }
 
-    console.log('[*] Frida js is running.')
+
+    function dumpModuleInfo(){
+        var ms = Process.enumerateModules();
+        for (var i = 0; i < ms.length; i ++ )
+        {
+            // console.log(ms[i].name);
+            if (ms[i].path.indexOf("libc") != -1)
+                console.log(ms[i].path);
+        }
+    }
+
+    console.log('[*] Frida js is running.');
+    dumpModuleInfo();
+
     // return
     // Use the mangled name
     var BpHwBinder_transact_p = Module.getExportByName("/system/lib64/libhidlbase.so", '_ZN7android8hardware10BpHwBinder8transactEjRKNS0_6ParcelEPS2_jNSt3__18functionIFvRS2_EEE');
@@ -693,9 +728,159 @@ Java.perform(function () {
 
     // collect the <fd, [size, buffer]> pair
     var mem_info = new Map();
+
     var g_fd;
     var g_size;
     var g_buffer;
+
+/*
+bionic/libc/bionic/mmap.cpp
+void* mmap(void* addr, size_t size, int prot, int flags, int fd, off_t offset) {
+
+
+system/core/libcutils/ashmem-dev.cpp
+int ashmem_create_region(const char *name, size_t size)
+
+
+	F_DUPFD                              = 0x0
+	F_DUPFD_CLOEXEC                      = 0x406
+
+device/linaro/bootloader/edk2/StdLib/LibC/Uefi/SysCalls.c
+int
+fcntl     (int fildes, int cmd, ...)
+{
+  va_list             p3;
+  struct __filedes   *MyFd;
+  int                 retval = -1;
+  int                 temp;
+
+//Print(L"%a( %d, %d, ...)\n", __func__, fildes, cmd);
+  va_start(p3, cmd);
+
+  if(ValidateFD( fildes, VALID_OPEN )) {
+    MyFd = &gMD->fdarray[fildes];
+
+    switch(cmd) {
+      case F_DUPFD:
+
+
+the dup is thunked to fcntl
+device/linaro/bootloader/edk2/StdLib/LibC/Uefi/SysCalls.c
+int
+dup   (int fildes)
+{
+  return fcntl(fildes, F_DUPFD, 0);
+}
+
+void munmap(void *addr, size_t length)
+{
+
+*/
+
+    var close_p = Module.getExportByName("libai_client.so",
+    'close');
+    console.log("[i] close addr: " + close_p);
+
+    Interceptor.attach(close_p, {
+        onEnter: function(args) {
+            console.log("[*] onEnter: close");
+            console.log("[i] the 0 argument, fd: 0x" + args[0].toString(16));
+            mem_info.remove(args[0].toInt32());
+        },
+
+        onLeave: function(retval) {
+            console.log("[*] onLeave: close");
+            console.log("|-[i] ret value: " + retval);
+        }
+    });
+
+//    var munmap_p = Module.getExportByName("libai_client.so",
+//    'munmap');
+//    console.log("[i] munmap addr: " + munmap_p);
+//
+//    Interceptor.attach(munmap_p, {
+//        onEnter: function(args) {
+//            console.log("[*] onEnter: munmap");
+//            console.log("[i] the 0 argument, addr: 0x" + args[0].toString(16));
+//            console.log("[i] the 1 argument, length: 0x" + args[1].toString(16));
+//
+//        },
+//
+//        onLeave: function(retval) {
+//            console.log("[*] onLeave: munmap");
+//            console.log("|-[i] ret value: " + retval);
+//        }
+//    });
+
+
+    var dup_p = Module.getExportByName("libai_client.so",
+    'dup');
+    console.log("[i] dup addr: " + dup_p);
+
+    var g_dup_old_fd;
+
+    Interceptor.attach(dup_p, {
+        onEnter: function(args) {
+            console.log("[*] onEnter: dup");
+            console.log("[i] the 0 argument, fildes: 0x" + args[0].toString(16));
+
+            g_dup_old_fd = args[0].toInt32();
+        },
+
+        onLeave: function(retval) {
+            console.log("[*] onLeave: dup");
+            console.log("|-[i] ret value: " + retval);
+
+            // as stated in frida's document, the `retval` is a NativePointer.
+            // I have no idea about how to covert the `NativePointer` to an UInt64.
+            // So I convert it to a string temporarily.
+            if (g_dup_old_fd != 0)
+            {
+                console.log("|-[i] old fd: 0x" + g_dup_old_fd.toString(16) + " -> new fd: 0x" + retval.toString(16));
+                mem_info.set(retval.toInt32(), mem_info.get(g_dup_old_fd));
+            }
+        }
+    });
+
+
+    var fcntl_p = Module.getExportByName("libai_client.so",
+    'fcntl');
+    console.log("[i] fcntl addr: " + fcntl_p);
+
+    var g_fcntl_old_fd;
+
+    Interceptor.attach(fcntl_p, {
+        onEnter: function(args) {
+            console.log("[*] onEnter: fcntl");
+            console.log("[i] the 0 argument, fildes: 0x" + args[0].toString(16));
+            console.log("[i] the 1 argument, cmd: 0x" + args[1].toString(16));
+            var cmd = args[1].toInt32();
+            if (cmd == 0x406 || cmd == 0x0)
+            {
+                g_fcntl_old_fd = args[0].toInt32();
+            }
+            else
+            {
+                g_fcntl_old_fd = 0;
+            }
+
+        },
+
+        onLeave: function(retval) {
+            console.log("[*] onLeave: fcntl");
+            console.log("|-[i] ret value: " + retval);
+
+            // as stated in frida's document, the `retval` is a NativePointer.
+            // I have no idea about how to covert the `NativePointer` to an UInt64.
+            // So I convert it to a string temporarily.
+            if (g_fcntl_old_fd != 0)
+            {
+                console.log("|-[i] old fd: 0x" + g_fcntl_old_fd.toString(16) + " -> new fd: 0x" + retval.toString(16));
+//                mem_info.set(retval.toInt32(), mem_info.get(g_fcntl_old_fd));
+//                console.log("foo");
+            }
+        }
+    });
 
     var mmap_p = Module.getExportByName("libai_client.so",
     'mmap');
@@ -704,8 +889,10 @@ Java.perform(function () {
     Interceptor.attach(mmap_p, {
         onEnter: function(args) {
             console.log("[*] onEnter: mmap");
+            console.log("[i] the 0 argument, addr: 0x" + args[0].toString(16));
             console.log("[i] the 1 argument, size: 0x" + args[1].toString(16));
             console.log("[i] the 4 argument, fd: 0x" + args[4].toString(16));
+            console.log("[i] the 5 argument, offset: 0x" + args[5].toString(16));
             g_fd = args[4].toInt32();
             g_size = args[1].toInt32();
         },
@@ -721,7 +908,7 @@ Java.perform(function () {
             }));
 
             // as stated in frida's document, the `retval` is a NativePointer.
-            // I have no idea about how to covert the `NativePointer` to an UInt64 value.
+            // I have no idea about how to covert the `NativePointer` to an UInt64.
             // So I convert it to a string temporarily.
             g_buffer = retval.toString(16);
             mem_info.set(g_fd, [g_size, g_buffer]);
@@ -729,26 +916,70 @@ Java.perform(function () {
     });
 
 
-//    var ashmem_create_region_p = Module.getExportByName("libai_client.so",
-//    'CreateAshmemRegionFd');
-//    console.log("[i] CreateAshmemRegionFd addr: " + ashmem_create_region_p)
-//
-//    Interceptor.attach(ashmem_create_region_p, {
-//        onEnter: function(args) {
-//            console.log("[*] onEnter: CreateAshmemRegionFd");
-//            console.log("[i] the 0 argument, name: " + args[0].readUtf8String())
-//            console.log("[i] the 1 argument, size: 0x" + args[1].toString(16))
-//        },
-//
-//        onLeave: function(retval) {
-//            console.log("[*] onLeave: CreateAshmemRegionFd");
-//            console.log("|-[i] ret value: " + retval);
-//
-//            var this_fd = retval.toInt32();
-//            console.log("typeof this_fd: " + typeof this_fd);
-//            mem_info.set(this_fd, []);
-//        }
-//    });
+    var ashmem_create_region_p = Module.getExportByName("libai_client.so",
+    'ashmem_create_region');
+    console.log("[i] ashmem_create_region addr: " + ashmem_create_region_p)
+
+    Interceptor.attach(ashmem_create_region_p, {
+        onEnter: function(args) {
+            console.log("[*] onEnter: ashmem_create_region");
+            console.log("[i] the 0 argument, name: " + args[0].readUtf8String())
+            console.log("[i] the 1 argument, size: 0x" + args[1].toString(16))
+        },
+
+        onLeave: function(retval) {
+            console.log("[*] onLeave: ashmem_create_region");
+            console.log("|-[i] ret value: " + retval);
+        }
+    });
+
+    var CreateAshmemRegionFd_p = Module.getExportByName("libai_client.so",
+    'CreateAshmemRegionFd');
+    console.log("[i] CreateAshmemRegionFd addr: " + CreateAshmemRegionFd_p)
+
+    Interceptor.attach(CreateAshmemRegionFd_p, {
+        onEnter: function(args) {
+            console.log("[*] onEnter: CreateAshmemRegionFd");
+            console.log("[i] the 0 argument, name: " + args[0].readUtf8String())
+            console.log("[i] the 1 argument, size: 0x" + args[1].toString(16))
+        },
+
+        onLeave: function(retval) {
+            console.log("[*] onLeave: CreateAshmemRegionFd");
+            console.log("|-[i] ret value: " + retval);
+        }
+    });
+
+
+
+/*
+    var g_model_buf;
+    var g_model_size;
+
+    var HIAI_ModelBuffer_create_from_buffer_p = Module.getExportByName("libai_client.so",
+    'HIAI_ModelBuffer_create_from_buffer');
+    console.log("[i] HIAI_ModelBuffer_create_from_buffer addr: " + HIAI_ModelBuffer_create_from_buffer_p)
+
+    var log_p = HIAI_ModelBuffer_create_from_buffer_p.add(0x40968).sub(0x407f4);
+
+
+    Interceptor.attach(log_p, {
+        onEnter: function(args) {
+            console.log("[*] onEnter: HIAI_ModelBuffer_create_from_buffer");
+//            console.log("[i] x3 value: " + this.context.x3);
+//            console.log("[i] x4 value: " + this.context.x4);
+            g_model_buf = this.context.x4;
+            g_model_size = this.context.x6.toInt32();
+            console.log("[i] x3 value: " + g_model_buf);
+            console.log("[i] x5 value: " + g_model_size);
+        },
+
+        onLeave: function(retval) {
+            console.log("[*] onLeave: HIAI_ModelBuffer_create_from_buffer");
+            console.log("|-[i] ret value: " + retval);
+        }
+    });
+*/
 
     /**
 

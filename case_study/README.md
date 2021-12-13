@@ -48,9 +48,9 @@ I take #7 as an example to perform both peekhole and object fuzz.
 
 I) An instance of `mData` in the Parcel is depicted as below.
 ```
-0          0x2c    0x30    0x34                     0x5c                     0x84                     0xac 0xb0 0xb4                     0xdc                     0xfc
-|-----------|-------|-------|------------------------|------------------------|------------------------|----|----|------------------------|------------------------| 
-| interface |  int  |  int  | BINDER_TYPE_PTR (0x28) | BINDER_TYPE_PTR (0x28) | BINDER_TYPE_PTR (0x28) | Uint64  | BINDER_TYPE_PTR (0x28) | BINDER_TYPE_FDA (0x20) |
+0                0x2c    0x30    0x34                     0x5c                     0x84                     0xac 0xb0 0xb4                     0xdc                     0xfc
+|-----------------|-------|-------|------------------------|------------------------|------------------------|----|----|------------------------|------------------------| 
+| interface token |  int  |  int  | BINDER_TYPE_PTR (0x28) | BINDER_TYPE_PTR (0x28) | BINDER_TYPE_PTR (0x28) | Uint64  | BINDER_TYPE_PTR (0x28) | BINDER_TYPE_FDA (0x20) |
 
              0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F  0123456789ABCDEF
 75dbac08c0  76 65 6e 64 6f 72 2e 68 75 61 77 65 69 2e 68 61  vendor.huawei.ha
@@ -290,4 +290,6 @@ to tell that the memory is created by using `ashmem_create_region` and `mmap`.
 The interceptor (e.g., `CreateAshmemRegionFd`) verified the thought. 
 So I maintain a pair of <fd, [size, buffer]>, such that I can map the `fd` to the memory. 
 
-Ok, It took me a few days to reach here, now, let's roll.
+**Unfortunately, by intercepting the `dup`, `mmap`, `ummap`, I found the buffer is freed by the client. That is, the file fuzz failed.**
+
+Ok, It took me a few days to reach here, now, let's roll back.
