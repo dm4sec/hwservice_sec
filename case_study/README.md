@@ -5,7 +5,7 @@ By observing, I find it's a case to case fuzzing for a specific service.
 ## 1. `huaweiAI` is used to fuzz [huawei ai service](https://developer.huawei.com/consumer/cn/doc/overview/HUAWEI_HiAI).
 
 ### 1.1 Background
-It's commonly known that in order to use a model, the ML framework should 1) load the model, 2) then feed the model with data to get result.
+It's commonly known that in order to use a model, the ML framework should 1) load the model, 2) then feed the model with data to get the result.
 These are two ideal places to perform file (data) fuzzing.
 
 ### 1.2 Collecting Information
@@ -106,7 +106,7 @@ II) Buffers of each `binder_buffer_object` object are depicted as: \
 |----[i] parent: 0x3
 |----[i] parent_offset: 0xc 
 ```
-III) The [idc_scirpt](https://github.com/dm4sec/hwservice_sec/idc_script) issues: 
+III) For this method, the [idc_scirpt](https://github.com/dm4sec/hwservice_sec/idc_script) issues: 
 
 ```
 F: 0x69028 - 0x69398: vendor::huawei::hardware::ai::V1_1::BpHwAiModelMngr::_hidl_startModelFromMem2(android::hardware::IInterface *, android::hardware::details::HidlInstrumentor *, int, int, android::hardware::hidl_vec<vendor::huawei::hardware::ai::V1_0::ModelBuffer> const&)
@@ -207,7 +207,7 @@ The `hidl_handle` object is a variant-length object, the instance of \#4 can be 
 
 I conclude that the overall `ModelBuffer` is assembled by a `hidl_string` object, a `hidl_handle` object and 2 additional `int`(s).
 The `hidl_handle` object contains 1 `fd` and 3 `int`(s). After inspecting all these information, I narrow down the target from the `ModelBuffer` to the four elements in \#4.
-By referring the information of logcat, I found the `V1` is the `size` and `V2` is the `perf` field, e.g., 
+By referring the information of logcat below, I found the `V1` is the `size` and `V2` is the `perf` field. 
 ```
 12-10 15:31:34.273  4419  4419 I aiclient: HIAI_GetVersion_Config ERROR __system_property_get <= 0
 12-10 15:31:34.273  4419  4419 I aiclient: success
@@ -285,10 +285,9 @@ By referring the information of logcat, I found the `V1` is the `size` and `V2` 
 12-10 15:31:34.471  4419  4419 I aiclient: name[ml_textsuperresolution600], path[], perf[3], size[17122]
 ```
 It's hard to tease out the relationship of the output. 
-However, I think the `CreateAshmemFd` is vital for parsing the relationship between the `Ashmem` and `fd`. So, I turn to `libai_client.so` to find the answer.
+However, the `CreateAshmemFd` is an important clue 
+to tell that the memory is created by using `ashmem_create_region` and `mmap`.
+The interceptor (e.g., `CreateAshmemRegionFd`) verified the thought. 
+So I maintain a pair of <fd, [size, buffer]>, such that I can map the `fd` to the memory. 
 
-
-Ok, I took a few days to reach here, now, let's roll.
-
-
-https://source.android.com/devices/architecture/hidl/memoryblock?hl=zh-cn
+Ok, It took me a few days to reach here, now, let's roll.
