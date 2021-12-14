@@ -285,7 +285,7 @@ to tell that the memory is created by using `ashmem_create_region` and `mmap`.
 The interceptor (e.g., `CreateAshmemRegionFd`) verified the thought. 
 So, we use `mmap` to map and modify the memory for fuzzing. 
 
-**NOTE, What confused me is that by intercepting the `dup`, `mmap`, `munmap`, I found the buffer is munmap(ped) by the client, but the model is still there.**
+**NOTE: what confused me is that by intercepting the `dup`, `mmap`, `munmap`, I found the buffer is munmap(ped) by the client, but the model is still there.**
 
 During the fuzzing, the logcat generates:
 ```
@@ -315,7 +315,7 @@ During the fuzzing, the logcat generates:
 12-13 23:27:11.635  1138  9059 E aiserver: AiModelMngrService::startModelFromMem2 ERROR: pid 6389001 already registered!
 ```
 This means our fuzzer works and trigger the first error, but the following error indicates the `_hidl_startModelFromMem2` method depends on the previous steps. 
-So that the replay strategy can't be applied to this scenario. There are 2 solutions for this problem. One is that we play the pre-steps, and the other one is that we load the model over and over. We use the later one to simplified the process.
+So that the replay strategy can't be applied to this scenario. There are 2 solutions for this problem. One is that we play the pre-steps, and the other one is that we modify the code to load the model over and over. We use the later one to simplified the process.
 To do so, we write a clean version of `ai_fuzzer.js`.
 **NOTE**: The output of logcat also indicates that we should fuzz the Peekhole one unit per time.
 

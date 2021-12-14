@@ -12,6 +12,121 @@ Java.perform(function () {
 	const PROT_WRITE        = 0x2;
 	const MAP_SHARED        = 0x1;
 
+
+
+    function genSeed(org_value)     // length: 21
+    {
+        return [//org_value,           // replay (test double-free?)
+                        ~org_value,
+                        org_value & 0xffffff00, org_value & 0xffff00ff, org_value & 0xff00ffff, org_value & 0x00ffffff,
+                        org_value | 0x000000ff, org_value | 0x0000ff00, org_value | 0x00ff0000, org_value | 0xff000000,
+                        0,
+                        0x7f, 0x7fff, 0x7fffffff,
+                        0x80, 0x8000, 0x80000000,
+                        0xff, 0xffff, 0xffffffff,
+                        org_value + 1, org_value - 1
+                        ];
+    }
+
+    var g_peekhole_index    = 0;
+    var g_peekhole_seed     = 0;
+
+    const peekHoleOffset    = [0x2c, 0x30];
+
+    function fuzzPeekhole(mData_pos, mDataSize, mObjects_pos, mObjectsSize, code, data, reply, flags, isVendor)
+    {
+        console.log("|---[i] start fuzzing peekholes in mData");
+
+        var dummy_seed = genSeed(0);
+        if (g_peekhole_seed >= dummy_seed.length)
+        {
+            g_peekhole_index += 1;
+            g_peekhole_seed = 0;
+        }
+        if (g_peekhole_index >= peekHoleOffset.length)
+        {
+            console.log("|[*] peekholes fuzz done");
+            return -1;
+        }
+
+        var fuzz_pos       = mData_pos.add(peekHoleOffset[g_peekhole_index]);
+
+        console.log(hexdump(mData_pos, {
+            offset: 0,
+            length: 0x40,
+            header: true,
+            ansi: true
+        }));
+
+        var org_value = fuzz_pos.readS32();
+        var new_value = genSeed(org_value);
+
+        console.log("|-----[i] g_peekhole_index: 0x" + g_peekhole_index.toString(16) + ", g_peekhole_seed: 0x" + g_peekhole_seed.toString(16));
+        console.log("|-----[i] fuzz memory: " + mData_pos.toString(16) + ", with offset: 0x" + peekHoleOffset[g_peekhole_index].toString(16) + ", with seed: 0x" + new_value[g_peekhole_seed].toString(16));
+
+        fuzz_pos.writeS32(new_value[g_cur_seed]);
+        console.log(hexdump(mData_pos, {
+            offset: 0,
+            length: 0x40,
+            header: true,
+            ansi: true
+        }));
+
+        g_peekhole_seed ++;
+        return 1;
+    }
+
+    /* TODO::
+    // fuzz the field in the <hidl_vec> and <hidl_handle>?
+    // to simplify the process, I mod each unit anyway.
+    var g_object_index      = 0;    // which object
+    var g_object_offset     = 0;    // offset in the object
+    var g_object_seed       = 0;    // which seed is used
+
+    function fuzzObject(mData_pos, mDataSize, mObjects_pos, mObjectsSize, code, data, reply, flags, isVendor)
+    {
+        console.log("|---[i] start fuzzing object in mData");
+
+        var dummy_seed = genSeed(0);
+        if (g_peekhole_seed >= dummy_seed.length)
+        {
+            g_peekhole_index += 1;
+            g_peekhole_seed = 0;
+        }
+        if (g_peekhole_index >= peekHoleOffset.length)
+        {
+            console.log("|[*] fuzz done");
+            return -1;
+        }
+
+        var fuzz_pos       = mData_pos.add(peekHoleOffset[g_peekhole_index]);
+
+        console.log(hexdump(mData_pos, {
+            offset: 0,
+            length: 0x40,
+            header: true,
+            ansi: true
+        }));
+
+        var org_value = fuzz_pos.readS32();
+        var new_value = genSeed(org_value);
+
+        console.log("|-----[i] g_peekhole_index: 0x" + g_peekhole_index.toString(16) + ", g_peekhole_seed: 0x" + g_peekhole_seed.toString(16));
+        console.log("|-----[i] fuzz memory: " + mData_pos.toString(16) + ", with offset: 0x" + peekHoleOffset[g_peekhole_index].toString(16) + ", with seed: 0x" + new_value[g_peekhole_seed].toString(16));
+
+        fuzz_pos.writeS32(new_value[g_cur_seed]);
+        console.log(hexdump(mData_pos, {
+            offset: 0,
+            length: 0x40,
+            header: true,
+            ansi: true
+        }));
+
+        g_peekhole_seed ++;
+        return 1;
+    }
+    */
+
     var g_cur_offset        = 0;
     var g_cur_seed          = 0;
 
@@ -84,31 +199,23 @@ Java.perform(function () {
             return;
         }
 
-        if (g_cur_seed >= 21 /*21, new_value.length*/)
+        var dummy_seed = genSeed(0);
+        if (g_cur_seed >= dummy_seed.length)
         {
             g_cur_offset += 4;
             g_cur_seed = 0;
         }
         if (g_cur_offset >= this_size)
         {
-            console.log("|[*] fuzz done");
+            console.log("|[*] fuzz_hidl_startModelFromMem2 fuzz done");
             return;
         }
 
         var org_value = this_fd_memory.add(g_cur_offset).readS32();
-        var new_value = [//org_value,           // replay (test double-free?)
-                        ~org_value,
-                        org_value & 0xffffff00, org_value & 0xffff00ff, org_value & 0xff00ffff, org_value & 0x00ffffff,
-                        org_value | 0x000000ff, org_value | 0x0000ff00, org_value | 0x00ff0000, org_value | 0xff000000,
-                        0,
-                        0x7f, 0x7fff, 0x7fffffff,
-                        0x80, 0x8000, 0x80000000,
-                        0xff, 0xffff, 0xffffffff,
-                        org_value + 1, org_value - 1
-                        ];
+        var new_value = genSeed(org_value);
 
         console.log("|-----[i] g_cur_offset: 0x" + g_cur_offset.toString(16) + ", g_cur_seed: 0x" + g_cur_seed.toString(16));
-        console.log("|-----[i] fuzz memory: " + this_fd_memory.toString(16) + ", with offset: 0x" + g_cur_offset.toString(16) + ", with seed: " + new_value[g_cur_seed].toString(16));
+        console.log("|-----[i] fuzz memory: " + this_fd_memory.toString(16) + ", with offset: 0x" + g_cur_offset.toString(16) + ", with seed: 0x" + new_value[g_cur_seed].toString(16));
 
         this_fd_memory.add(g_cur_offset).writeS32(new_value[g_cur_seed]);
 
@@ -207,7 +314,9 @@ Java.perform(function () {
         }));
 
         if (mObjectsSize != 0)
-            fuzz_hidl_startModelFromMem2(mData_pos, mObjects_pos, mObjectsSize, args[1].toInt32(), args[2], args[3], args[4].toInt32(), isVendor);
+            var ret = fuzzPeekhole(mData_pos, mDataSize, mObjects_pos, mObjectsSize, args[1].toInt32(), args[2], args[3], args[4].toInt32(), isVendor);
+            if (ret == -1)
+                fuzz_hidl_startModelFromMem2(mData_pos, mObjects_pos, mObjectsSize, args[1].toInt32(), args[2], args[3], args[4].toInt32(), isVendor);
     }
 
 
