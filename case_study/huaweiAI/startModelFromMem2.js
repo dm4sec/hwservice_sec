@@ -14,17 +14,20 @@ Java.perform(function () {
 
 
 
-    function genSeed(org_value)     // length: 21
+    function genSeed(org_value)     // length: 38
     {
         return [//org_value,           // replay (test double-free?)
                         ~org_value,
                         org_value & 0xffffff00, org_value & 0xffff00ff, org_value & 0xff00ffff, org_value & 0x00ffffff,
                         org_value | 0x000000ff, org_value | 0x0000ff00, org_value | 0x00ff0000, org_value | 0xff000000,
+                        org_value & 0xffffff00 + 0x7f, org_value & 0xffff00ff + 0x7f00, org_value & 0xff00ffff + 0x7f0000, org_value & 0x00ffffff + 0x7f000000,
+                        org_value & 0xffffff00 + 0x80, org_value & 0xffff00ff + 0x8000, org_value & 0xff00ffff + 0x800000, org_value & 0x00ffffff + 0x80000000,
                         0,
-                        0x7f, 0x7fff, 0x7fffffff,
-                        0x80, 0x8000, 0x80000000,
-                        0xff, 0xffff, 0xffffffff,
-                        org_value + 1, org_value - 1
+                        0x7f, 0x7fff, 0x7fffff, 0x7fffffff,
+                        0x80, 0x8000, 0x800000, 0x80000000,
+                        0xff, 0xffff, 0xffffff, 0xffffffff,
+                        org_value + 1, org_value + 0x100, org_value + 0x10000, org_value + 0x1000000,
+                        org_value - 1, org_value - 0x100, org_value - 0x10000, org_value - 0x1000000
                         ];
     }
 
@@ -53,7 +56,7 @@ Java.perform(function () {
 
         console.log(hexdump(mData_pos, {
             offset: 0,
-            length: 0x40,
+            length: mDataSize,
             header: true,
             ansi: true
         }));
@@ -67,7 +70,7 @@ Java.perform(function () {
         fuzz_pos.writeS32(new_value[g_cur_seed]);
         console.log(hexdump(mData_pos, {
             offset: 0,
-            length: 0x40,
+            length: mDataSize,
             header: true,
             ansi: true
         }));
@@ -164,7 +167,7 @@ Java.perform(function () {
         var this_size = buffer_pos.readPointer().add(0x18).readU32();
         console.log("|----[i] this_size: 0x" + this_size.toString(16));
 
-        this_size = 8;
+        // this_size = 8;
 
         var this_mmap_p = Module.getExportByName("libai_client.so", 'mmap');
         console.log("|-----[i] mmap addr: " + this_mmap_p);
@@ -184,20 +187,20 @@ Java.perform(function () {
         console.log("|-----[i] mmap ret: 0x" + ret.toString(16));
 
         var this_fd_memory = ptr(ret);
-        console.log("|-----[i] mmap buffer: 0x" + ret.toString(16));
-        try{
-            console.log(hexdump(this_fd_memory, {
-                offset: 0,
-                length: 0x40,
-                header: true,
-                ansi: true
-            }));
-        }
-        catch(err)
-        {
-            console.log("|-----[e] can't read");
-            return;
-        }
+//        console.log("|-----[i] mmap buffer: 0x" + ret.toString(16));
+//        try{
+//            console.log(hexdump(this_fd_memory, {
+//                offset: 0,
+//                length: 0x100,
+//                header: true,
+//                ansi: true
+//            }));
+//        }
+//        catch(err)
+//        {
+//            console.log("|-----[e] can't read");
+//            return;
+//        }
 
         var dummy_seed = genSeed(0);
         if (g_cur_seed >= dummy_seed.length)

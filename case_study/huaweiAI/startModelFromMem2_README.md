@@ -4,7 +4,7 @@
 It's commonly known that in order to use a model, the ML framework should 1) load the model, 2) then feed the model with data to get the result.
 These are two ideal places to perform file (data) fuzzing.
 
-### 2 Collecting information
+## 2 Collecting information
 A. Use the [Frida Gadget](https://frida.re/docs/gadget/) to process the [Sample](https://developer.huawei.com/consumer/cn/doc/development/hiai-Examples/sample-code-0000001050265470), e.g., [Vision Demo](https://github.com/HMS-Core/hms-ml-demo/tree/master/MLKit-Sample/module-vision). \
 B. Distill `vendor.huawei.hardware.ai@*` from device, then use [idc_scirpt](https://github.com/dm4sec/hwservice_sec/idc_script) to parse these binaries.
 ```commandline
@@ -154,14 +154,14 @@ And the last invocation is thunked to:
 .text:00000000000A8040 ; End of function vendor::huawei::hardware::ai::V1_0::writeEmbeddedToParcel(vendor::huawei::hardware::ai::V1_0::ModelBuffer const&,android::hardware::Parcel *,ulong,ulong)
 ```
 
-### 3. Start Fuzzing
-#### 3.1 fuzzPeekhole
+## 3. Start Fuzzing
+### 3.1 fuzzPeekhole
 This method delivers 3 parameters, two `Int32`(s) and one `android::hardware::hidl_vec<vendor::huawei::hardware::ai::V1_0::ModelBuffer>`.
 This indicates there are 2 units can be fuzzed. However, offset 0x2c, 0x30, 0xac and 0xb0 of the above memory are fuzzed actually.
 After going through `status_t writeEmbeddedToParcel(const hidl_memory &memory,
         Parcel *parcel, size_t parentHandle, size_t parentOffset)` (system/libhidl/transport/HidlBinderSupport.cpp), I find there is one leading `Uint64` inserted when performing `writeNativeHandleNoDup`. Anyway, it's doesn't matter if I fuzz one unit each time.
 
-#### 3.2 fuzzObject
+### 3.2 fuzzObject
 
 In order to fuzz object, we have to hack each object to assemble a valid Parcel to reach the server side. 
 The most important thing is to tell apart user data from system data.
@@ -200,8 +200,9 @@ The `hidl_handle` object is a variant-length object, the instance of \#4 can be 
 | sizeof(native_handle_t) | numFds | numInts | 1st fds | 1st int |    V2   |    V1   |
 ```
 
+###### Locate the fuzz data
 We conclude that the overall `ModelBuffer` is assembled by a `hidl_string` object, a `hidl_handle` object and 2 additional `int`(s).
-The `hidl_handle` object contains 1 `fd` and 3 `int`(s). After inspecting all these information, we narrow down the target from the `ModelBuffer` to the four elements in \#4.
+The `hidl_handle` object contains 1 `fd` and 3 `int`(s). After inspecting all these information, we narrow down the target from the `ModelBuffer` to the four elements within \#4.
 By referring the information of logcat below, we found the `V1` is the `size` and `V2` is the `perf` field. 
 ```
 12-10 15:31:34.273  4419  4419 I aiclient: HIAI_GetVersion_Config ERROR __system_property_get <= 0
@@ -286,6 +287,26 @@ The interceptor (e.g., `CreateAshmemRegionFd`) verified the thought.
 So, we use `mmap` to map and modify the memory for fuzzing. 
 
 **NOTE: what confused me is that by intercepting the `dup`, `mmap`, `munmap`, I found the buffer is munmap(ped) by the client, but the model is still there.**
+The model looks like:
+```
+             0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F  0123456789ABCDEF
+76cb33d000  49 4d 4f 44 00 01 00 00 00 00 00 10 00 00 00 00  IMOD............
+76cb33d010  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+76cb33d020  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+76cb33d030  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+76cb33d040  00 00 00 00 00 00 00 00 00 00 00 00 e2 41 00 00  .............A..
+76cb33d050  00 00 03 00 67 65 5f 64 65 66 61 75 6c 74 00 00  ....ge_default..
+76cb33d060  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+76cb33d070  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+76cb33d080  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+76cb33d090  00 00 00 00 00 00 00 00 02 00 00 00 33 2e 35 31  ............3.51
+76cb33d0a0  2e 7a 2e 30 00 00 00 00 00 00 00 00 00 00 00 00  .z.0............
+76cb33d0b0  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+76cb33d0c0  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+76cb33d0d0  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+76cb33d0e0  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+76cb33d0f0  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+```
 
 During the fuzzing, the logcat generates:
 ```
@@ -316,7 +337,9 @@ During the fuzzing, the logcat generates:
 ```
 This means our fuzzer works and trigger the first error, but the following error indicates the `_hidl_startModelFromMem2` method depends on the previous steps. 
 So that the replay strategy can't be applied to this scenario. There are 2 solutions for this problem. One is that we play the pre-steps, and the other one is that we modify the code to load the model over and over. We use the later one to simplified the process.
-To do so, we write a clean version of `ai_fuzzer.js`.
+To do so, we also write a clean version of `startModelFromMem2.js`.
 **NOTE**: The output of logcat also indicates that we should fuzz the Peekhole one unit per time.
 
-Ok, It took us a few days to reach here, now, let's roll!
+##4. Fuzz result
+Ok, It took us a few days to reach here, now, let's roll! \
+After one whole night, I found nothing. After that I cross checked the [IMOD](https://bio3d.colorado.edu/imod/), [Imod ASCII File Format](https://bio3d.colorado.edu/imod/doc/asciispec.html), [IMOD Binary File Format](https://bio3d.colorado.edu/imod/doc/binspec.html) and found that I need to turn to another target.
