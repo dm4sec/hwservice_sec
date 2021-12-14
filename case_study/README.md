@@ -288,8 +288,37 @@ It's hard to tease out the relationship of the output.
 However, the `CreateAshmemFd` is an important clue 
 to tell that the memory is created by using `ashmem_create_region` and `mmap`.
 The interceptor (e.g., `CreateAshmemRegionFd`) verified the thought. 
-So I maintain a pair of <fd, [size, buffer]>, such that I can map the `fd` to the memory. 
+So, we use `mmap` to map the memory for fuzzing. 
 
-**Unfortunately, by intercepting the `dup`, `mmap`, `ummap`, I found the buffer is freed by the client. That is, the file fuzz failed.**
+**NOTE, What confused me is that by intercepting the `dup`, `mmap`, `munmap`, I found the buffer is munmap(ped) by the client, but the model is still there.**
+
+During the fuzzing, the logcat generate:
+```
+12-13 23:27:11.635  1138  9059 W ENGINE  : /ai_timer_manager.cpp CreateTimer(164)::"interval must be larger than 1000ms."
+12-13 23:27:11.635  1138  9059 I ENGINE  : /ai_model_manager_impl.cpp ParseAIConfig(280)::"Get pid config, value:6389"
+12-13 23:27:11.635  1138  9059 I ENGINE  : /ai_model_manager_impl.cpp LoadModelFromMem(693)::"Load Model name: ml_textsuperresolution400, omOptions type: 0"
+12-13 23:27:11.635  1138  9059 W RUNTIME : PrimaryContextRetain:359 Context IncRef, count = 0x2
+12-13 23:27:11.635  1138  9059 E AI_FMK  : /model_buffer_helper.cpp GetModelType(1104)::"ModelBufferLoader parse invalid model. input buffer size:17122, parse size:17122"
+12-13 23:27:11.635  1138  9059 E AI_FMK  : /model_generator.cpp GetModelTypeFromBuffer(264)::"ModelGenerator::GenerateFromBuffer get modelType fail."
+12-13 23:27:11.635  1138  9059 E ENGINE  : /ai_model_executor_manager.cpp LoadModel(158)::"ModelGenerator GetModelTypeFromBuffer failed!"
+12-13 23:27:11.635  1138  9059 E ENGINE  : /ai_model_manager_impl.cpp LoadModelFromMem(717)::"LoadModelFromMem failed!"
+12-13 23:27:11.635  1138  9059 W RUNTIME : PrimaryContextRelease:390 Context TryDecRef, count = 0x1, reset:0
+12-13 23:27:11.635  1138  9059 E ENGINE  : /ai_model_manager_impl.cpp LoadModels(347)::"Load model \"ml_textsuperresolution400\" failed!"
+12-13 23:27:11.635  1138  9059 E ENGINE  : /ai_model_manager_impl.cpp Init(249)::"Load models failed!"
+12-13 23:27:11.635  1138  9059 I ENGINE  : /ai_model_manager_impl.cpp UnloadModels(751)::"Unload models failed."
+12-13 23:27:11.635  1138  9059 I aiserver: AiModelMngrService::LoadModel init ret = 1
+12-13 23:27:11.635  1138  9059 I ENGINE  : SetPerfRelease(110)::"updata data->current(426) != data->last(425)."
+12-13 23:27:11.635  1138  9059 I aiserver: AiModelMngrService::startModelFromMem2 PIDCID_CONCAT = 6389001
+12-13 23:27:11.635  1138  9059 E aiserver: AiModelMngrService::startModelFromMem2 ERROR: pid 6389001 already registered!
+12-13 23:27:11.635  1138  9059 I aiserver: AiModelMngrService::startModelFromMem2 PIDCID_CONCAT = 6389001
+12-13 23:27:11.635  1138  9059 E aiserver: AiModelMngrService::startModelFromMem2 ERROR: pid 6389001 already registered!
+12-13 23:27:11.635  1138  9059 I aiserver: AiModelMngrService::startModelFromMem2 PIDCID_CONCAT = 6389001
+12-13 23:27:11.635  1138  9059 E aiserver: AiModelMngrService::startModelFromMem2 ERROR: pid 6389001 already registered!
+12-13 23:27:11.635  1138  9059 I aiserver: AiModelMngrService::startModelFromMem2 PIDCID_CONCAT = 6389001
+12-13 23:27:11.635  1138  9059 E aiserver: AiModelMngrService::startModelFromMem2 ERROR: pid 6389001 already registered!
+12-13 23:27:11.635  1138  9059 I aiserver: AiModelMngrService::startModelFromMem2 PIDCID_CONCAT = 6389001
+12-13 23:27:11.635  1138  9059 E aiserver: AiModelMngrService::startModelFromMem2 ERROR: pid 6389001 already registered!
+```
+This means our fuzzer works to trigger the first error, but the following error means `_hidl_startModelFromMem2` method depends on the previous steps. 
 
 Ok, It took me a few days to reach here, now, let's roll back.

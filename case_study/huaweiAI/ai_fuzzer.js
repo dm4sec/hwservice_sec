@@ -79,6 +79,9 @@ Java.perform(function () {
     */
 
     const mHandle_LOC       = 0x8;
+	const PROT_READ         = 0x1;
+	const PROT_WRITE        = 0x2;
+	const MAP_SHARED        = 0x1;
 
     function fuzz_hidl_startModelFromMem2(mData_pos, mObjects_pos, mObjectsSize, mHandle, code, data, reply, flags, isVendor)
     {
@@ -116,16 +119,36 @@ Java.perform(function () {
         var this_size = buffer_pos.readPointer().add(0x18).readU32();
         console.log("|----[i] this_size: 0x" + this_size.toString(16));
 
-        console.log("|----[i] fd info: " + mem_info.get(this_fd));
-        var this_fd_size = mem_info.get(this_fd)[0];
-        console.log("|----[i] size info: 0x" + this_fd_size.toString(16));
-        var this_fd_buffer = ptr("0x" + mem_info.get(this_fd)[1]);
-        console.log("|----[i] buffer info: 0x" + this_fd_buffer.toString(16));
+//        console.log("|----[i] fd info: " + mem_info.get(this_fd));
+//        var this_fd_size = mem_info.get(this_fd)[0];
+//        console.log("|----[i] size info: 0x" + this_fd_size.toString(16));
+//        var this_fd_buffer = ptr("0x" + mem_info.get(this_fd)[1]);
+//        console.log("|----[i] buffer info: 0x" + this_fd_buffer.toString(16));
 
+        // void* mmap(void* addr, size_t size, int prot, int flags, int fd, off_t offset) {
+
+        var this_mmap_p = Module.getExportByName("libai_client.so", 'mmap');
+        console.log("[i] mmap addr: " + this_mmap_p);
+
+        var func_mmap = new NativeFunction(this_mmap_p,
+            'uint64',
+            ['uint64', 'uint32', 'int32', 'int32', 'int32', 'int32']
+            );
+        var ret = func_mmap(
+            0,
+            this_size,
+            PROT_READ|PROT_WRITE,
+            MAP_SHARED,
+            this_fd,
+            0);
+
+        console.log("[i] mmap ret: 0x" + ret.toString(16));
+
+        var this_fd_buffer = ptr(ret);
         try{
             console.log(hexdump(this_fd_buffer, {
                 offset: 0,
-                length: 0x40,
+                length: 0x200,
                 header: true,
                 ansi: true
             }));
@@ -136,7 +159,7 @@ Java.perform(function () {
             return;
         }
 
-        for (var i = 0; i < this_fd_size; i += 4 )
+        for (var i = 0; i < this_size; i += 4 )
         {
             console.log("|----[i] fuzz offset: 0x" + this_fd_buffer.add(i).toString(16));
             fuzzOneSInt(this_fd_buffer.add(i), mHandle, code, data, reply, flags, isVendor);
@@ -405,6 +428,8 @@ Java.perform(function () {
         var org_value = fuzzPos.readS32();
         var new_value = [//org_value,           // replay (test double-free?)
                         ~org_value,
+                        org_value & 0xffffff00, org_value & 0xffff00ff, org_value & 0xff00ffff, org_value & 0x00ffffff,
+                        org_value | 0x000000ff, org_value | 0x0000ff00, org_value | 0x00ff0000, org_value | 0xff000000,
                         0,
                         0x7f, 0x7fff, 0x7fffffff,
                         0x80, 0x8000, 0x80000000,
@@ -425,12 +450,12 @@ Java.perform(function () {
         {
             fuzzPos.writeS32(new_value[i]);
     //        mData_pos.add(SInt_pos).writeS32(org_value | 0xffff);
-    //        console.log(hexdump(mData_pos.add(SInt_pos), {
-    //            offset: 0,
-    //            length: 0x10,
-    //            header: true,
-    //            ansi: true
-    //        }));
+//            console.log(hexdump(fuzzPos, {
+//                offset: 0,
+//                length: 0x10,
+//                header: true,
+//                ansi: true
+//            }));
 
 
             if (isVendor == false)
@@ -777,22 +802,22 @@ void munmap(void *addr, size_t length)
 
 */
 
-    var close_p = Module.getExportByName("libai_client.so",
-    'close');
-    console.log("[i] close addr: " + close_p);
-
-    Interceptor.attach(close_p, {
-        onEnter: function(args) {
-            console.log("[*] onEnter: close");
-            console.log("[i] the 0 argument, fd: 0x" + args[0].toString(16));
-            mem_info.remove(args[0].toInt32());
-        },
-
-        onLeave: function(retval) {
-            console.log("[*] onLeave: close");
-            console.log("|-[i] ret value: " + retval);
-        }
-    });
+//    var close_p = Module.getExportByName("libai_client.so",
+//    'close');
+//    console.log("[i] close addr: " + close_p);
+//
+//    Interceptor.attach(close_p, {
+//        onEnter: function(args) {
+//            console.log("[*] onEnter: close");
+//            console.log("[i] the 0 argument, fd: 0x" + args[0].toString(16));
+//            mem_info.remove(args[0].toInt32());
+//        },
+//
+//        onLeave: function(retval) {
+//            console.log("[*] onLeave: close");
+//            console.log("|-[i] ret value: " + retval);
+//        }
+//    });
 
 //    var munmap_p = Module.getExportByName("libai_client.so",
 //    'munmap');
@@ -900,12 +925,12 @@ void munmap(void *addr, size_t length)
         onLeave: function(retval) {
             console.log("[*] onLeave: mmap");
             console.log("|-[i] ret value: " + retval);
-            console.log(hexdump(retval, {
-                offset: 0,
-                length: 0x40,
-                header: true,
-                ansi: true
-            }));
+//            console.log(hexdump(retval, {
+//                offset: 0,
+//                length: 0x40,
+//                header: true,
+//                ansi: true
+//            }));
 
             // as stated in frida's document, the `retval` is a NativePointer.
             // I have no idea about how to covert the `NativePointer` to an UInt64.
