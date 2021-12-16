@@ -12,7 +12,7 @@ The call trace of `transact` is:
     _hidl_err = ::android::hardware::IInterface::asBinder(_hidl_this)->transact(3 /* baz */, _hidl_data, &_hidl_reply);
 ```
 
-`system/libhwbinder/BpHwBinder.cpp`
+`system/libhwbinder/BpHwBinder.cpp`<span id='intercept_pos'></span>
 ```cpp
 status_t BpHwBinder::transact( <- intercept here.
     uint32_t code, const Parcel& data, Parcel* reply, uint32_t flags, TransactCallback /*callback*/)
@@ -66,9 +66,8 @@ Use `Interceptor` alone is not enough to replay the new generated data.
 We are lucky to find that `BpHwBinder::transact` is a wrapper of `IPCThreadState::self()->transact`, such that we can invoke the later method over and over. 
 
 
-### 2 TODO:
-**T1**: Assemble the `Parcel` is a somewhat complex work.
-The external resource includes:
+### 1.4 Assemble the `Parcel`
+This is a somewhat complex task, the external resource FYI:
 ```
 https://source.android.com/devices/architecture/hidl/types
 https://source.android.com/devices/architecture/hidl-cpp/types
@@ -76,7 +75,9 @@ https://source.android.com/devices/architecture/hidl-java/types
 https://android.googlesource.com/platform/system/tools/hidl/
 ```
 
-**T2**: Observe the status of the server (running status, etc.).
+### 1.5 Observe the status of the server 
+Pay attention to the [code snippet](#intercept_pos) above, the [DEAD_OBJECT](https://source.android.com/devices/architecture/hidl-cpp/functions#transport) is an indication of the server's status. 
+Although this is hopefully to bring me out of the chaos, it's not tested yet.
 
 ### 3 Reference
 https://frida.re/docs/javascript-api/

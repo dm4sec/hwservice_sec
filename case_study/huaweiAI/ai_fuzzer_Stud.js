@@ -159,6 +159,8 @@ Java.perform(function () {
             return;
         }
 
+        return;
+
         for (var i = 0; i < this_size; i += 4 )
         {
             console.log("|----[i] fuzz offset: 0x" + this_fd_buffer.add(i).toString(16));
