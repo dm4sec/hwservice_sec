@@ -3,59 +3,44 @@
 # @Time    : 2021/9/23 15:54
 
 from __future__ import print_function
+import subprocess
 import frida
 import sys
-import subprocess
 
 g_obj_content_offset = 0
-g_obj_content_seed = 0
 g_script = 0
 
+# https://github.com/frida/frida/issues/1073
 def on_message(message, data):
 
     global g_obj_content_offset
     global g_obj_content_seed
 
     if message["type"] == "send":
-        print(message["payload"])
-
         if message["payload"].find("ready") != -1:
-            print(message["payload"])
-            # g_script.post({'type': 'synchronize', 'payload': 'roll'})
-            # print(message["payload"])
+            p = subprocess.Popen("adb logcat -b crash -d",
+                                 shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                                 stderr=subprocess.PIPE
+                                 )
 
-            p = subprocess.Popen("adb logcat -s '*:F'", shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-                         stderr=subprocess.STDOUT)
             stdout, stderr = p.communicate()
-            # print(stdout.decode())
-            print("1")
-            # print(stderr.decode())
-            # print("2")
-            # print(message["payload"])
-
-            if stdout.decode().find("Build fingerprint") != -1:
-                with open("crash.log", "a+") as fwh:
-                    fwh.write("model offset: {} with seed: {} crashed the server.\n".format(g_obj_content_offset, g_obj_content_seed))
-                    fwh.write(stdout.decode())
 
             msg = message["payload"].strip().split(":")
-            g_obj_content_offset = msg[1]
-            print(g_obj_content_offset)
-            g_obj_content_seed = msg[2]
-            print(g_obj_content_seed)
+            g_obj_content_offset = int(msg[1])
 
-            while(True):
-                p = subprocess.Popen("adb logcat -c",
-                                     shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-                         stderr=subprocess.PIPE
-                                     )
-                stdout, stderr = p.communicate()
-                # print(stderr.decode())
-                if stderr.decode() == "":
-                    break
+            if stdout.decode().find("Build fingerprint") != -1 and g_obj_content_offset != 0:
+                print("[*] logging crash")
+                with open("crash.log", "a+") as fwh:
+                    fwh.write("************ model offset: {} crashed the app. ************\n".format(g_obj_content_offset - 4))
+                    fwh.write(stdout.decode())
+
+            p = subprocess.Popen("adb logcat -c",
+                                 shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                     stderr=subprocess.PIPE
+                                 )
+            stdout, stderr = p.communicate()
 
             g_script.post({'type': 'synchronize', 'payload': 'roll'})
-            print(message["payload"])
 
 def main():
     '''
