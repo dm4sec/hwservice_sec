@@ -47,8 +47,6 @@ Since this is just a PoC, only the peekholes (e.g., the `mData` exclude `mObject
 `BpBinder::transact` is a wrapper of `IPCThreadState::self()->transact`, such that we can invoke the later function over and over. 
 
 
-### 2 TODO:
-The same as hwservice.
-### 3 Reference
+### 2 Reference
 The same as hwservice.
 

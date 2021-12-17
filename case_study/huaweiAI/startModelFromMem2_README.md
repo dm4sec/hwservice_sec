@@ -340,9 +340,9 @@ So that the replay strategy can't be applied to this scenario. There are 2 solut
 To do so, we also write a clean version of `startModelFromMem2.js`.
 **NOTE**: The output of logcat also indicates that we should fuzz the Peekhole one unit per time.
 
-##4. Fuzz result
+## 4. Fuzz result
 Ok, It took us a few days to reach here, now, let's roll! \
-After one whole night, I found lots of error like:
+After one whole night, I found lots of crashes like:
 ```
 12-16 17:13:22.912  1138  1530 F libc    : Fatal signal 11 (SIGSEGV), code 2 (SEGV_ACCERR), fault addr 0x7d3d503000 in tid 1530 (HwBinder:1138_1), pid 1138 (hiaiserver)
 12-16 17:13:23.439 21601 21601 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
@@ -383,8 +383,9 @@ After one whole night, I found lots of error like:
 12-16 17:13:23.460 21601 21601 F DEBUG   :       #16 pc 00000000000721a8  /apex/com.android.runtime/lib64/bionic/libc.so (__start_thread+64) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
 ```
 Parts of the offsets in the model that will crash the server are collected as `[-4, 0x12c, 0x1bc, 0x1c0, 0x1e0, 0x250, 0x25c, 0x2f0, 0x5c4, 0x5c8, ]`.
-##6. TODO:
-A nicely bug observer.
 
-##5. Reference:
+## 6. TODO:
+A graceful bug observer.
+
+## 5. Reference:
 [IMOD](https://bio3d.colorado.edu/imod/), [Imod ASCII File Format](https://bio3d.colorado.edu/imod/doc/asciispec.html), [IMOD Binary File Format](https://bio3d.colorado.edu/imod/doc/binspec.html).
