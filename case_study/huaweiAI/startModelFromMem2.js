@@ -29,9 +29,11 @@ Java.perform(function () {
 
     // collect manually
     // 0x80, 0xfc, 0x12c, 0x1bc, 0x1c0, 0x1e0, 0x250, 0x25c, 0x2f0, 0x568, 0x5c4, 0x624, 0x82c, 0xa04
-    var g_collected_crash           = [-4, 0x12c, 0x1bc, 0x1c0, 0x1e0, 0x250, 0x25c, 0x2f0, 0x5c4, 0x5c8, 0x624, 0x1b88, ];
-    var g_obj_content_offset        = g_collected_crash[g_collected_crash.length - 1] + 0x4;
-    // var g_obj_content_offset        = 0x5c8;
+    var g_collected_crash           = [-4, 0x12c, 0x1bc, 0x1c0, 0x1e0, 0x1e4, 0x250, 0x25c, 0x260, 0x2f0, 0x2f4, 0x5c4, 0x5c8,
+                                        0x624, 0x1b88, 0x3130, 0x4000, 0x4158, 0x416c, 0x4224, 0x4228, 0x422c,
+                                        0x4244, ];
+    // var g_obj_content_offset        = g_collected_crash[g_collected_crash.length - 1] + 0x4;
+    var g_obj_content_offset        = 0x1c0;
     var g_obj_content_seed          = 0x0;
 
 
@@ -195,6 +197,16 @@ Java.perform(function () {
         console.log("|-----[i] g_obj_content_offset: 0x" + g_obj_content_offset.toString(16) + ", g_obj_content_seed: 0x" + g_obj_content_seed.toString(16));
         console.log("|-----[i] fuzz memory: " + this_fd_memory.toString(16) + ", with offset: 0x" + g_obj_content_offset.toString(16) + ", with seed: 0x" + new_value[g_obj_content_seed].toString(16));
 
+        /*
+        // send message to host.
+        send("ready:" + g_obj_content_offset + ":" + g_obj_content_seed);
+        // wait the host to finish it's task.
+        var foo = recv('synchronize', function(value) {
+            console.log("|-----[i] host ready message received, continue.");
+        });
+        foo.wait();
+        */
+
         this_fd_memory.add(g_obj_content_offset).writeS32(new_value[g_obj_content_seed]);
 
         var this_munmap_p = Module.getExportByName("libai_client.so", 'munmap');
@@ -338,6 +350,7 @@ Java.perform(function () {
                 g_dead_obj_lst.push(g_obj_content_offset, g_obj_content_seed);    // should tell em apart
 //                g_dead_obj_lst.push(g_object_offset, g_object_index);
             }
+//            send("done");
         }
     });
 
@@ -359,6 +372,7 @@ Java.perform(function () {
                 g_dead_obj_lst.push(g_obj_content_offset, g_obj_content_seed);    // should tell them apart
 //                g_dead_obj_lst.push(g_object_offset, g_object_index);
             }
+//            send("done");
         }
     });
 

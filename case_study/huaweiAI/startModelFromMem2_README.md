@@ -337,7 +337,10 @@ During the fuzzing, the logcat generates:
 ```
 This means our fuzzer works and trigger the first error, but the following error indicates the `_hidl_startModelFromMem2` method depends on the previous steps. 
 So that the replay strategy can't be applied to this scenario. There are 2 solutions for this problem. One is that we play the pre-steps, and the other one is that we modify the code to load the model over and over. We use the later one to simplified the process.
-To do so, we also write a clean version of `startModelFromMem2.js`.
+To do so, we also write a clean version of `startModelFromMem2.js`, it works as:
+
+![image](https://github.com/dm4sec/hwservice_sec/case_study/huaweiAI/images/startModelFromMem2.gif)
+
 **NOTE**: The output of logcat also indicates that we should fuzz the Peekhole one unit per time.
 
 ## 4. Fuzz result
