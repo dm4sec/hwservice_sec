@@ -6,7 +6,7 @@ These are the two ideal places to perform file (data) fuzzing.
 
 ## 2 Collecting information
 A. Use the [Frida Gadget](https://frida.re/docs/gadget/) to process the [Sample](https://developer.huawei.com/consumer/cn/doc/development/hiai-Examples/sample-code-0000001050265470), e.g., [Vision Demo](https://github.com/HMS-Core/hms-ml-demo/tree/master/MLKit-Sample/module-vision). \
-B. Withdraw `vendor.huawei.hardware.ai@*` from device, then use [idc_scirpt](https://github.com/dm4sec/hwservice_sec/idc_script) to parse these binaries.
+B. Withdraw `vendor.huawei.hardware.ai@*` from device, then use [idc_scirpt](https://github.com/dm4sec/hwservice_sec/tree/master/idc_script) to parse these binaries.
 ```commandline
 demo@demo:~/Downloads$ adb shell ls /vendor/lib64/vendor.huawei.hardware.ai@*
 /vendor/lib64/vendor.huawei.hardware.ai@1.0.so
@@ -100,7 +100,7 @@ II) Buffers of each `binder_buffer_object` object: \
 |----[i] parent: 0x3
 |----[i] parent_offset: 0xc 
 ```
-III) For this method, the [idc_scirpt](https://github.com/dm4sec/hwservice_sec/idc_script) issues: 
+III) For this method, the [idc_scirpt](https://github.com/dm4sec/hwservice_sec/tree/master/idc_script) issues: 
 
 ```
 F: 0x69028 - 0x69398: vendor::huawei::hardware::ai::V1_1::BpHwAiModelMngr::_hidl_startModelFromMem2(android::hardware::IInterface *, android::hardware::details::HidlInstrumentor *, int, int, android::hardware::hidl_vec<vendor::huawei::hardware::ai::V1_0::ModelBuffer> const&)
@@ -175,7 +175,7 @@ Anyway, `writeEmbeddedToParcel` is equal to `writeEmbeddedBuffer` when processin
 
 ###### Profile the `ModelBuffer` object
 The challenge is that the object is self organized (unknown to third-party).
-By observation (e.g., by cross referencing the libai_client.so, vendor.huawei.hardware.ai@1.0.so, the output of logcat, and some testcases), we profile the layout of the `ModelBuffer` ([#2](2nd_binder_buffer_object)) as:
+By observation (e.g., by cross referencing the libai_client.so, vendor.huawei.hardware.ai@1.0.so, the output of logcat, and some testcases), we profile the layout of the `ModelBuffer` ([#2](#2nd_binder_buffer_object)) as:
 ```
              0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F  0123456789ABCDEF
 75e9a20d28  b0 0d a2 e9 75 00 00 00 2d 00 00 00 01 00 00 00  ....u...-.......
