@@ -2263,6 +2263,7 @@ var f119 = "_ZN6vendor6huawei8hardware2ai4V1_219BpHwAiEngineService29_hidl_creat
             console.log("[i] x8 value: " + this.context.x8);
             var module = Process.getModuleByAddress(this.context.x8)
             console.log("[i] belongs to module: " + module.name)
+            console.log("[i] module path: " + module.path)
 
             var exports = module.enumerateExports();
             console.log("[i] export length: " + exports.length);

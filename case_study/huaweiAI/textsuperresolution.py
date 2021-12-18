@@ -10,13 +10,21 @@ import sys
 g_obj_content_offset = 0
 g_script = 0
 
-# https://github.com/frida/frida/issues/1073
 def on_message(message, data):
 
     global g_obj_content_offset
     global g_obj_content_seed
 
     if message["type"] == "send":
+        if message["payload"].find("dead_object") != -1:
+            msg = message["payload"].strip().split(":")
+            g_obj_content_offset = int(msg[1])
+
+            print("[*] logging dead_object")
+            with open("textsuperresolution_crash.log", "a+") as fwh:
+                fwh.write("************ model offset: {} crashed the server. ************\n".format(
+                    hex(g_obj_content_offset)))
+
         if message["payload"].find("ready") != -1:
             p = subprocess.Popen("adb logcat -b crash -d",
                                  shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
@@ -30,8 +38,8 @@ def on_message(message, data):
 
             if stdout.decode().find("Build fingerprint") != -1 and g_obj_content_offset != 0:
                 print("[*] logging crash")
-                with open("crash.log", "a+") as fwh:
-                    fwh.write("************ model offset: {} crashed the app. ************\n".format(g_obj_content_offset - 4))
+                with open("textsuperresolution_crash.log", "a+") as fwh:
+                    fwh.write("------------ model offset: {} crashed the app. ------------\n".format(hex(g_obj_content_offset - 4)))
                     fwh.write(stdout.decode())
 
             p = subprocess.Popen("adb logcat -c",
@@ -75,7 +83,7 @@ def main():
 
     # process = frida.get_usb_device().attach("Camera")
     session = frida.get_usb_device().attach("Gadget")
-    JSFile = open('startModelFromMem2.js')
+    JSFile = open('textsuperresolution.js')
     JsCodeFromfile = JSFile.read()
     global g_script
     g_script = session.create_script(JsCodeFromfile)

@@ -51,7 +51,7 @@ def main():
     # process = frida.get_usb_device().attach("Camera")
     process = frida.get_usb_device().attach("Gadget")
 
-    JSFile = open('ai_fuzzer_Stud.js')
+    JSFile = open('ai_Stud.js')
     JsCodeFromfile = JSFile.read()
     script = process.create_script(JsCodeFromfile)
 

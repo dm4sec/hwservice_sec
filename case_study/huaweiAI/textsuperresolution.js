@@ -33,7 +33,7 @@ Java.perform(function () {
                                         0x624, 0x1b88, 0x3130, 0x4000, 0x4158, 0x416c, 0x4224, 0x4228, 0x422c,
                                         0x4244, ];
     // var g_obj_content_offset        = g_collected_crash[g_collected_crash.length - 1] + 0x4;
-    var g_obj_content_offset        = 0x0;
+    var g_obj_content_offset        = 0x4244 + 4;
     var g_obj_content_seed          = 0x0;
 
     function genSeed(org_value)     // length: 38
@@ -170,18 +170,28 @@ Java.perform(function () {
 //            return;
 //        }
 
-
         var dummy_seed = genSeed(0);
         if (g_obj_content_seed >= dummy_seed.length)
         {
             g_obj_content_offset += 4;
             g_obj_content_seed = 0;
-
 //            while(g_collected_crash.includes(g_obj_content_offset)) // skip those crash the app
 //            {
 //                g_obj_content_offset += 4;
 //            }
         }
+
+        if (g_obj_content_seed == 0)
+        {
+            // send message to host.
+            send("ready:" + g_obj_content_offset);
+            // wait the host to finish it's task.
+            var foo = recv('synchronize', function(value) {
+                console.log("|-----[i] host ready message received, continue.");
+            });
+            foo.wait();
+        }
+
         if (g_obj_content_offset >= this_size)
         {
             console.log("|[*] fuzz_hidl_startModelFromMem2 fuzz done");
@@ -193,14 +203,6 @@ Java.perform(function () {
 
         console.log("|-----[i] g_obj_content_offset: 0x" + g_obj_content_offset.toString(16) + ", g_obj_content_seed: 0x" + g_obj_content_seed.toString(16));
         console.log("|-----[i] fuzz memory: " + this_fd_memory.toString(16) + ", with offset: 0x" + g_obj_content_offset.toString(16) + ", with seed: 0x" + new_value[g_obj_content_seed].toString(16));
-
-        // send message to host.
-        send("ready:" + g_obj_content_offset);
-        // wait the host to finish it's task.
-        var foo = recv('synchronize', function(value) {
-            console.log("|-----[i] host ready message received, continue.");
-        });
-        foo.wait();
 
         this_fd_memory.add(g_obj_content_offset).writeS32(new_value[g_obj_content_seed]);
 
@@ -343,6 +345,7 @@ Java.perform(function () {
             if (retval.toInt32() == DEAD_OBJECT)
             {
                 g_dead_obj_lst.push(g_obj_content_offset, g_obj_content_seed);    // should tell em apart
+                send("dead_object:" + g_obj_content_offset);
 //                g_dead_obj_lst.push(g_object_offset, g_object_index);
             }
 //            send("done");
@@ -365,6 +368,7 @@ Java.perform(function () {
             if (retval.toInt32() == DEAD_OBJECT)
             {
                 g_dead_obj_lst.push(g_obj_content_offset, g_obj_content_seed);    // should tell them apart
+                send("dead_object:" + g_obj_content_offset);
 //                g_dead_obj_lst.push(g_object_offset, g_object_index);
             }
 //            send("done");

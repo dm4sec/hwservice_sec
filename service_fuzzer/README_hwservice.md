@@ -28,7 +28,7 @@ status_t BpHwBinder::transact( <- intercept here.
     return DEAD_OBJECT;
 }
 ```
-To get this interface, I firstly pull the binary, then find the target.
+To get this interface, I firstly pull the binaries, then find the target.
 ```commandline
 demo@demo:~/Downloads$ adb pull /system/lib64/libhidlbase.so
 /system/lib64/libhidlbase.so: 1 file pulled, 0 skipped. 10.8 MB/s (688096 bytes in 0.061s)
@@ -86,7 +86,7 @@ demo@demo:~/Downloads$ adb logcat | grep "HWSERVICES"
 12-17 08:51:46.444 28349 28349 I HWSERVICES: hwnative_get_component_register:libdrmbitmap,JNI
 ```
 However, if the client does not process the crash gracefully and been killed (e.g., libai_client.so), we will miss such log.
-C) The most reliable method is to analysis the crash log. There are lots of [literals](https://www.cnblogs.com/willhua/p/6718379.html) for analyzing the crash below.
+C) The most reliable method is to catch the crash log. There are lots of [literals](https://www.cnblogs.com/willhua/p/6718379.html) for catching the crash below.
 ```
 12-16 17:13:22.912  1138  1530 F libc    : Fatal signal 11 (SIGSEGV), code 2 (SEGV_ACCERR), fault addr 0x7d3d503000 in tid 1530 (HwBinder:1138_1), pid 1138 (hiaiserver)
 12-16 17:13:23.439 21601 21601 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***

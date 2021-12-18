@@ -1,12 +1,12 @@
-# `huaweiAI` is used to fuzz [huawei ai service](https://developer.huawei.com/consumer/cn/doc/overview/HUAWEI_HiAI).
+# This is the case of fuzzing `textsuperresolution` of [huawei ai service](https://developer.huawei.com/consumer/cn/doc/overview/HUAWEI_HiAI).
 
 ## 1 Background
 It's commonly known that in order to use a model, the ML framework should 1) load the model, 2) then feed the model with data to get the result.
-These are two ideal places to perform file (data) fuzzing.
+These are the two ideal places to perform file (data) fuzzing.
 
 ## 2 Collecting information
 A. Use the [Frida Gadget](https://frida.re/docs/gadget/) to process the [Sample](https://developer.huawei.com/consumer/cn/doc/development/hiai-Examples/sample-code-0000001050265470), e.g., [Vision Demo](https://github.com/HMS-Core/hms-ml-demo/tree/master/MLKit-Sample/module-vision). \
-B. Distill `vendor.huawei.hardware.ai@*` from device, then use [idc_scirpt](https://github.com/dm4sec/hwservice_sec/idc_script) to parse these binaries.
+B. Withdraw `vendor.huawei.hardware.ai@*` from device, then use [idc_scirpt](https://github.com/dm4sec/hwservice_sec/idc_script) to parse these binaries.
 ```commandline
 demo@demo:~/Downloads$ adb shell ls /vendor/lib64/vendor.huawei.hardware.ai@*
 /vendor/lib64/vendor.huawei.hardware.ai@1.0.so
@@ -20,7 +20,7 @@ demo@demo:~/Downloads$ adb shell ls /vendor/lib64/vendor.huawei.hardware.ai@*
 /vendor/lib64/vendor.huawei.hardware.ai@3.2.so
 ```
 
-C. After exploring `文字图像超分` activity, I find the following methods are triggered.
+C. After exploring `文字图像超分` (a.k.a textsuperresolution) activity, I find the following methods are triggered.
 
 | # | transaction code | interface token | interface method | 
 | ----| :----: | :----: | :---- |
@@ -35,7 +35,7 @@ C. After exploring `文字图像超分` activity, I find the following methods a
 | 9 | 21 | vendor.huawei.hardware.ai@3.0::IAiModelMngr | vendor::huawei::hardware::ai::V3_0::BpHwAiModelMngr::_hidl_allocMemory(android::hardware::IInterface *, android::hardware::details::HidlInstrumentor *, int, android::hardware::hidl_string const&, int, std::__1::function<void ()(int, android::hardware::hidl_memory const&)>)
 | 10 | 22 | vendor.huawei.hardware.ai@3.0::IAiModelMngr | vendor::huawei::hardware::ai::V3_0::BpHwAiModelMngr::_hidl_freeMemory(android::hardware::IInterface *, android::hardware::details::HidlInstrumentor *, int, android::hardware::hidl_string const&, android::hardware::hidl_memory const&)
 
-After inspecting the `interface method` names, I would like to fuzz #6, #7, and #8 interfaces.
+I would like to fuzz #6, #7, and #8 interfaces after going through the `interface method` names.
 I take #7 as an example to perform both peekhole and object fuzz. 
 
 D) The runtime `Parcel` information is collected below. 
@@ -71,7 +71,7 @@ II) Buffers of each `binder_buffer_object` object: \
              0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F  0123456789ABCDEF
 7fe89abb88  28 0d a2 e9 75 00 00 00 01 00 00 00 01 00 00 00  (...u...........
 ```
-\#2. 0x5c - 0x84, assembled by `writeEmbeddedBuffer`, which write the object of `hidl_vect<t>`:
+\#2. <span id='2nd_binder_buffer_object'></span> 0x5c - 0x84, assembled by `writeEmbeddedBuffer`, which write the object of `hidl_vect<t>`:
 ```
              0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F  0123456789ABCDEF
 75e9a20d28  b0 0d a2 e9 75 00 00 00 2d 00 00 00 01 00 00 00  ....u...-.......
@@ -85,7 +85,7 @@ II) Buffers of each `binder_buffer_object` object: \
 75e9a20dc0  6c 75 74 69 6f 6e 36 30 30 3a 63 6f 6d 2e 6d 6c  lution600:com.ml
 75e9a20dd0  6b 69 74 2e 73 61 6d 70 6c 65 2e 63 6e 00        kit.sample.cn.
 ```
-\#4. 0xb4 - 0xdc, `status_t writeEmbeddedToParcel(const hidl_handle &handle,` -> `status_t Parcel::writeEmbeddedNativeHandle(const native_handle_t *handle,` -> `status_t Parcel::writeNativeHandleNoDup(const native_handle_t *handle,
+\#4. <span id='4th_binder_buffer_object'> 0xb4 - 0xdc, `status_t writeEmbeddedToParcel(const hidl_handle &handle,` -> `status_t Parcel::writeEmbeddedNativeHandle(const native_handle_t *handle,` -> `status_t Parcel::writeNativeHandleNoDup(const native_handle_t *handle,
 ` -> `status_t Parcel::writeEmbeddedBuffer(`
 ```
              0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F  0123456789ABCDEF
@@ -175,7 +175,7 @@ Anyway, `writeEmbeddedToParcel` is equal to `writeEmbeddedBuffer` when processin
 
 ###### Profile the `ModelBuffer` object
 The challenge is that the object is self organized (unknown to third-party).
-By observation (e.g., by cross referencing the libai_client.so, vendor.huawei.hardware.ai@1.0.so, the output of logcat, and some testcases), we profile the layout of the `ModelBuffer` (\#2) as:
+By observation (e.g., by cross referencing the libai_client.so, vendor.huawei.hardware.ai@1.0.so, the output of logcat, and some testcases), we profile the layout of the `ModelBuffer` ([#2](2nd_binder_buffer_object)) as:
 ```
              0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F  0123456789ABCDEF
 75e9a20d28  b0 0d a2 e9 75 00 00 00 2d 00 00 00 01 00 00 00  ....u...-.......
@@ -188,7 +188,7 @@ By observation (e.g., by cross referencing the libai_client.so, vendor.huawei.ha
 |   hidl_string object    |   hidl_handle object    | 1st int | 2nd int |     
 ```
 
-The `hidl_handle` object is a variant-length object, the instance of \#4 can be read as:
+The `hidl_handle` object is a variant-length object, the instance of [#4](#4th_binder_buffer_object) can be read as:
 
 ```
              0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F  0123456789ABCDEF
@@ -336,12 +336,12 @@ During the fuzzing, the logcat generates:
 12-13 23:27:11.635  1138  9059 E aiserver: AiModelMngrService::startModelFromMem2 ERROR: pid 6389001 already registered!
 ```
 This means our fuzzer works and trigger the first error, but the following error indicates the `_hidl_startModelFromMem2` method depends on the previous steps. 
-So that the replay strategy can't be applied to this scenario. There are 2 solutions for this problem. One is that we play the pre-steps, and the other one is that we modify the code to load the model over and over. We use the later one to simplified the process.
-To do so, we also write a clean version of `startModelFromMem2.js`, it works as:
+So that the replay strategy can't be applied to this scenario. There are 2 solutions for this problem. One is that we play the pre-steps, and the other one is that we modify the code of app to load the model over and over. We adopt the later one to simplified the process.
+To do so, we write a clean version of `textsuperresolution.js`, it works as:
 
 ![image](https://github.com/dm4sec/hwservice_sec/blob/master/case_study/huaweiAI/images/startModelFromMem2.gif)
 
-**NOTE**: The output of logcat also indicates that we should fuzz the Peekhole one unit per time.
+**NOTE**: The output of logcat also indicates that we should fuzz the Peekhole one unit per lunch.
 
 ## 4. Fuzz result
 Ok, It took us a few days to reach here, now, let's roll! \
@@ -385,10 +385,7 @@ After one whole night, I found lots of crashes like:
 12-16 17:13:23.460 21601 21601 F DEBUG   :       #15 pc 00000000000cf7c0  /apex/com.android.runtime/lib64/bionic/libc.so (__pthread_start(void*)+36) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
 12-16 17:13:23.460 21601 21601 F DEBUG   :       #16 pc 00000000000721a8  /apex/com.android.runtime/lib64/bionic/libc.so (__start_thread+64) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
 ```
-Parts of the offsets in the model that will crash the server are collected as `[-4, 0x12c, 0x1bc, 0x1c0, 0x1e0, 0x250, 0x25c, 0x2f0, 0x5c4, 0x5c8, ]`.
+Values of the model that will crash the server are collected as [textsuperresolution_carsh.log](https://github.com/dm4sec/hwservice_sec/blob/master/case_study/huaweiAI/textsuperresolution_crash.log).
 
-## 6. TODO:
-A graceful bug observer.
-
-## 5. Reference:
+## 4. Reference:
 [IMOD](https://bio3d.colorado.edu/imod/), [Imod ASCII File Format](https://bio3d.colorado.edu/imod/doc/asciispec.html), [IMOD Binary File Format](https://bio3d.colorado.edu/imod/doc/binspec.html).
