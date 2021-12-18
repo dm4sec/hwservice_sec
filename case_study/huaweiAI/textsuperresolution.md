@@ -336,7 +336,7 @@ During the fuzzing, the logcat generates:
 12-13 23:27:11.635  1138  9059 E aiserver: AiModelMngrService::startModelFromMem2 ERROR: pid 6389001 already registered!
 ```
 This means our fuzzer works and trigger the first error, but the following error indicates the `_hidl_startModelFromMem2` method depends on the previous steps. 
-So that the replay strategy can't be applied to this scenario. There are 2 solutions for this problem. One is that we play the pre-steps, and the other one is that we modify the code of app to load the model over and over. We adopt the later one to simplified the process.
+So that the replay strategy can't be applied to this scenario. There are 2 solutions for this problem. One is that we craft and play the pre-steps, and the other one is that we modify the code of app to load the model over and over. We adopt the later one to simplified the process.
 To do so, we write a clean version of `textsuperresolution.js`, it works as:
 
 ![image](https://github.com/dm4sec/hwservice_sec/blob/master/case_study/huaweiAI/images/startModelFromMem2.gif)
