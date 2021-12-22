@@ -78,7 +78,7 @@ Java.perform(function () {
 
     const mHandle_LOC      = 0x8;
 
-    // defined in system/libhwbinder/Parcel.cpp
+    // defined in frameworks/native/libs/binder/Parcel.cpp
     function PAD_SIZE_UNSAFE(s)
     {
         return (((s)+3)&~3)

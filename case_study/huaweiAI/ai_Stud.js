@@ -85,16 +85,8 @@ Java.perform(function () {
 
     function fuzz_hidl_startModelFromMem2(mData_pos, mObjects_pos, mObjectsSize, mHandle, code, data, reply, flags, isVendor)
     {
-// The parcel layout:
-//        0          0x2c    0x30    0x34                     0x5c                     0x84                     0xac 0xb0 0xb4                     0xdc                     0xfc
-//        |-----------|-------|-------|------------------------|------------------------|------------------------|----|----|------------------------|------------------------|
-//        | interface |  int  |  int  | BINDER_TYPE_PTR (0x28) | BINDER_TYPE_PTR (0x28) | BINDER_TYPE_PTR (0x28) | Uint64  | BINDER_TYPE_PTR (0x28) | BINDER_TYPE_FDA (0x20) |
 
-//        0                        0x04     0x08      0x0c      0x10      0x14      0x18      0x2c
-//        |-------------------------|--------|---------|---------|---------|---------|---------|
-//        | sizeof(native_handle_t) | numFds | numInts | 1st fds | 1st int |    V2   |    V1   |
-
-        var binder_object_offset    = mObjects_pos.add(3 * 0x8).readU64();
+        var binder_object_offset    = mObjects_pos.add(2 * 0x8).readU64();
         var binder_object_pos       = mData_pos.add(binder_object_offset);
 
         var buffer_pos          = binder_object_pos.add(0x8);
@@ -127,7 +119,8 @@ Java.perform(function () {
 
         // void* mmap(void* addr, size_t size, int prot, int flags, int fd, off_t offset) {
 
-        var this_mmap_p = Module.getExportByName("libai_client.so", 'mmap');
+
+        var this_mmap_p = Module.getExportByName("libai_hidl_request_client.so", 'mmap');
         console.log("[i] mmap addr: " + this_mmap_p);
 
         var func_mmap = new NativeFunction(this_mmap_p,
@@ -187,6 +180,163 @@ Java.perform(function () {
 //            console.log("|----[i] fuzz offset: 0x" + i + ", addr: " + g_model_buf.add(i).toString(16));
 //            fuzzOneSInt(g_model_buf.add(i), mHandle, code, data, reply, flags, isVendor);
 //        }
+
+    }
+
+    // fast study the object
+    function fastStudyObject(mData_pos, mObjects_pos, mObjectsSize, mHandle, code, data, reply, flags, isVendor){
+        var binder_object_offset    = mObjects_pos.add(2 * 0x8).readU64();
+        var binder_object_pos       = mData_pos.add(binder_object_offset);
+        var buffer_pos              = binder_object_pos.add(0x8);
+        var length_pos              = binder_object_pos.add(0x10);
+
+        console.log(hexdump(buffer_pos.readPointer(), {
+            offset: 0,
+            length: length_pos.readU64(),
+            header: true,
+            ansi: true
+        }));
+
+        var this_mmap_p = Module.getExportByName("libai_hidl_request_client.so", 'mmap');
+        console.log("[i] mmap addr: " + this_mmap_p);
+
+        var this_fd =  buffer_pos.readPointer().add(0xc).readU32();
+        var this_size = buffer_pos.readPointer().add(0x18).readU32();
+        console.log(this_fd + ": " + this_size);
+
+        var func_mmap = new NativeFunction(this_mmap_p,
+            'uint64',
+            ['uint64', 'uint32', 'int32', 'int32', 'int32', 'int32']
+            );
+        var ret = func_mmap(
+            0,
+            this_size,
+            PROT_READ|PROT_WRITE,
+            MAP_SHARED,
+            this_fd,
+            0);
+
+        console.log("[i] mmap ret: 0x" + ret.toString(16));
+
+        var this_fd_buffer = ptr(ret);
+        try{
+            console.log(hexdump(this_fd_buffer, {
+                offset: 0,
+                length: this_size,
+                header: true,
+                ansi: true
+            }));
+        }
+        catch(err)
+        {
+            console.log("|----[e] can't read");
+            return;
+        }
+
+
+        console.log(hexdump(this_fd_buffer.add(0x16).readPointer(), {
+            offset: 0,
+            length: 0x80,
+            header: true,
+            ansi: true
+        }));
+
+        console.log(hexdump(this_fd_buffer.add(0x1e).readPointer(), {
+            offset: 0,
+            length: 0x80,
+            header: true,
+            ansi: true
+        }));
+
+        var binder_object_offset    = mObjects_pos.add(4 * 0x8).readU64();
+        var binder_object_pos       = mData_pos.add(binder_object_offset);
+        var buffer_pos              = binder_object_pos.add(0x8);
+        var length_pos              = binder_object_pos.add(0x10);
+
+        console.log(hexdump(buffer_pos.readPointer(), {
+            offset: 0,
+            length: length_pos.readU64(),
+            header: true,
+            ansi: true
+        }));
+
+        var this_fd =  buffer_pos.readPointer().add(0xc).readU32();
+        var this_size = buffer_pos.readPointer().add(0x18).readU32();
+        console.log(this_fd + ": " + this_size);
+
+        var func_mmap = new NativeFunction(this_mmap_p,
+            'uint64',
+            ['uint64', 'uint32', 'int32', 'int32', 'int32', 'int32']
+            );
+        var ret = func_mmap(
+            0,
+            this_size,
+            PROT_READ|PROT_WRITE,
+            MAP_SHARED,
+            this_fd,
+            0);
+
+        console.log("[i] mmap ret: 0x" + ret.toString(16));
+
+        var this_fd_buffer = ptr(ret);
+        try{
+            console.log(hexdump(this_fd_buffer, {
+                offset: 0,
+                length: 0x100,
+                header: true,
+                ansi: true
+            }));
+        }
+        catch(err)
+        {
+            console.log("|----[e] can't read");
+            return;
+        }
+
+        var binder_object_offset    = mObjects_pos.add(6 * 0x8).readU64();
+        var binder_object_pos       = mData_pos.add(binder_object_offset);
+        var buffer_pos              = binder_object_pos.add(0x8);
+        var length_pos              = binder_object_pos.add(0x10);
+
+        console.log(hexdump(buffer_pos.readPointer(), {
+            offset: 0,
+            length: length_pos.readU64(),
+            header: true,
+            ansi: true
+        }));
+
+        var this_fd =  buffer_pos.readPointer().add(0xc).readU32();
+        var this_size = buffer_pos.readPointer().add(0x18).readU32();
+        console.log(this_fd + ": " + this_size);
+
+        var func_mmap = new NativeFunction(this_mmap_p,
+            'uint64',
+            ['uint64', 'uint32', 'int32', 'int32', 'int32', 'int32']
+            );
+        var ret = func_mmap(
+            0,
+            this_size,
+            PROT_READ|PROT_WRITE,
+            MAP_SHARED,
+            this_fd,
+            0);
+
+        console.log("[i] mmap ret: 0x" + ret.toString(16));
+
+        var this_fd_buffer = ptr(ret);
+        try{
+            console.log(hexdump(this_fd_buffer, {
+                offset: 0,
+                length: 0x100,
+                header: true,
+                ansi: true
+            }));
+        }
+        catch(err)
+        {
+            console.log("|----[e] can't read");
+            return;
+        }
 
     }
 
@@ -400,6 +550,8 @@ Java.perform(function () {
                     binder_size_t			parent_offset;
                 };
                 */
+
+
                 var num_fds_pos                 = binder_object_pos.add(0x8);
                 var parent_pos                  = binder_object_pos.add(0x10);
                 var parent_offset_pos           = binder_object_pos.add(0x18);
@@ -407,6 +559,7 @@ Java.perform(function () {
                 console.log("|----[i] num_fds: 0x" + num_fds_pos.readU64().toString(16));
                 console.log("|----[i] parent: 0x" + parent_pos.readU64().toString(16));
                 console.log("|----[i] parent_offset: 0x" + parent_offset_pos.readU64().toString(16));
+
 
             }
             else
@@ -553,12 +706,11 @@ Java.perform(function () {
     }
 
     const whiteTransactionCode = [
-        // 11,                                 // vendor.huawei.hardware.ai@2.1::IModelManagerService_hidl         _hidl_BuildModel
-        11,                                 // vendor.huawei.hardware.ai@1.1::IAiModelMngr                      _hidl_startModelFromMem2
-        // 12                                  // vendor.huawei.hardware.ai@1.1::IAiModelMngr                      _hidl_runModel2
+        1
     ];
+
     // const fuzzInterface     = "vendor.huawei.hardware.ai";
-    const fuzzInterface             = "vendor.huawei.hardware.ai@1.1::IAiModelMngr"
+    const fuzzInterface             = "vendor.huawei.hardware.ai.hidlrequest@1.0::IHidlRequest"
 
     function parseParcel(args, that, isVendor){
         // remove to enable all transactions.
@@ -569,10 +721,10 @@ Java.perform(function () {
         if (args[2].add(mData_LOC).readPointer().readUtf8String().indexOf(fuzzInterface) == -1)
             return
 
-        console.log("[i] memory information:");
-        for (let [key, value] of mem_info.entries()) {
-            console.log("0x" + key.toString(16) + " = " + "0x" + value[0].toString(16) + ", 0x" + value[1].toString(16));
-        }
+//        console.log("[i] memory information:");
+//        for (let [key, value] of mem_info.entries()) {
+//            console.log("0x" + key.toString(16) + " = " + "0x" + value[0].toString(16) + ", 0x" + value[1].toString(16));
+//        }
 
         console.log('[i] call stack:\n' +
             Thread.backtrace(that.context, Backtracer.ACCURATE)
@@ -665,8 +817,9 @@ Java.perform(function () {
         // I would like to fuzz in runtime, such that I can covert back to the original mData.
         // fuzzPeekhole(mData_pos, mDataSize, mObjects_pos, mObjectsSize, mHandle, args[1].toInt32(), args[2], args[3], args[4].toInt32(), isVendor);
         if (mObjectsSize != 0)
-            // studyObject(mData_pos, mObjects_pos, mObjectsSize, mHandle, args[1].toInt32(), args[2], args[3], args[4].toInt32(), isVendor);
-            fuzz_hidl_startModelFromMem2(mData_pos, mObjects_pos, mObjectsSize, mHandle, args[1].toInt32(), args[2], args[3], args[4].toInt32(), isVendor);
+            // fastStudyObject(mData_pos, mObjects_pos, mObjectsSize, mHandle, args[1].toInt32(), args[2], args[3], args[4].toInt32(), isVendor);
+            studyObject(mData_pos, mObjects_pos, mObjectsSize, mHandle, args[1].toInt32(), args[2], args[3], args[4].toInt32(), isVendor);
+            // fuzz_hidl_startModelFromMem2(mData_pos, mObjects_pos, mObjectsSize, mHandle, args[1].toInt32(), args[2], args[3], args[4].toInt32(), isVendor);
     }
 
 
@@ -839,7 +992,7 @@ void munmap(void *addr, size_t length)
 //        }
 //    });
 
-
+/*
     var dup_p = Module.getExportByName("libai_client.so",
     'dup');
     console.log("[i] dup addr: " + dup_p);
@@ -977,6 +1130,7 @@ void munmap(void *addr, size_t length)
         }
     });
 
+*/
 
 
 /*
