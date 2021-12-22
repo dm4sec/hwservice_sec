@@ -53,6 +53,62 @@ Java.perform(function () {
                         ];
     }
 
+    function studyObject(mData_pos, mDataSize, mObjects_pos, mObjectsSize, code, data, reply, flags, isVendor)
+    {
+// the layout of mData is as:
+//            0                0x38  0x3c  0x40       0x68                    0x90                 0x98          0xc0       0xe8
+//    |-----------------|-----|-----|----------|-----------------------|--------------------|-------------|----------|-----
+//    | interface token | int | int | hidl_vec | hidl_vec<hidl_handle> | native_handle_size | hidl_handle | fd_array | ...
+//                                                                                           \------- zero or more --------
+        if (mObjectsSize <= 2)
+            return;
+
+        for (var index = 2; index < mObjectsSize; index += 2)
+        {
+            // dump each hidl_handle
+            var hidl_handle_pos = mData_pos.add(mObjects_pos.add(index * 0x8).readU64());
+            var buffer          = hidl_handle_pos.add(0x8).readPointer();
+            var length          = hidl_handle_pos.add(0x10).readU32();
+
+            console.log(hexdump(buffer, {
+                offset: 0,
+                length: length,
+                header: true,
+                ansi: true
+            }));
+
+            var this_fd         = buffer.add(0x0c).readU32();
+            var this_size       = buffer.add(0x18).readU32();
+
+            var this_mmap_p = Module.getExportByName("libai_hidl_request_client.so", 'mmap');
+            console.log("|-----[i] mmap addr: " + this_mmap_p);
+
+            var func_mmap = new NativeFunction(this_mmap_p,
+                'uint64',
+                ['uint64', 'uint32', 'int32', 'int32', 'int32', 'int32']
+                );
+            var map_memory_addr = func_mmap(
+                0,
+                this_size,
+                PROT_READ|PROT_WRITE,
+                MAP_SHARED,
+                this_fd,
+                0);
+
+            console.log("|-----[i] mmap ret: 0x" + map_memory_addr.toString(16));
+            console.log("|-----[i] dumping fd: 0x" + this_fd.toString(16) + ", size: 0x" + this_size.toString(16));
+
+            var that_size = this_size > 0x100 ? 0x100: this_size;
+            console.log(hexdump(ptr(map_memory_addr), {
+                offset: 0,
+                length: that_size,
+                header: true,
+                ansi: true
+            }));
+
+        }
+    }
+
 
     function fuzzPeekhole(mData_pos, mDataSize, mObjects_pos, mObjectsSize, code, data, reply, flags, isVendor)
     {
@@ -103,7 +159,6 @@ Java.perform(function () {
 
     function fuzz_hidl_startModelFromMem2(mData_pos, mObjects_pos, mObjectsSize, code, data, reply, flags, isVendor)
     {
-
         var binder_object_offset    = mObjects_pos.add(2 * 0x8).readU64();
         var binder_object_pos       = mData_pos.add(binder_object_offset);
 
@@ -306,7 +361,7 @@ Java.perform(function () {
 
         // dump the InterfaceToken
         var interfaceToken = mData_pos.readUtf8String();
-        console.log("|--[interface Token: ");
+        console.log("|--[i]interface Token: ");
         console.log(hexdump(mData_pos, {
             offset: 0,
             length: interfaceToken.length,
@@ -334,7 +389,7 @@ Java.perform(function () {
         if (mObjectsSize != 0)
 //            var ret = fuzzPeekhole(mData_pos, mDataSize, mObjects_pos, mObjectsSize, args[1].toInt32(), args[2], args[3], args[4].toInt32(), isVendor);
 //            if (ret == -1)
-                fuzz_hidl_startModelFromMem2(mData_pos, mObjects_pos, mObjectsSize, args[1].toInt32(), args[2], args[3], args[4].toInt32(), isVendor);
+                studyObject(mData_pos, mDataSize, mObjects_pos, mObjectsSize, args[1].toInt32(), args[2], args[3], args[4].toInt32(), isVendor);
     }
 
 

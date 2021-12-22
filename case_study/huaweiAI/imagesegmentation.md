@@ -1,6 +1,6 @@
 # This is the case of fuzzing `Image Segmentation` of [huawei ai service](https://developer.huawei.com/consumer/cn/doc/overview/HUAWEI_HiAI).
 
-## S1:
+## S1: collecting information
 We firstly remove the `interface token and transaction code filter` to collect all interfaces related to the test case (Image Segmentation -> Image Segmentation -> Select an image -> Select `sky` as the target).
 The transactions we collected:
 
@@ -67,7 +67,7 @@ C: 0x13358 -> 0x22070: android::hardware::writeEmbeddedToParcel(android::hardwar
 T: Transaction code at 0x13398: 1
 ```
 
-## S2: 
+## S2: inspecting the `mData`s
 After that, we enable the interface token and transaction code filter to get the `Parcel` data, the `mData` within the `Parcel` are:
 ```
              0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F  0123456789ABCDEF
@@ -248,16 +248,206 @@ After that, we enable the interface token and transaction code filter to get the
 
 **Note:** 
 1) The transaction is processed multiple times, such that we get a collection of transactions; 
-2) The prototype of `_hidl_execute` accepts 4 arguments, 2 `int`s, one `hidl_vec<hidl_handle>`, and one `callback`. Pay attention to the second `int` in the `mData`, I guess it's an important indication to tell these `Parcel`s apart;
+2) The prototype of `_hidl_execute` accepts 4 arguments, 2 `int`s, one `hidl_vec<hidl_handle>`, and one `callback`. Pay attention to the 2nd `int`<span id='2nd_int'> in the `mData`, I guess it's an important indication to tell these `transaction`s apart;
 3) The layout of `mData` is like below, the first and the second block do not ended with `BINDER_TYPE_FDA`, which means an empty `hidl_vec` is delivered.
-
-`hidl_vec<hidl_handle>` within 
-
 ```
 0                0x38  0x3c  0x40       0x68                    0x90                 0x98          0xc0       0xe8
 |-----------------|-----|-----|----------|-----------------------|--------------------|-------------|----------|----- 
 | interface token | int | int | hidl_vec | hidl_vec<hidl_handle> | native_handle_size | hidl_handle | fd_array | ...    
+                                                                                       \------- zero or more --------                       
 ```
- 
 
- 
+## S3: inspecting each handles
+After parsing each `hidl_handle`, I found each handle is created by using `native_handle_create(1, 5)`, which create instance of handle as:
+
+```
+73a0c9e700  0c 00 00 00 01 00 00 00 05 00 00 00 7f 00 00 00  ................
+73a0c9e710  72 64 77 61 72 65 2e 61 0e 00 00 00 64 6c 72 65  rdware.a....dlre
+73a0c9e720  71 75 65 73                                      ques
+
+```
+the layout of the `hidl_handle` is as:
+```
+0                        0x04     0x08      0x0c 0x10  0x14  0x18  0x1c  0x20  0x24 
+|-------------------------|--------|---------|----|-----|-----|-----|-----|-----|
+| sizeof(native_handle_t) | numFds | numInts | fd | int | int | len | int | int |
+```
+**NOTE:**
+1) There are only 1 `fd` in the object with offset `0x0c`;
+2) By observation, I found the `int` in the offset of `0x18` is the length of ashmem.
+
+Then I peak each of the ashmem to find tje interesting target. Each memory is collected as:
+
+\#1:
+```
+|-----[i] dumping fd: 0x7d, size: 0x8
+             0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F  0123456789ABCDEF
+7485c09000  00 20 2f 6d 73 00 00 00                          . /ms...
+```
+
+\#2:
+```
+|-----[i] dumping fd: 0x7d, size: 0x1414728
+             0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F  0123456789ABCDEF
+735f5eb000  fe 46 41 01 0a 0f 72 65 73 33 30 2d 62 6d 2d 64  .FA...res30-bm-d
+735f5eb010  65 70 6c 6f 79 22 06 64 61 74 61 3a 30 2a 0d 4e  eploy".data:0*.N
+735f5eb020  6f 64 65 5f 4f 75 74 70 75 74 3a 30 32 8f 01 0a  ode_Output:02...
+735f5eb030  04 64 61 74 61 12 04 44 61 74 61 2a 00 52 0d 0a  .data..Data*.R..
+735f5eb040  07 76 65 72 73 69 6f 6e 12 02 18 05 52 0f 0a 09  .version....R...
+735f5eb050  64 61 74 61 5f 74 79 70 65 12 02 18 00 52 15 0a  data_type....R..
+735f5eb060  0f 69 6e 66 65 72 72 65 64 5f 66 6f 72 6d 61 74  .inferred_format
+735f5eb070  12 02 18 00 a0 01 01 a8 01 b2 03 8a 02 1d 10 01  ................
+735f5eb080  1a 08 0a 06 01 03 e0 02 e0 02 22 04 4e 43 48 57  ..........".NCHW
+735f5eb090  48 01 50 80 e0 5a 72 03 4e 50 55 92 02 20 10 01  H.P..Zr.NPU.. ..
+735f5eb0a0  1a 08 0a 06 01 03 e0 02 e0 02 22 04 4e 43 48 57  ..........".NCHW
+735f5eb0b0  48 01 50 a0 b0 2d 72 03 4e 50 55 80 01 04 32 d5  H.P..-r.NPU...2.
+735f5eb0c0  01 0a 22 63 6f 6e 76 31 30 5f 62 30 5f 31 78 6b  .."conv10_b0_1xk
+735f5eb0d0  5f 6d 5f 4c 65 61 6b 79 52 65 6c 75 5f 5f 63 6f  _m_LeakyRelu__co
+735f5eb0e0  6e 73 74 5f 32 12 05 43 6f 6e 73 74 52 1c 0a 11  nst_2..ConstR...
+735f5eb0f0  6f 72 69 67 69 6e 61 6c 5f 6f 70 5f 6e 61 6d 65  original_op_name
+```
+\#3:
+```
+|-----[i] dumping fd: 0x7d, size: 0x14146fe
+             0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F  0123456789ABCDEF
+735e1d6000  0a 0f 72 65 73 33 30 2d 62 6d 2d 64 65 70 6c 6f  ..res30-bm-deplo
+735e1d6010  79 22 06 64 61 74 61 3a 30 2a 0d 4e 6f 64 65 5f  y".data:0*.Node_
+735e1d6020  4f 75 74 70 75 74 3a 30 32 8f 01 0a 04 64 61 74  Output:02....dat
+735e1d6030  61 12 04 44 61 74 61 2a 00 52 0d 0a 07 76 65 72  a..Data*.R...ver
+735e1d6040  73 69 6f 6e 12 02 18 05 52 0f 0a 09 64 61 74 61  sion....R...data
+735e1d6050  5f 74 79 70 65 12 02 18 00 52 15 0a 0f 69 6e 66  _type....R...inf
+735e1d6060  65 72 72 65 64 5f 66 6f 72 6d 61 74 12 02 18 00  erred_format....
+735e1d6070  a0 01 01 a8 01 8b 05 8a 02 1d 10 01 1a 08 0a 06  ................
+735e1d6080  01 03 e0 02 e0 02 22 04 4e 43 48 57 48 01 50 80  ......".NCHWH.P.
+735e1d6090  e0 5a 72 03 4e 50 55 92 02 20 10 01 1a 08 0a 06  .Zr.NPU.. ......
+735e1d60a0  01 03 e0 02 e0 02 22 04 4e 43 48 57 48 01 50 a0  ......".NCHWH.P.
+735e1d60b0  b0 2d 72 03 4e 50 55 80 01 04 32 d5 01 0a 22 63  .-r.NPU...2..."c
+735e1d60c0  6f 6e 76 31 30 5f 62 30 5f 31 78 6b 5f 6d 5f 4c  onv10_b0_1xk_m_L
+735e1d60d0  65 61 6b 79 52 65 6c 75 5f 5f 63 6f 6e 73 74 5f  eakyRelu__const_
+735e1d60e0  32 12 05 43 6f 6e 73 74 52 1c 0a 11 6f 72 69 67  2..ConstR...orig
+735e1d60f0  69 6e 61 6c 5f 6f 70 5f 6e 61 6d 65 73 12 07 0a  inal_op_names...
+```
+\#4:
+```
+|-----[i] dumping fd: 0x7e, size: 0x6
+             0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F  0123456789ABCDEF
+7487b2d000  44 4e 4e 41 43 4c                                DNNACL
+```
+\#5:
+```
+|-----[i] dumping fd: 0x7d, size: 0x1414dd1
+             0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F  0123456789ABCDEF
+735cdc1000  0a 1b 72 65 73 33 30 2d 62 6d 2d 64 65 70 6c 6f  ..res30-bm-deplo
+735cdc1010  79 5f 73 75 62 5f 67 72 61 70 68 5f 30 22 11 53  y_sub_graph_0".S
+735cdc1020  75 62 47 72 61 70 68 5f 30 5f 64 61 74 61 3a 30  ubGraph_0_data:0
+735cdc1030  2a 13 53 75 62 47 72 61 70 68 5f 30 5f 6e 65 74  *.SubGraph_0_net
+735cdc1040  6f 75 74 3a 30 32 67 0a 0f 53 75 62 47 72 61 70  out:02g..SubGrap
+735cdc1050  68 5f 30 5f 64 61 74 61 12 04 44 61 74 61 2a 00  h_0_data..Data*.
+735cdc1060  a0 01 01 a8 01 bc 08 ea 01 01 00 8a 02 1d 10 01  ................
+735cdc1070  1a 08 0a 06 01 03 e0 02 e0 02 22 04 4e 43 48 57  ..........".NCHW
+735cdc1080  48 01 50 a0 e0 5a 72 03 4e 50 55 92 02 20 10 01  H.P..Zr.NPU.. ..
+735cdc1090  1a 08 0a 06 01 03 e0 02 e0 02 22 04 4e 43 48 57  ..........".NCHW
+735cdc10a0  48 01 50 a0 e0 5a 72 03 4e 50 55 80 01 04 32 b6  H.P..Zr.NPU...2.
+735cdc10b0  81 10 0a 1b 72 65 73 34 61 5f 62 72 61 6e 63 68  ....res4a_branch
+735cdc10c0  32 63 5f 63 6f 6e 76 5f 63 6f 6e 73 74 5f 31 12  2c_conv_const_1.
+735cdc10d0  05 43 6f 6e 73 74 52 1c 0a 11 6f 72 69 67 69 6e  .ConstR...origin
+735cdc10e0  61 6c 5f 6f 70 5f 6e 61 6d 65 73 12 07 0a 05 12  al_op_names.....
+735cdc10f0  00 a0 01 01 52 b2 80 10 0a 05 76 61 6c 75 65 12  ....R.....value.
+```
+\#6:
+```
+|-----[i] dumping fd: 0x7e, size: 0x6
+             0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F  0123456789ABCDEF
+7487b2b000  44 4e 4e 41 43 4c                                DNNACL
+```
+\#7:
+```
+|-----[i] dumping fd: 0x7f, size: 0x1
+             0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F  0123456789ABCDEF
+7487b2a000  00                                               .
+```
+\#8:
+```
+|-----[i] dumping fd: 0x7d, size: 0xe
+             0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F  0123456789ABCDEF
+7487b29000  06 00 00 00 44 4e 4e 41 43 4c 03 00 00 00        ....DNNACL....
+```
+\#9:
+```
+|-----[i] dumping fd: 0x7f, size: 0xcd09a1
+             0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F  0123456789ABCDEF
+735c0f0000  1b 00 00 00 06 00 00 00 44 4e 4e 41 43 4c 00 00  ........DNNACL..
+735c0f0010  00 00 00 00 00 00 01 26 65 00 00 00 00 00 00 76  .......&e......v
+735c0f0020  55 b6 00 49 4d 4f 44 00 01 00 00 00 00 00 10 00  U..IMOD.........
+735c0f0030  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+735c0f0040  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+735c0f0050  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+735c0f0060  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 76  ...............v
+735c0f0070  54 b6 00 00 00 04 00 72 65 73 33 30 2d 62 6d 2d  T......res30-bm-
+735c0f0080  64 65 70 6c 6f 79 5f 73 75 62 5f 67 72 61 70 68  deploy_sub_graph
+735c0f0090  5f 30 5f 61 69 68 00 00 00 00 00 00 00 00 00 00  _0_aih..........
+735c0f00a0  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+735c0f00b0  00 00 00 00 00 00 00 00 00 00 00 02 00 00 00 33  ...............3
+735c0f00c0  2e 35 31 2e 7a 2e 30 00 00 00 00 00 00 00 00 00  .51.z.0.........
+735c0f00d0  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+735c0f00e0  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+735c0f00f0  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+```
+\#10:
+```
+|-----[i] dumping fd: 0x84, size: 0x26
+             0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F  0123456789ABCDEF
+7485bf1000  06 00 00 00 44 4e 4e 41 43 4c 00 00 00 00 01 00  ....DNNACL......
+7485bf1010  00 00 01 00 00 00 00 70 79 4f 73 00 00 00 00 30  .......pyOs....0
+7485bf1020  26 4f 73 00 00 00                                &Os...
+```
+\#11:
+```
+|-----[i] dumping fd: 0x82, size: 0x16b000
+             0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F  0123456789ABCDEF
+734f0f8000  00 00 a0 42 00 00 9c 42 00 00 9c 42 00 00 9e 42  ...B...B...B...B
+734f0f8010  00 00 9e 42 00 00 9e 42 00 00 9c 42 00 00 9e 42  ...B...B...B...B
+734f0f8020  00 00 a0 42 00 00 9e 42 00 00 9c 42 00 00 9c 42  ...B...B...B...B
+734f0f8030  00 00 9e 42 00 00 9e 42 00 00 9c 42 00 00 9e 42  ...B...B...B...B
+734f0f8040  00 00 9e 42 00 00 9e 42 00 00 9e 42 00 00 9e 42  ...B...B...B...B
+734f0f8050  00 00 9e 42 00 00 9e 42 00 00 a0 42 00 00 a0 42  ...B...B...B...B
+734f0f8060  00 00 9e 42 00 00 9e 42 00 00 9e 42 00 00 9e 42  ...B...B...B...B
+734f0f8070  00 00 a0 42 00 00 a0 42 00 00 9e 42 00 00 a0 42  ...B...B...B...B
+734f0f8080  00 00 a0 42 00 00 9e 42 00 00 9e 42 00 00 9e 42  ...B...B...B...B
+734f0f8090  00 00 9e 42 00 00 a2 42 00 00 9e 42 00 00 9e 42  ...B...B...B...B
+734f0f80a0  00 00 a0 42 00 00 9e 42 00 00 9e 42 00 00 a2 42  ...B...B...B...B
+734f0f80b0  00 00 9e 42 00 00 a0 42 00 00 a0 42 00 00 9e 42  ...B...B...B...B
+734f0f80c0  00 00 a0 42 00 00 a0 42 00 00 9e 42 00 00 9e 42  ...B...B...B...B
+734f0f80d0  00 00 a0 42 00 00 9e 42 00 00 9e 42 00 00 9e 42  ...B...B...B...B
+734f0f80e0  00 00 9c 42 00 00 9c 42 00 00 9c 42 00 00 9e 42  ...B...B...B...B
+734f0f80f0  00 00 9e 42 00 00 a0 42 00 00 a0 42 00 00 9e 42  ...B...B...B...B
+```
+\#12:
+```
+|-----[i] dumping fd: 0x83, size: 0x533000
+             0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F  0123456789ABCDEF
+734ebc5000  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+734ebc5010  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+734ebc5020  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+734ebc5030  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+734ebc5040  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+734ebc5050  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+734ebc5060  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+734ebc5070  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+734ebc5080  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+734ebc5090  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+734ebc50a0  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+734ebc50b0  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+734ebc50c0  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+734ebc50d0  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+734ebc50e0  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+734ebc50f0  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+```
+
+By observation, I would like to fuzz blocks #2, #3, #4, #5, #6, #7, #8 and #9, for they are models. (Although the #10 block looks like a model, it is enclosed in a `Parcel` we do not interested nonetheless.)
+## S4: start fuzzing
+1. As we stated, the [2nd int](#2nd_int) can tell apart different transaction, the parcels enclosing our interested data are tagged as:
+0x11 (#2), 0x10 (#3, #4), 0x13 (#5, #6, #7), 0x1b (#8) and 0x14 (#9).
+2. We notice that the first run of the app issues lots of transactions, but the following operation does not. This means that the replay strategy does not work. So we modify the source code of the app to re-launch the app.
+
+# fuzz result 
