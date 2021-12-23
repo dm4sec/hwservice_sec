@@ -1,8 +1,8 @@
 # This is the case of fuzzing `Image Segmentation` of [huawei ai service](https://developer.huawei.com/consumer/cn/doc/overview/HUAWEI_HiAI).
 
 ## S1: collecting information
-We firstly remove the `interface token and transaction code filter` to collect all interfaces related to the test case (Image Segmentation -> Image Segmentation -> Select an image -> Select `sky` as the target).
-The transactions we collected:
+We firstly remove the `interface token and transaction code filter` to collect all interfaces related to the test path (Image Segmentation -> Image Segmentation -> Select an image -> Select `sky` as the target).
+The transactions we collected are:
 
 | # | transaction code | interface token | interface method | 
 | ----| :----: | :----: | :---- |
@@ -68,7 +68,7 @@ T: Transaction code at 0x13398: 1
 ```
 
 ## S2: inspecting the `mData`s
-After that, we enable the interface token and transaction code filter to get the `Parcel` data, the `mData` within the `Parcel` are:
+After that, we enable the interface token and transaction code filter to get the `Parcel` data, the `mData`s within the `Parcel` are:
 ```
              0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F  0123456789ABCDEF
 73ea85a980  76 65 6e 64 6f 72 2e 68 75 61 77 65 69 2e 68 61  vendor.huawei.ha
@@ -247,9 +247,9 @@ After that, we enable the interface token and transaction code filter to get the
 ```
 
 **Note:** 
-1) The transaction is processed multiple times, such that we get a collection of transactions; 
-2) The prototype of `_hidl_execute` accepts 4 arguments, 2 `int`s, one `hidl_vec<hidl_handle>`, and one `callback`. Pay attention to the 2nd `int`<span id='2nd_int'> in the `mData`, I guess it's an important indication to tell these `transaction`s apart;
-3) The layout of `mData` is like below, the first and the second block do not ended with `BINDER_TYPE_FDA`, which means an empty `hidl_vec` is delivered.
+1) The transaction is delivered multiple times, such that we get a collection of transactions; 
+2) The prototype of `_hidl_execute` accepts 4 arguments, 2 `int`s, one `hidl_vec<hidl_handle>`, and one `callback`. Pay attention to the 2nd `int`<span id='2nd_int'> in the `mData`, it is likely to be an important indication to tell these `transaction`s apart;
+3) The layout of `mData` is as below, the first and the second `mData` block are not ended with `BINDER_TYPE_FDA`, which means an empty `hidl_vec` is delivered.
 ```
 0                0x38  0x3c  0x40       0x68                    0x90                 0x98          0xc0       0xe8
 |-----------------|-----|-----|----------|-----------------------|--------------------|-------------|----------|----- 
@@ -266,17 +266,17 @@ After parsing each `hidl_handle`, I found each handle is created by using `nativ
 73a0c9e720  71 75 65 73                                      ques
 
 ```
-the layout of the `hidl_handle` is as:
+the overall layout of the `hidl_handle` is as:
 ```
 0                        0x04     0x08      0x0c 0x10  0x14  0x18  0x1c  0x20  0x24 
 |-------------------------|--------|---------|----|-----|-----|-----|-----|-----|
 | sizeof(native_handle_t) | numFds | numInts | fd | int | int | len | int | int |
 ```
 **NOTE:**
-1) There are only 1 `fd` in the object with offset `0x0c`;
-2) By observation, I found the `int` in the offset of `0x18` is the length of ashmem.
+1) There are only 1 `fd` in the object in offset `0x0c`;
+2) By observation, I find the `int` in the offset of `0x18` is the length of the `ashmem`.
 
-Then I peak each of the ashmem to find tje interesting target. Each memory is collected as:
+Then I peak each of the `ashmem` to find the interesting target. Each memory is collected as:
 
 \#1:
 ```
@@ -444,10 +444,11 @@ Then I peak each of the ashmem to find tje interesting target. Each memory is co
 734ebc50f0  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
 ```
 
-By observation, I would like to fuzz blocks #2, #3, #4, #5, #6, #7, #8 and #9, for they are models. (Although the #10 block looks like a model, it is enclosed in a `Parcel` we do not interested nonetheless.)
+By observation, I would like to fuzz blocks #2, #3, #4, #5, #6, #7, #8 and #9, for they carrying models. (The #10 block looks like to be a model, it is enclosed in a `Parcel` we do not interested nonetheless.)
 ## S4: start fuzzing
-1. As we stated, the [2nd int](#2nd_int) can tell apart different transaction, the parcels enclosing our interested data are tagged as:
+1. As we stated, the [2nd int](#2nd_int) can tell apart different parcels, the parcels enclosing our interested data are tagged as:
 0x11 (#2), 0x10 (#3, #4), 0x13 (#5, #6, #7), 0x1b (#8) and 0x14 (#9).
-2. We notice that the first run of the app issues lots of transactions, but the following operation does not. This means that the replay strategy does not work. So we modify the source code of the app to re-launch the app.
-
+2. We notice that the first lunch of the app issues lots of parcels, but the following operation does not (does not load model). This means that the replay strategy does not work. So we modify the source code of the app to re-launch the app.
+3. I find the service can't be restarted automatically, so I detach to stop sending message.
 # fuzz result 
+The fuzz result is stored in imagesegmentation_crash.log file.

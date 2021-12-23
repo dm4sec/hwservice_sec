@@ -827,9 +827,9 @@ Java.perform(function () {
         var ms = Process.enumerateModules();
         for (var i = 0; i < ms.length; i ++ )
         {
-            // console.log(ms[i].name);
-            if (ms[i].path.indexOf("libc") != -1)
-                console.log(ms[i].path);
+            console.log(ms[i].name);
+//            if (ms[i].path.indexOf("vendor.huawei.hardware.ai") != -1)
+//                console.log(ms[i].path);
         }
     }
 

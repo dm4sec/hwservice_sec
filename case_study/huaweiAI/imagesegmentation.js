@@ -27,14 +27,6 @@ Java.perform(function () {
     var g_peekhole_index    = 2;
     var g_peekhole_seed     = 0;
 
-    // collect manually
-    // 0x80, 0xfc, 0x12c, 0x1bc, 0x1c0, 0x1e0, 0x250, 0x25c, 0x2f0, 0x568, 0x5c4, 0x624, 0x82c, 0xa04
-    var g_collected_crash           = [-4, 0x12c, 0x1bc, 0x1c0, 0x1e0, 0x1e4, 0x250, 0x25c, 0x260, 0x2f0, 0x2f4, 0x5c4, 0x5c8,
-                                        0x624, 0x1b88, 0x3130, 0x4000, 0x4158, 0x416c, 0x4224, 0x4228, 0x422c,
-                                        0x4244, ];
-    // var g_obj_content_offset        = g_collected_crash[g_collected_crash.length - 1] + 0x4;
-    var g_obj_content_offset        = 0x4244 + 4;
-    var g_obj_content_seed          = 0x0;
 
     function genSeed(org_value)     // length: 38
     {
@@ -53,10 +45,11 @@ Java.perform(function () {
                         ];
     }
 
+
     function studyObject(mData_pos, mDataSize, mObjects_pos, mObjectsSize, code, data, reply, flags, isVendor)
     {
 // the layout of mData is as:
-//            0                0x38  0x3c  0x40       0x68                    0x90                 0x98          0xc0       0xe8
+//    0                0x38  0x3c  0x40       0x68                    0x90                 0x98          0xc0       0xe8
 //    |-----------------|-----|-----|----------|-----------------------|--------------------|-------------|----------|-----
 //    | interface token | int | int | hidl_vec | hidl_vec<hidl_handle> | native_handle_size | hidl_handle | fd_array | ...
 //                                                                                           \------- zero or more --------
@@ -157,9 +150,28 @@ Java.perform(function () {
     // fuzz the field in the <hidl_vec> and <hidl_handle>?
     */
 
-    function fuzz_hidl_startModelFromMem2(mData_pos, mObjects_pos, mObjectsSize, code, data, reply, flags, isVendor)
+    // 0x11 (#2), 0x10 (#3, #4), 0x13 (#5, #6, #7), 0x1b (#8) and 0x14 (#9)
+    // set manually
+    const g_cur_process = [
+        0x11, /* which tag */
+        0, /* which hidl_handle */
+        -4 + 4, /* offset */
+        ];
+
+    // collect manually
+    var g_obj_content_seed          = 0x0;
+
+    function fuzz_imagesegmentation(mData_pos, mDataSize, mObjects_pos, mObjectsSize, code, data, reply, flags, isVendor)
     {
-        var binder_object_offset    = mObjects_pos.add(2 * 0x8).readU64();
+// the layout of mData is as:
+//    0                0x38  0x3c  0x40       0x68                    0x90                 0x98          0xc0       0xe8
+//    |-----------------|-----|-----|----------|-----------------------|--------------------|-------------|----------|-----
+//    | interface token | int | int | hidl_vec | hidl_vec<hidl_handle> | native_handle_size | hidl_handle | fd_array | ...
+//                                                                                           \------- zero or more --------
+        if (mData_pos.add(0x3c).readU32() != g_cur_process[0])
+            return;
+
+        var binder_object_offset    = mObjects_pos.add(2 * 0x8 + g_cur_process[1] * 0x10).readU64();
         var binder_object_pos       = mData_pos.add(binder_object_offset);
 
         var buffer_pos              = binder_object_pos.add(0x8);
@@ -182,8 +194,6 @@ Java.perform(function () {
         var this_size = buffer_pos.readPointer().add(0x18).readU32();
         console.log("|----[i] this_size: 0x" + this_size.toString(16));
 
-        // this_size = 8;
-
         var this_mmap_p = Module.getExportByName("libai_hidl_request_client.so", 'mmap');
         console.log("|-----[i] mmap addr: " + this_mmap_p);
 
@@ -199,75 +209,32 @@ Java.perform(function () {
             this_fd,
             0);
 
-        console.log("|-----[i] mmap ret: 0x" + map_memory_addr.toString(16));
+        console.log("|-----[i] mmap buffer: 0x" + map_memory_addr.toString(16));
 
         var this_fd_memory = ptr(map_memory_addr);
 
-        for(var i = 0; i < this_size; i += 4)
-        {
-            onsole.log(i);
-            console.log(this_size);
-
-            var org_value = this_fd_memory.add(i).readS32();
-            var new_values = genSeed(org_value);
-            for(var j = 0; j < new_values.length; j ++)
-            {
-                this_fd_memory.add(i).writeS32(new_values[j]);
-
-                console.log("|-----[i] fuzz vendor Parcel: (" + this_fd_memory.add(i) + "): 0x" + org_value.toString(16) + " -> 0x" + new_values[j].toString(16));
-                var func_IPCThreadState_self_vendor = new NativeFunction(IPCThreadState_self_vendor_p, 'pointer', []);
-                var IPCThreadState_Obj = func_IPCThreadState_self_vendor();
-                // console.log("|-----IPCThreadState object: 0x" + IPCThreadState_Obj.toString(16));
-
-                var func_IPCThreadState_transact_vendor = new NativeFunction(IPCThreadState_transact_vendor_p, 'int32', ['pointer', 'int32', 'uint32', 'pointer', 'pointer', 'uint32']);
-                var ret = func_IPCThreadState_transact_vendor(
-                    IPCThreadState_Obj,
-                    g_mHandle,
-                    code,
-                    data,
-                    reply,
-                    flags);
-
-                console.log(ret);
-                if (ret == DEAD_OBJECT)
-                    console.log(i + ": " + j);
-
-                this_fd_memory.add(i).writeS32(org_value);
-
-            }
-        }
-        return;
-
-//        console.log("|-----[i] mmap buffer: 0x" + ret.toString(16));
-//        try{
-//            console.log(hexdump(this_fd_memory, {
-//                offset: 0,
-//                length: 0x100,
-//                header: true,
-//                ansi: true
-//            }));
-//        }
-//        catch(err)
-//        {
-//            console.log("|-----[e] can't read");
-//            return;
-//        }
+//        console.log(hexdump(ptr(map_memory_addr), {
+//            offset: 0,
+//            length: this_size > 0x100 ? 0x100: this_size,
+//            header: true,
+//            ansi: true
+//        }));
 
         var dummy_seed = genSeed(0);
         if (g_obj_content_seed >= dummy_seed.length)
         {
-            g_obj_content_offset += 4;
+            g_cur_process[2] += 4;
             g_obj_content_seed = 0;
-//            while(g_collected_crash.includes(g_obj_content_offset)) // skip those crash the app
+//            while(g_collected_crash.includes(g_cur_process[2])) // skip those crash the app
 //            {
-//                g_obj_content_offset += 4;
+//                g_cur_process[2] += 4;
 //            }
         }
 
         if (g_obj_content_seed == 0)
         {
             // send message to host.
-            send("ready:" + g_obj_content_offset);
+            send("ready:" + g_cur_process[2]);
             // wait the host to finish it's task.
             var foo = recv('synchronize', function(value) {
                 console.log("|-----[i] host ready message received, continue.");
@@ -275,19 +242,31 @@ Java.perform(function () {
             foo.wait();
         }
 
-        if (g_obj_content_offset >= this_size)
+        if (g_cur_process[2] >= this_size)
         {
-            console.log("|[*] fuzz_hidl_startModelFromMem2 fuzz done");
+            console.log("|[*] fuzz_imagesegmentation fuzz done");
             return;
         }
 
-        var org_value = this_fd_memory.add(g_obj_content_offset).readS32();
+        var org_value = this_fd_memory.add(g_cur_process[2]).readS32();
         var new_value = genSeed(org_value);
 
-        console.log("|-----[i] g_obj_content_offset: 0x" + g_obj_content_offset.toString(16) + ", g_obj_content_seed: 0x" + g_obj_content_seed.toString(16));
-        console.log("|-----[i] fuzz memory: " + this_fd_memory.toString(16) + ", with offset: 0x" + g_obj_content_offset.toString(16) + ", with seed: 0x" + new_value[g_obj_content_seed].toString(16));
+        console.log("|-----[i] g_cur_process[2]: 0x" + g_cur_process[2].toString(16) + ", g_obj_content_seed: 0x" + g_obj_content_seed.toString(16));
+        console.log("|-----[i] fuzz memory: " + this_fd_memory.toString(16) + ", with offset: 0x" + g_cur_process[2].toString(16) + ", with seed: 0x" + new_value[g_obj_content_seed].toString(16));
 
-        this_fd_memory.add(g_obj_content_offset).writeS32(new_value[g_obj_content_seed]);
+        this_fd_memory.add(g_cur_process[2]).writeS32(new_value[g_obj_content_seed]);
+
+        var this_munmap_p = Module.getExportByName("libai_hidl_request_client.so", 'munmap');
+        console.log("|-----[i] munmap addr: " + this_munmap_p);
+
+        var func_munmap = new NativeFunction(this_munmap_p,
+            'void',
+            ['uint64', 'uint32']
+            );
+        func_munmap(
+            map_memory_addr,
+            this_size
+            );
 
 //        try{
 //            console.log(hexdump(this_fd_memory, {
@@ -307,9 +286,6 @@ Java.perform(function () {
 
     }
 
-    const mHandle_LOC       = 0x8;
-    var g_mHandle           = 0;
-
     const whiteTransactionCode = [
         1,                                 // vendor::huawei::hardware::ai::hidlrequest::V1_0::BpHwHidlRequest::_hidl_execute
     ];
@@ -325,8 +301,6 @@ Java.perform(function () {
         // remove to enable all interfaces.
         if (args[2].add(mData_LOC).readPointer().readUtf8String().indexOf(fuzzInterface) == -1)
             return
-
-        g_mHandle = args[0].add(mHandle_LOC).readU32()
 
 //        console.log('[i] call stack:\n' +
 //            Thread.backtrace(that.context, Backtracer.ACCURATE)
@@ -389,9 +363,9 @@ Java.perform(function () {
         if (mObjectsSize != 0)
 //            var ret = fuzzPeekhole(mData_pos, mDataSize, mObjects_pos, mObjectsSize, args[1].toInt32(), args[2], args[3], args[4].toInt32(), isVendor);
 //            if (ret == -1)
-                studyObject(mData_pos, mDataSize, mObjects_pos, mObjectsSize, args[1].toInt32(), args[2], args[3], args[4].toInt32(), isVendor);
+                // studyObject(mData_pos, mDataSize, mObjects_pos, mObjectsSize, args[1].toInt32(), args[2], args[3], args[4].toInt32(), isVendor);
+                fuzz_imagesegmentation(mData_pos, mDataSize, mObjects_pos, mObjectsSize, args[1].toInt32(), args[2], args[3], args[4].toInt32(), isVendor);
     }
-
 
     console.log('[*] Frida js is running.');
 
@@ -415,8 +389,10 @@ Java.perform(function () {
 //            console.log("|-[i] ret value: " + retval);
             if (retval.toInt32() == DEAD_OBJECT)
             {
-                g_dead_obj_lst.push(g_obj_content_offset, g_obj_content_seed);    // should tell em apart
-                send("dead_object:" + g_obj_content_offset);
+                g_dead_obj_lst.push(g_cur_process[2], g_obj_content_seed);    // should tell em apart
+                send("dead_object:" + g_cur_process[2]);
+                console.warn("|-[i] dead object received, stop intercepting.");
+                Interceptor.detachAll();
 //                g_dead_obj_lst.push(g_object_offset, g_object_index);
             }
 //            send("done");
@@ -426,13 +402,6 @@ Java.perform(function () {
 
     var BpHwBinder_transact_vendor_p = Module.getExportByName("/system/lib64/vndk-sp-29/libhidlbase.so", '_ZN7android8hardware10BpHwBinder8transactEjRKNS0_6ParcelEPS2_jNSt3__18functionIFvRS2_EEE');
     console.log("[i] Vendor BpHwBinder::transact addr: " + BpHwBinder_transact_vendor_p)
-
-    var IPCThreadState_transact_vendor_p = Module.getExportByName("/system/lib64/vndk-sp-29/libhidlbase.so", '_ZN7android8hardware14IPCThreadState8transactEijRKNS0_6ParcelEPS2_j');
-    console.log("[i] Vendor IPCThreadState::transact addr: " + IPCThreadState_transact_vendor_p)
-
-    var IPCThreadState_self_vendor_p = Module.getExportByName("/system/lib64/vndk-sp-29/libhidlbase.so", '_ZN7android8hardware14IPCThreadState4selfEv');
-    console.log("[i] Vendor IPCThreadState::self addr: " + IPCThreadState_self_vendor_p)
-
 
     Interceptor.attach(BpHwBinder_transact_vendor_p, {
         onEnter: function(args) {
@@ -445,9 +414,11 @@ Java.perform(function () {
 //            console.log("|-[i] ret value: " + retval);
             if (retval.toInt32() == DEAD_OBJECT)
             {
-                g_dead_obj_lst.push(g_obj_content_offset, g_obj_content_seed);    // should tell them apart
-                send("dead_object:" + g_obj_content_offset);
+                g_dead_obj_lst.push(g_cur_process[2], g_obj_content_seed);    // should tell them apart
+                send("dead_object:" + g_cur_process[2]);
 //                g_dead_obj_lst.push(g_object_offset, g_object_index);
+                console.warn("|-[i] dead object received, stop intercepting.");
+                Interceptor.detachAll();
             }
 //            send("done");
         }

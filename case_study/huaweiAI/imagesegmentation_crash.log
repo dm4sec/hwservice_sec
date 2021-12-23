@@ -1,0 +1,53 @@
+************ model offset: 0x0 crashed the server. ************
+************ model offset: 0x0 crashed the server. ************
+************ model offset: 0x0 crashed the server. ************
+------------ model offset: 0x0 crashed the app. ------------
+12-23 12:02:47.884 31075  1138 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 1138 (HwBinder:31075_), pid 31075 (hiaiserver)
+12-23 12:02:47.917  1754  1754 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+12-23 12:02:47.917  1754  1754 F DEBUG   : Build fingerprint: 'HUAWEI/MRX-AN19/HWMRX:10/HUAWEIMRX-AN19/102.0.0.207C00:user/release-keys'
+12-23 12:02:47.917  1754  1754 F DEBUG   : Revision: '0'
+12-23 12:02:47.917  1754  1754 F DEBUG   : ABI: 'arm64'
+12-23 12:02:47.918  1754  1754 F DEBUG   : Timestamp: 2021-12-23 12:02:47+0800
+12-23 12:02:47.918  1754  1754 F DEBUG   : pid: 31075, tid: 1138, name: HwBinder:31075_  >>> /vendor/bin/hiaiserver <<<
+12-23 12:02:47.918  1754  1754 F DEBUG   : uid: 1000
+12-23 12:02:47.918  1754  1754 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+12-23 12:02:47.918  1754  1754 F DEBUG   : Abort message: 'terminating with uncaught exception of type std::bad_alloc: std::bad_alloc'
+12-23 12:02:47.918  1754  1754 F DEBUG   :     x0  0000000000000000  x1  0000000000000472  x2  0000000000000006  x3  00000074b50fd8e0
+12-23 12:02:47.918  1754  1754 F DEBUG   :     x4  fefefefefefefeff  x5  fefefefefefefeff  x6  fefefefefefefeff  x7  7f7f7f7f7f7f7f7f
+12-23 12:02:47.918  1754  1754 F DEBUG   :     x8  00000000000000f0  x9  e05f8bbe29529cc0  x10 0000000000000001  x11 0000000000000000
+12-23 12:02:47.918  1754  1754 F DEBUG   :     x12 fffffff0ffffffdf  x13 0000000061c3f4e7  x14 000d1e5df99bf65f  x15 00000ed051554ba0
+12-23 12:02:47.918  1754  1754 F DEBUG   :     x16 00000074d3870a08  x17 00000074d38507c0  x18 00000074bec0a000  x19 0000000000007963
+12-23 12:02:47.918  1754  1754 F DEBUG   :     x20 0000000000000472  x21 00000000ffffffff  x22 00000074b50fdb30  x23 00000074d386b5b0
+12-23 12:02:47.918  1754  1754 F DEBUG   :     x24 00000074b50fda10  x25 00000074b50fda50  x26 00000074afbeb006  x27 fffffffffebeb900
+12-23 12:02:47.918  1754  1754 F DEBUG   :     x28 0000000000000000  x29 00000074b50fd980
+12-23 12:02:47.918  1754  1754 F DEBUG   :     sp  00000074b50fd8c0  lr  00000074d3805640  pc  00000074d380566c
+12-23 12:02:47.934  1754  1754 F DEBUG   :
+12-23 12:02:47.934  1754  1754 F DEBUG   : backtrace:
+12-23 12:02:47.934  1754  1754 F DEBUG   :       #00 pc 000000000007066c  /apex/com.android.runtime/lib64/bionic/libc.so (abort+160) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+12-23 12:02:47.934  1754  1754 F DEBUG   :       #01 pc 00000000000500fc  /system/lib64/vndk-sp-29/libc++.so (abort_message+232) (BuildId: 4d9b5f81053165d6e71cc4d52e2434c5)
+12-23 12:02:47.934  1754  1754 F DEBUG   :       #02 pc 00000000000502f0  /system/lib64/vndk-sp-29/libc++.so (demangling_terminate_handler()+260) (BuildId: 4d9b5f81053165d6e71cc4d52e2434c5)
+12-23 12:02:47.934  1754  1754 F DEBUG   :       #03 pc 00000000000646c4  /system/lib64/vndk-sp-29/libc++.so (std::__terminate(void (*)())+12) (BuildId: 4d9b5f81053165d6e71cc4d52e2434c5)
+12-23 12:02:47.934  1754  1754 F DEBUG   :       #04 pc 0000000000063da0  /system/lib64/vndk-sp-29/libc++.so (__cxxabiv1::failed_throw(__cxxabiv1::__cxa_exception*)+28) (BuildId: 4d9b5f81053165d6e71cc4d52e2434c5)
+12-23 12:02:47.934  1754  1754 F DEBUG   :       #05 pc 0000000000063cd0  /system/lib64/vndk-sp-29/libc++.so (__cxa_throw+112) (BuildId: 4d9b5f81053165d6e71cc4d52e2434c5)
+12-23 12:02:47.934  1754  1754 F DEBUG   :       #06 pc 0000000000067430  /system/lib64/vndk-sp-29/libc++.so (operator new(unsigned long)+84) (BuildId: 4d9b5f81053165d6e71cc4d52e2434c5)
+12-23 12:02:47.934  1754  1754 F DEBUG   :       #07 pc 00000000000b1ac8  /system/lib64/vndk-sp-29/libc++.so (std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>>::__grow_by_and_replace(unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, char const*)+160) (BuildId: 4d9b5f81053165d6e71cc4d52e2434c5)
+12-23 12:02:47.934  1754  1754 F DEBUG   :       #08 pc 00000000000b19c8  /system/lib64/vndk-sp-29/libc++.so (std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>>::append(char const*, unsigned long)+100) (BuildId: 4d9b5f81053165d6e71cc4d52e2434c5)
+12-23 12:02:47.935  1754  1754 F DEBUG   :       #09 pc 00000000000d5538  /vendor/lib64/libprotobuf-cpp-full.so (google::protobuf::io::CodedInputStream::ReadStringFallback(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>>*, int)+208) (BuildId: 3f18358a6799a41dd523b6f67ce70d70)
+12-23 12:02:47.935  1754  1754 F DEBUG   :       #10 pc 00000000000b989c  /vendor/lib64/libgraph_proto.so (ge::proto::GraphDef::MergePartialFromCodedStream(google::protobuf::io::CodedInputStream*)+308) (BuildId: 7acb6579532144a949166bdfae962347)
+12-23 12:02:47.935  1754  1754 F DEBUG   :       #11 pc 00000000000d0c90  /vendor/lib64/libprotobuf-cpp-full.so (google::protobuf::MessageLite::ParseFromCodedStream(google::protobuf::io::CodedInputStream*)+68) (BuildId: 3f18358a6799a41dd523b6f67ce70d70)
+12-23 12:02:47.935  1754  1754 F DEBUG   :       #12 pc 00000000000b278c  /vendor/lib64/libgraph.so (BuildId: d2a9b3d0cdbbae81ebf61f41d7db8a9d)
+12-23 12:02:47.935  1754  1754 F DEBUG   :       #13 pc 00000000000b33c0  /vendor/lib64/libgraph.so (ge::ModelSerialize::UnserializeGraph(unsigned char const*, unsigned long)+80) (BuildId: d2a9b3d0cdbbae81ebf61f41d7db8a9d)
+12-23 12:02:47.935  1754  1754 F DEBUG   :       #14 pc 0000000000014398  /vendor/lib64/libai_fmk_dnnacl_server.so (dnnacl::DnnaclManagerService::UnSerialize(std::__1::vector<hiai::rpc::RpcHandle, std::__1::allocator<hiai::rpc::RpcHandle>> const&, ge::GraphOptimizerOptions&, std::__1::shared_ptr<ge::ComputeGraph>&, std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>>&, int&)+332) (BuildId: a3d3df4ad64833388320d8292f418fd3)
+12-23 12:02:47.935  1754  1754 F DEBUG   :       #15 pc 0000000000013d80  /vendor/lib64/libai_fmk_dnnacl_server.so (dnnacl::DnnaclManagerService::GraphOptimize(std::__1::vector<hiai::rpc::RpcHandle, std::__1::allocator<hiai::rpc::RpcHandle>> const&, std::__1::vector<hiai::rpc::RpcHandle, std::__1::allocator<hiai::rpc::RpcHandle>>&)+176) (BuildId: a3d3df4ad64833388320d8292f418fd3)
+12-23 12:02:47.935  1754  1754 F DEBUG   :       #16 pc 000000000001ba24  /vendor/lib64/libai_fmk_dnnacl_server.so (dnnacl::DnnaclManagerService::Execute(int, int, std::__1::vector<hiai::rpc::RpcHandle, std::__1::allocator<hiai::rpc::RpcHandle>> const&, std::__1::vector<hiai::rpc::RpcHandle, std::__1::allocator<hiai::rpc::RpcHandle>>&)+352) (BuildId: a3d3df4ad64833388320d8292f418fd3)
+12-23 12:02:47.935  1754  1754 F DEBUG   :       #17 pc 0000000000008814  /vendor/lib64/libai_hidl_request_server.so (ai::HIAIHidlRequestService::execute(int, int, android::hardware::hidl_vec<android::hardware::hidl_handle> const&, std::__1::function<void (int, android::hardware::hidl_vec<android::hardware::hidl_handle> const&)>)+228) (BuildId: fedeb9d03f4d8796b16748598bbece8a)
+12-23 12:02:47.935  1754  1754 F DEBUG   :       #18 pc 000000000001523c  /vendor/lib64/vendor.huawei.hardware.ai.hidlrequest@1.0.so (vendor::huawei::hardware::ai::hidlrequest::V1_0::BnHwHidlRequest::_hidl_execute(android::hidl::base::V1_0::BnHwBase*, android::hardware::Parcel const&, android::hardware::Parcel*, std::__1::function<void (android::hardware::Parcel&)>)+516) (BuildId: 15741e40f920d429fdff64766dfaae6f)
+12-23 12:02:47.935  1754  1754 F DEBUG   :       #19 pc 0000000000015db4  /vendor/lib64/vendor.huawei.hardware.ai.hidlrequest@1.0.so (vendor::huawei::hardware::ai::hidlrequest::V1_0::BnHwHidlRequest::onTransact(unsigned int, android::hardware::Parcel const&, android::hardware::Parcel*, unsigned int, std::__1::function<void (android::hardware::Parcel&)>)+544) (BuildId: 15741e40f920d429fdff64766dfaae6f)
+12-23 12:02:47.935  1754  1754 F DEBUG   :       #20 pc 00000000000825f4  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::BHwBinder::transact(unsigned int, android::hardware::Parcel const&, android::hardware::Parcel*, unsigned int, std::__1::function<void (android::hardware::Parcel&)>)+68) (BuildId: 11681eaa4cb6b125f8ee49040fbec465)
+12-23 12:02:47.935  1754  1754 F DEBUG   :       #21 pc 0000000000085e88  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::IPCThreadState::getAndExecuteCommand()+1036) (BuildId: 11681eaa4cb6b125f8ee49040fbec465)
+12-23 12:02:47.935  1754  1754 F DEBUG   :       #22 pc 0000000000087518  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::IPCThreadState::joinThreadPool(bool)+152) (BuildId: 11681eaa4cb6b125f8ee49040fbec465)
+12-23 12:02:47.935  1754  1754 F DEBUG   :       #23 pc 00000000000965ac  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::PoolThread::threadLoop()+24) (BuildId: 11681eaa4cb6b125f8ee49040fbec465)
+12-23 12:02:47.935  1754  1754 F DEBUG   :       #24 pc 00000000000136d8  /system/lib64/vndk-sp-29/libutils.so (android::Thread::_threadLoop(void*)+288) (BuildId: d8022ba6148997b3e4f5f130703a1b11)
+12-23 12:02:47.935  1754  1754 F DEBUG   :       #25 pc 00000000000cf7c0  /apex/com.android.runtime/lib64/bionic/libc.so (__pthread_start(void*)+36) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+12-23 12:02:47.935  1754  1754 F DEBUG   :       #26 pc 00000000000721a8  /apex/com.android.runtime/lib64/bionic/libc.so (__start_thread+64) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+************ model offset: 0x0 crashed the server. ************

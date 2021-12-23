@@ -101,7 +101,7 @@ Java.perform(function () {
     // fuzz the field in the <hidl_vec> and <hidl_handle>?
     */
 
-    function fuzz_hidl_startModelFromMem2(mData_pos, mObjects_pos, mObjectsSize, code, data, reply, flags, isVendor)
+    function fuzz_textsuperresolution(mData_pos, mObjects_pos, mObjectsSize, code, data, reply, flags, isVendor)
     {
 // The parcel layout:
 //        0          0x2c    0x30    0x34                     0x5c                     0x84                     0xac 0xb0 0xb4                     0xdc                     0xfc
@@ -194,7 +194,7 @@ Java.perform(function () {
 
         if (g_obj_content_offset >= this_size)
         {
-            console.log("|[*] fuzz_hidl_startModelFromMem2 fuzz done");
+            console.log("|[*] fuzz_textsuperresolution fuzz done");
             return;
         }
 
@@ -318,7 +318,7 @@ Java.perform(function () {
         if (mObjectsSize != 0)
             var ret = fuzzPeekhole(mData_pos, mDataSize, mObjects_pos, mObjectsSize, args[1].toInt32(), args[2], args[3], args[4].toInt32(), isVendor);
             if (ret == -1)
-                fuzz_hidl_startModelFromMem2(mData_pos, mObjects_pos, mObjectsSize, args[1].toInt32(), args[2], args[3], args[4].toInt32(), isVendor);
+                fuzz_textsuperresolution(mData_pos, mObjects_pos, mObjectsSize, args[1].toInt32(), args[2], args[3], args[4].toInt32(), isVendor);
     }
 
 
