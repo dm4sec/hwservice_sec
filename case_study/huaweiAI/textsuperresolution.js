@@ -194,8 +194,8 @@ Java.perform(function () {
 
         if (g_obj_content_offset >= this_size)
         {
-            console.log("|[*] fuzz_textsuperresolution fuzz done");
-            return;
+            console.error("|[*] fuzz_textsuperresolution fuzz done");
+            Interceptor.detachAll();
         }
 
         var org_value = this_fd_memory.add(g_obj_content_offset).readS32();
@@ -346,7 +346,8 @@ Java.perform(function () {
             {
                 g_dead_obj_lst.push(g_obj_content_offset, g_obj_content_seed);    // should tell em apart
                 send("dead_object:" + g_obj_content_offset);
-//                g_dead_obj_lst.push(g_object_offset, g_object_index);
+                console.warn("|-[i] dead object received, stop intercepting. current offset: 0x" + g_obj_content_offset.toString(16));
+                Interceptor.detachAll();
             }
 //            send("done");
         }
@@ -369,7 +370,8 @@ Java.perform(function () {
             {
                 g_dead_obj_lst.push(g_obj_content_offset, g_obj_content_seed);    // should tell them apart
                 send("dead_object:" + g_obj_content_offset);
-//                g_dead_obj_lst.push(g_object_offset, g_object_index);
+                console.warn("|-[i] dead object received, stop intercepting. current offset: 0x" + g_obj_content_offset.toString(16));
+                Interceptor.detachAll();
             }
 //            send("done");
         }

@@ -9,11 +9,13 @@ import sys
 
 g_obj_content_offset = 0
 g_script = 0
+g_log_file = "imagesegmentation_crash.log"
 
 def on_message(message, data):
 
     global g_obj_content_offset
     global g_obj_content_seed
+    global g_log_file
 
     if message["type"] == "send":
         if message["payload"].find("dead_object") != -1:
@@ -21,7 +23,7 @@ def on_message(message, data):
             g_obj_content_offset = int(msg[1])
 
             print("[*] logging dead_object")
-            with open("imagesegmentation_crash.log", "a+") as fwh:
+            with open(g_log_file, "a+") as fwh:
                 fwh.write("************ model offset: {} crashed the server. ************\n".format(
                     hex(g_obj_content_offset)))
         if message["payload"].find("ready") != -1:
@@ -37,7 +39,7 @@ def on_message(message, data):
 
             if stdout.decode().find("Build fingerprint") != -1 and g_obj_content_offset != 0:
                 print("[*] logging crash")
-                with open("imagesegmentation_crash.log", "a+") as fwh:
+                with open(g_log_file, "a+") as fwh:
                     fwh.write("------------ model offset: {} crashed the app. ------------\n".format(hex(g_obj_content_offset - 4)))
                     fwh.write(stdout.decode())
 

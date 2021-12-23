@@ -52,7 +52,8 @@ Java.perform(function () {
 //    0                0x38  0x3c  0x40       0x68                    0x90                 0x98          0xc0       0xe8
 //    |-----------------|-----|-----|----------|-----------------------|--------------------|-------------|----------|-----
 //    | interface token | int | int | hidl_vec | hidl_vec<hidl_handle> | native_handle_size | hidl_handle | fd_array | ...
-//                                                                                           \------- zero or more --------
+//                                                                     \--------------------------- zero or more --------
+
         if (mObjectsSize <= 2)
             return;
 
@@ -167,7 +168,8 @@ Java.perform(function () {
 //    0                0x38  0x3c  0x40       0x68                    0x90                 0x98          0xc0       0xe8
 //    |-----------------|-----|-----|----------|-----------------------|--------------------|-------------|----------|-----
 //    | interface token | int | int | hidl_vec | hidl_vec<hidl_handle> | native_handle_size | hidl_handle | fd_array | ...
-//                                                                                           \------- zero or more --------
+//                                                                     \--------------------------- zero or more --------
+
         if (mData_pos.add(0x3c).readU32() != g_cur_process[0])
             return;
 
@@ -244,8 +246,8 @@ Java.perform(function () {
 
         if (g_cur_process[2] >= this_size)
         {
-            console.log("|[*] fuzz_imagesegmentation fuzz done");
-            return;
+            console.error("|[*] fuzz_imagesegmentation fuzz done");
+            Interceptor.detachAll();
         }
 
         var org_value = this_fd_memory.add(g_cur_process[2]).readS32();
@@ -391,7 +393,7 @@ Java.perform(function () {
             {
                 g_dead_obj_lst.push(g_cur_process[2], g_obj_content_seed);    // should tell em apart
                 send("dead_object:" + g_cur_process[2]);
-                console.warn("|-[i] dead object received, stop intercepting.");
+                console.warn("|-[i] dead object received, stop intercepting. current offset: 0x" + g_cur_process[2].toString(16));
                 Interceptor.detachAll();
 //                g_dead_obj_lst.push(g_object_offset, g_object_index);
             }
@@ -417,7 +419,7 @@ Java.perform(function () {
                 g_dead_obj_lst.push(g_cur_process[2], g_obj_content_seed);    // should tell them apart
                 send("dead_object:" + g_cur_process[2]);
 //                g_dead_obj_lst.push(g_object_offset, g_object_index);
-                console.warn("|-[i] dead object received, stop intercepting.");
+                console.warn("|-[i] dead object received, stop intercepting. current offset: 0x" + g_cur_process[2].toString(16));
                 Interceptor.detachAll();
             }
 //            send("done");

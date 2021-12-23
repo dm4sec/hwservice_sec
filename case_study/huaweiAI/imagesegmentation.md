@@ -254,7 +254,7 @@ After that, we enable the interface token and transaction code filter to get the
 0                0x38  0x3c  0x40       0x68                    0x90                 0x98          0xc0       0xe8
 |-----------------|-----|-----|----------|-----------------------|--------------------|-------------|----------|----- 
 | interface token | int | int | hidl_vec | hidl_vec<hidl_handle> | native_handle_size | hidl_handle | fd_array | ...    
-                                                                                       \------- zero or more --------                       
+                                                                 \--------------------------- zero or more --------                       
 ```
 
 ## S3: inspecting each handles
