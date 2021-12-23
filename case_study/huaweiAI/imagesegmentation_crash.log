@@ -1,53 +1,126 @@
 ************ model offset: 0x0 crashed the server. ************
-************ model offset: 0x0 crashed the server. ************
-************ model offset: 0x0 crashed the server. ************
 ------------ model offset: 0x0 crashed the app. ------------
-12-23 12:02:47.884 31075  1138 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 1138 (HwBinder:31075_), pid 31075 (hiaiserver)
-12-23 12:02:47.917  1754  1754 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
-12-23 12:02:47.917  1754  1754 F DEBUG   : Build fingerprint: 'HUAWEI/MRX-AN19/HWMRX:10/HUAWEIMRX-AN19/102.0.0.207C00:user/release-keys'
-12-23 12:02:47.917  1754  1754 F DEBUG   : Revision: '0'
-12-23 12:02:47.917  1754  1754 F DEBUG   : ABI: 'arm64'
-12-23 12:02:47.918  1754  1754 F DEBUG   : Timestamp: 2021-12-23 12:02:47+0800
-12-23 12:02:47.918  1754  1754 F DEBUG   : pid: 31075, tid: 1138, name: HwBinder:31075_  >>> /vendor/bin/hiaiserver <<<
-12-23 12:02:47.918  1754  1754 F DEBUG   : uid: 1000
-12-23 12:02:47.918  1754  1754 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
-12-23 12:02:47.918  1754  1754 F DEBUG   : Abort message: 'terminating with uncaught exception of type std::bad_alloc: std::bad_alloc'
-12-23 12:02:47.918  1754  1754 F DEBUG   :     x0  0000000000000000  x1  0000000000000472  x2  0000000000000006  x3  00000074b50fd8e0
-12-23 12:02:47.918  1754  1754 F DEBUG   :     x4  fefefefefefefeff  x5  fefefefefefefeff  x6  fefefefefefefeff  x7  7f7f7f7f7f7f7f7f
-12-23 12:02:47.918  1754  1754 F DEBUG   :     x8  00000000000000f0  x9  e05f8bbe29529cc0  x10 0000000000000001  x11 0000000000000000
-12-23 12:02:47.918  1754  1754 F DEBUG   :     x12 fffffff0ffffffdf  x13 0000000061c3f4e7  x14 000d1e5df99bf65f  x15 00000ed051554ba0
-12-23 12:02:47.918  1754  1754 F DEBUG   :     x16 00000074d3870a08  x17 00000074d38507c0  x18 00000074bec0a000  x19 0000000000007963
-12-23 12:02:47.918  1754  1754 F DEBUG   :     x20 0000000000000472  x21 00000000ffffffff  x22 00000074b50fdb30  x23 00000074d386b5b0
-12-23 12:02:47.918  1754  1754 F DEBUG   :     x24 00000074b50fda10  x25 00000074b50fda50  x26 00000074afbeb006  x27 fffffffffebeb900
-12-23 12:02:47.918  1754  1754 F DEBUG   :     x28 0000000000000000  x29 00000074b50fd980
-12-23 12:02:47.918  1754  1754 F DEBUG   :     sp  00000074b50fd8c0  lr  00000074d3805640  pc  00000074d380566c
-12-23 12:02:47.934  1754  1754 F DEBUG   :
-12-23 12:02:47.934  1754  1754 F DEBUG   : backtrace:
-12-23 12:02:47.934  1754  1754 F DEBUG   :       #00 pc 000000000007066c  /apex/com.android.runtime/lib64/bionic/libc.so (abort+160) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
-12-23 12:02:47.934  1754  1754 F DEBUG   :       #01 pc 00000000000500fc  /system/lib64/vndk-sp-29/libc++.so (abort_message+232) (BuildId: 4d9b5f81053165d6e71cc4d52e2434c5)
-12-23 12:02:47.934  1754  1754 F DEBUG   :       #02 pc 00000000000502f0  /system/lib64/vndk-sp-29/libc++.so (demangling_terminate_handler()+260) (BuildId: 4d9b5f81053165d6e71cc4d52e2434c5)
-12-23 12:02:47.934  1754  1754 F DEBUG   :       #03 pc 00000000000646c4  /system/lib64/vndk-sp-29/libc++.so (std::__terminate(void (*)())+12) (BuildId: 4d9b5f81053165d6e71cc4d52e2434c5)
-12-23 12:02:47.934  1754  1754 F DEBUG   :       #04 pc 0000000000063da0  /system/lib64/vndk-sp-29/libc++.so (__cxxabiv1::failed_throw(__cxxabiv1::__cxa_exception*)+28) (BuildId: 4d9b5f81053165d6e71cc4d52e2434c5)
-12-23 12:02:47.934  1754  1754 F DEBUG   :       #05 pc 0000000000063cd0  /system/lib64/vndk-sp-29/libc++.so (__cxa_throw+112) (BuildId: 4d9b5f81053165d6e71cc4d52e2434c5)
-12-23 12:02:47.934  1754  1754 F DEBUG   :       #06 pc 0000000000067430  /system/lib64/vndk-sp-29/libc++.so (operator new(unsigned long)+84) (BuildId: 4d9b5f81053165d6e71cc4d52e2434c5)
-12-23 12:02:47.934  1754  1754 F DEBUG   :       #07 pc 00000000000b1ac8  /system/lib64/vndk-sp-29/libc++.so (std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>>::__grow_by_and_replace(unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, char const*)+160) (BuildId: 4d9b5f81053165d6e71cc4d52e2434c5)
-12-23 12:02:47.934  1754  1754 F DEBUG   :       #08 pc 00000000000b19c8  /system/lib64/vndk-sp-29/libc++.so (std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>>::append(char const*, unsigned long)+100) (BuildId: 4d9b5f81053165d6e71cc4d52e2434c5)
-12-23 12:02:47.935  1754  1754 F DEBUG   :       #09 pc 00000000000d5538  /vendor/lib64/libprotobuf-cpp-full.so (google::protobuf::io::CodedInputStream::ReadStringFallback(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>>*, int)+208) (BuildId: 3f18358a6799a41dd523b6f67ce70d70)
-12-23 12:02:47.935  1754  1754 F DEBUG   :       #10 pc 00000000000b989c  /vendor/lib64/libgraph_proto.so (ge::proto::GraphDef::MergePartialFromCodedStream(google::protobuf::io::CodedInputStream*)+308) (BuildId: 7acb6579532144a949166bdfae962347)
-12-23 12:02:47.935  1754  1754 F DEBUG   :       #11 pc 00000000000d0c90  /vendor/lib64/libprotobuf-cpp-full.so (google::protobuf::MessageLite::ParseFromCodedStream(google::protobuf::io::CodedInputStream*)+68) (BuildId: 3f18358a6799a41dd523b6f67ce70d70)
-12-23 12:02:47.935  1754  1754 F DEBUG   :       #12 pc 00000000000b278c  /vendor/lib64/libgraph.so (BuildId: d2a9b3d0cdbbae81ebf61f41d7db8a9d)
-12-23 12:02:47.935  1754  1754 F DEBUG   :       #13 pc 00000000000b33c0  /vendor/lib64/libgraph.so (ge::ModelSerialize::UnserializeGraph(unsigned char const*, unsigned long)+80) (BuildId: d2a9b3d0cdbbae81ebf61f41d7db8a9d)
-12-23 12:02:47.935  1754  1754 F DEBUG   :       #14 pc 0000000000014398  /vendor/lib64/libai_fmk_dnnacl_server.so (dnnacl::DnnaclManagerService::UnSerialize(std::__1::vector<hiai::rpc::RpcHandle, std::__1::allocator<hiai::rpc::RpcHandle>> const&, ge::GraphOptimizerOptions&, std::__1::shared_ptr<ge::ComputeGraph>&, std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>>&, int&)+332) (BuildId: a3d3df4ad64833388320d8292f418fd3)
-12-23 12:02:47.935  1754  1754 F DEBUG   :       #15 pc 0000000000013d80  /vendor/lib64/libai_fmk_dnnacl_server.so (dnnacl::DnnaclManagerService::GraphOptimize(std::__1::vector<hiai::rpc::RpcHandle, std::__1::allocator<hiai::rpc::RpcHandle>> const&, std::__1::vector<hiai::rpc::RpcHandle, std::__1::allocator<hiai::rpc::RpcHandle>>&)+176) (BuildId: a3d3df4ad64833388320d8292f418fd3)
-12-23 12:02:47.935  1754  1754 F DEBUG   :       #16 pc 000000000001ba24  /vendor/lib64/libai_fmk_dnnacl_server.so (dnnacl::DnnaclManagerService::Execute(int, int, std::__1::vector<hiai::rpc::RpcHandle, std::__1::allocator<hiai::rpc::RpcHandle>> const&, std::__1::vector<hiai::rpc::RpcHandle, std::__1::allocator<hiai::rpc::RpcHandle>>&)+352) (BuildId: a3d3df4ad64833388320d8292f418fd3)
-12-23 12:02:47.935  1754  1754 F DEBUG   :       #17 pc 0000000000008814  /vendor/lib64/libai_hidl_request_server.so (ai::HIAIHidlRequestService::execute(int, int, android::hardware::hidl_vec<android::hardware::hidl_handle> const&, std::__1::function<void (int, android::hardware::hidl_vec<android::hardware::hidl_handle> const&)>)+228) (BuildId: fedeb9d03f4d8796b16748598bbece8a)
-12-23 12:02:47.935  1754  1754 F DEBUG   :       #18 pc 000000000001523c  /vendor/lib64/vendor.huawei.hardware.ai.hidlrequest@1.0.so (vendor::huawei::hardware::ai::hidlrequest::V1_0::BnHwHidlRequest::_hidl_execute(android::hidl::base::V1_0::BnHwBase*, android::hardware::Parcel const&, android::hardware::Parcel*, std::__1::function<void (android::hardware::Parcel&)>)+516) (BuildId: 15741e40f920d429fdff64766dfaae6f)
-12-23 12:02:47.935  1754  1754 F DEBUG   :       #19 pc 0000000000015db4  /vendor/lib64/vendor.huawei.hardware.ai.hidlrequest@1.0.so (vendor::huawei::hardware::ai::hidlrequest::V1_0::BnHwHidlRequest::onTransact(unsigned int, android::hardware::Parcel const&, android::hardware::Parcel*, unsigned int, std::__1::function<void (android::hardware::Parcel&)>)+544) (BuildId: 15741e40f920d429fdff64766dfaae6f)
-12-23 12:02:47.935  1754  1754 F DEBUG   :       #20 pc 00000000000825f4  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::BHwBinder::transact(unsigned int, android::hardware::Parcel const&, android::hardware::Parcel*, unsigned int, std::__1::function<void (android::hardware::Parcel&)>)+68) (BuildId: 11681eaa4cb6b125f8ee49040fbec465)
-12-23 12:02:47.935  1754  1754 F DEBUG   :       #21 pc 0000000000085e88  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::IPCThreadState::getAndExecuteCommand()+1036) (BuildId: 11681eaa4cb6b125f8ee49040fbec465)
-12-23 12:02:47.935  1754  1754 F DEBUG   :       #22 pc 0000000000087518  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::IPCThreadState::joinThreadPool(bool)+152) (BuildId: 11681eaa4cb6b125f8ee49040fbec465)
-12-23 12:02:47.935  1754  1754 F DEBUG   :       #23 pc 00000000000965ac  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::PoolThread::threadLoop()+24) (BuildId: 11681eaa4cb6b125f8ee49040fbec465)
-12-23 12:02:47.935  1754  1754 F DEBUG   :       #24 pc 00000000000136d8  /system/lib64/vndk-sp-29/libutils.so (android::Thread::_threadLoop(void*)+288) (BuildId: d8022ba6148997b3e4f5f130703a1b11)
-12-23 12:02:47.935  1754  1754 F DEBUG   :       #25 pc 00000000000cf7c0  /apex/com.android.runtime/lib64/bionic/libc.so (__pthread_start(void*)+36) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
-12-23 12:02:47.935  1754  1754 F DEBUG   :       #26 pc 00000000000721a8  /apex/com.android.runtime/lib64/bionic/libc.so (__start_thread+64) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
-************ model offset: 0x0 crashed the server. ************
+12-23 17:07:20.225  3983  4001 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 4001 (HwBinder:3983_2), pid 3983 (hiaiserver)
+12-23 17:07:20.244 15381 15381 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+12-23 17:07:20.244 15381 15381 F DEBUG   : Build fingerprint: 'HUAWEI/MRX-AN19/HWMRX:10/HUAWEIMRX-AN19/102.0.0.207C00:user/release-keys'
+12-23 17:07:20.244 15381 15381 F DEBUG   : Revision: '0'
+12-23 17:07:20.244 15381 15381 F DEBUG   : ABI: 'arm64'
+12-23 17:07:20.244 15381 15381 F DEBUG   : Timestamp: 2021-12-23 17:07:20+0800
+12-23 17:07:20.244 15381 15381 F DEBUG   : pid: 3983, tid: 4001, name: HwBinder:3983_2  >>> /vendor/bin/hiaiserver <<<
+12-23 17:07:20.244 15381 15381 F DEBUG   : uid: 1000
+12-23 17:07:20.244 15381 15381 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+12-23 17:07:20.244 15381 15381 F DEBUG   : Abort message: 'terminating with uncaught exception of type std::bad_alloc: std::bad_alloc'
+12-23 17:07:20.244 15381 15381 F DEBUG   :     x0  0000000000000000  x1  0000000000000fa1  x2  0000000000000006  x3  0000007b065fa8e0
+12-23 17:07:20.244 15381 15381 F DEBUG   :     x4  fefefefefefefeff  x5  fefefefefefefeff  x6  fefefefefefefeff  x7  7f7f7f7f7f7f7f7f
+12-23 17:07:20.244 15381 15381 F DEBUG   :     x8  00000000000000f0  x9  a70099a07e44bed3  x10 0000000000000001  x11 0000000000000000
+12-23 17:07:20.244 15381 15381 F DEBUG   :     x12 fffffff0ffffffdf  x13 0000000061c43c48  x14 000348a80093245f  x15 00001489ab8a9d35
+12-23 17:07:20.244 15381 15381 F DEBUG   :     x16 0000007b0fce4a08  x17 0000007b0fcc47c0  x18 0000007b05a30000  x19 0000000000000f8f
+12-23 17:07:20.244 15381 15381 F DEBUG   :     x20 0000000000000fa1  x21 00000000ffffffff  x22 0000007b065fab30  x23 0000007b0fcdf5b0
+12-23 17:07:20.244 15381 15381 F DEBUG   :     x24 0000007b065faa10  x25 0000007b065faa50  x26 0000007ae19eb006  x27 fffffffffebeb900
+12-23 17:07:20.244 15381 15381 F DEBUG   :     x28 0000000000000000  x29 0000007b065fa980
+12-23 17:07:20.244 15381 15381 F DEBUG   :     sp  0000007b065fa8c0  lr  0000007b0fc79640  pc  0000007b0fc7966c
+12-23 17:07:20.252 15381 15381 F DEBUG   : 
+12-23 17:07:20.252 15381 15381 F DEBUG   : backtrace:
+12-23 17:07:20.252 15381 15381 F DEBUG   :       #00 pc 000000000007066c  /apex/com.android.runtime/lib64/bionic/libc.so (abort+160) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+12-23 17:07:20.252 15381 15381 F DEBUG   :       #01 pc 00000000000500fc  /system/lib64/vndk-sp-29/libc++.so (abort_message+232) (BuildId: 4d9b5f81053165d6e71cc4d52e2434c5)
+12-23 17:07:20.252 15381 15381 F DEBUG   :       #02 pc 00000000000502f0  /system/lib64/vndk-sp-29/libc++.so (demangling_terminate_handler()+260) (BuildId: 4d9b5f81053165d6e71cc4d52e2434c5)
+12-23 17:07:20.252 15381 15381 F DEBUG   :       #03 pc 00000000000646c4  /system/lib64/vndk-sp-29/libc++.so (std::__terminate(void (*)())+12) (BuildId: 4d9b5f81053165d6e71cc4d52e2434c5)
+12-23 17:07:20.252 15381 15381 F DEBUG   :       #04 pc 0000000000063da0  /system/lib64/vndk-sp-29/libc++.so (__cxxabiv1::failed_throw(__cxxabiv1::__cxa_exception*)+28) (BuildId: 4d9b5f81053165d6e71cc4d52e2434c5)
+12-23 17:07:20.252 15381 15381 F DEBUG   :       #05 pc 0000000000063cd0  /system/lib64/vndk-sp-29/libc++.so (__cxa_throw+112) (BuildId: 4d9b5f81053165d6e71cc4d52e2434c5)
+12-23 17:07:20.252 15381 15381 F DEBUG   :       #06 pc 0000000000067430  /system/lib64/vndk-sp-29/libc++.so (operator new(unsigned long)+84) (BuildId: 4d9b5f81053165d6e71cc4d52e2434c5)
+12-23 17:07:20.252 15381 15381 F DEBUG   :       #07 pc 00000000000b1ac8  /system/lib64/vndk-sp-29/libc++.so (std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>>::__grow_by_and_replace(unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, char const*)+160) (BuildId: 4d9b5f81053165d6e71cc4d52e2434c5)
+12-23 17:07:20.252 15381 15381 F DEBUG   :       #08 pc 00000000000b19c8  /system/lib64/vndk-sp-29/libc++.so (std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>>::append(char const*, unsigned long)+100) (BuildId: 4d9b5f81053165d6e71cc4d52e2434c5)
+12-23 17:07:20.252 15381 15381 F DEBUG   :       #09 pc 00000000000d5538  /vendor/lib64/libprotobuf-cpp-full.so (google::protobuf::io::CodedInputStream::ReadStringFallback(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>>*, int)+208) (BuildId: 3f18358a6799a41dd523b6f67ce70d70)
+12-23 17:07:20.252 15381 15381 F DEBUG   :       #10 pc 00000000000b989c  /vendor/lib64/libgraph_proto.so (ge::proto::GraphDef::MergePartialFromCodedStream(google::protobuf::io::CodedInputStream*)+308) (BuildId: 7acb6579532144a949166bdfae962347)
+12-23 17:07:20.252 15381 15381 F DEBUG   :       #11 pc 00000000000d0c90  /vendor/lib64/libprotobuf-cpp-full.so (google::protobuf::MessageLite::ParseFromCodedStream(google::protobuf::io::CodedInputStream*)+68) (BuildId: 3f18358a6799a41dd523b6f67ce70d70)
+12-23 17:07:20.252 15381 15381 F DEBUG   :       #12 pc 00000000000b278c  /vendor/lib64/libgraph.so (BuildId: d2a9b3d0cdbbae81ebf61f41d7db8a9d)
+12-23 17:07:20.252 15381 15381 F DEBUG   :       #13 pc 00000000000b33c0  /vendor/lib64/libgraph.so (ge::ModelSerialize::UnserializeGraph(unsigned char const*, unsigned long)+80) (BuildId: d2a9b3d0cdbbae81ebf61f41d7db8a9d)
+12-23 17:07:20.252 15381 15381 F DEBUG   :       #14 pc 0000000000014398  /vendor/lib64/libai_fmk_dnnacl_server.so (dnnacl::DnnaclManagerService::UnSerialize(std::__1::vector<hiai::rpc::RpcHandle, std::__1::allocator<hiai::rpc::RpcHandle>> const&, ge::GraphOptimizerOptions&, std::__1::shared_ptr<ge::ComputeGraph>&, std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>>&, int&)+332) (BuildId: a3d3df4ad64833388320d8292f418fd3)
+12-23 17:07:20.252 15381 15381 F DEBUG   :       #15 pc 0000000000013d80  /vendor/lib64/libai_fmk_dnnacl_server.so (dnnacl::DnnaclManagerService::GraphOptimize(std::__1::vector<hiai::rpc::RpcHandle, std::__1::allocator<hiai::rpc::RpcHandle>> const&, std::__1::vector<hiai::rpc::RpcHandle, std::__1::allocator<hiai::rpc::RpcHandle>>&)+176) (BuildId: a3d3df4ad64833388320d8292f418fd3)
+12-23 17:07:20.252 15381 15381 F DEBUG   :       #16 pc 000000000001ba24  /vendor/lib64/libai_fmk_dnnacl_server.so (dnnacl::DnnaclManagerService::Execute(int, int, std::__1::vector<hiai::rpc::RpcHandle, std::__1::allocator<hiai::rpc::RpcHandle>> const&, std::__1::vector<hiai::rpc::RpcHandle, std::__1::allocator<hiai::rpc::RpcHandle>>&)+352) (BuildId: a3d3df4ad64833388320d8292f418fd3)
+12-23 17:07:20.252 15381 15381 F DEBUG   :       #17 pc 0000000000008814  /vendor/lib64/libai_hidl_request_server.so (ai::HIAIHidlRequestService::execute(int, int, android::hardware::hidl_vec<android::hardware::hidl_handle> const&, std::__1::function<void (int, android::hardware::hidl_vec<android::hardware::hidl_handle> const&)>)+228) (BuildId: fedeb9d03f4d8796b16748598bbece8a)
+12-23 17:07:20.252 15381 15381 F DEBUG   :       #18 pc 000000000001523c  /vendor/lib64/vendor.huawei.hardware.ai.hidlrequest@1.0.so (vendor::huawei::hardware::ai::hidlrequest::V1_0::BnHwHidlRequest::_hidl_execute(android::hidl::base::V1_0::BnHwBase*, android::hardware::Parcel const&, android::hardware::Parcel*, std::__1::function<void (android::hardware::Parcel&)>)+516) (BuildId: 15741e40f920d429fdff64766dfaae6f)
+12-23 17:07:20.252 15381 15381 F DEBUG   :       #19 pc 0000000000015db4  /vendor/lib64/vendor.huawei.hardware.ai.hidlrequest@1.0.so (vendor::huawei::hardware::ai::hidlrequest::V1_0::BnHwHidlRequest::onTransact(unsigned int, android::hardware::Parcel const&, android::hardware::Parcel*, unsigned int, std::__1::function<void (android::hardware::Parcel&)>)+544) (BuildId: 15741e40f920d429fdff64766dfaae6f)
+12-23 17:07:20.252 15381 15381 F DEBUG   :       #20 pc 00000000000825f4  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::BHwBinder::transact(unsigned int, android::hardware::Parcel const&, android::hardware::Parcel*, unsigned int, std::__1::function<void (android::hardware::Parcel&)>)+68) (BuildId: 11681eaa4cb6b125f8ee49040fbec465)
+12-23 17:07:20.252 15381 15381 F DEBUG   :       #21 pc 0000000000085e88  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::IPCThreadState::getAndExecuteCommand()+1036) (BuildId: 11681eaa4cb6b125f8ee49040fbec465)
+12-23 17:07:20.253 15381 15381 F DEBUG   :       #22 pc 0000000000087518  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::IPCThreadState::joinThreadPool(bool)+152) (BuildId: 11681eaa4cb6b125f8ee49040fbec465)
+12-23 17:07:20.253 15381 15381 F DEBUG   :       #23 pc 00000000000965ac  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::PoolThread::threadLoop()+24) (BuildId: 11681eaa4cb6b125f8ee49040fbec465)
+12-23 17:07:20.253 15381 15381 F DEBUG   :       #24 pc 00000000000136d8  /system/lib64/vndk-sp-29/libutils.so (android::Thread::_threadLoop(void*)+288) (BuildId: d8022ba6148997b3e4f5f130703a1b11)
+12-23 17:07:20.253 15381 15381 F DEBUG   :       #25 pc 00000000000cf7c0  /apex/com.android.runtime/lib64/bionic/libc.so (__pthread_start(void*)+36) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+12-23 17:07:20.253 15381 15381 F DEBUG   :       #26 pc 00000000000721a8  /apex/com.android.runtime/lib64/bionic/libc.so (__start_thread+64) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+------------ model offset: 0x84 crashed the app. ------------
+12-23 17:34:13.809 19245 20575 F libc    : Fatal signal 11 (SIGSEGV), code 2 (SEGV_ACCERR), fault addr 0x7487b99000 in tid 20575 (pool-3-thread-5), pid 19245 (t.sample.vision)
+12-23 17:34:13.942 20587 20587 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+12-23 17:34:13.942 20587 20587 F DEBUG   : Build fingerprint: 'HUAWEI/MRX-AN19/HWMRX:10/HUAWEIMRX-AN19/102.0.0.207C00:user/release-keys'
+12-23 17:34:13.942 20587 20587 F DEBUG   : Revision: '0'
+12-23 17:34:13.942 20587 20587 F DEBUG   : ABI: 'arm64'
+12-23 17:34:13.942 20587 20587 F DEBUG   : Timestamp: 2021-12-23 17:34:13+0800
+12-23 17:34:13.942 20587 20587 F DEBUG   : pid: 19245, tid: 20575, name: pool-3-thread-5  >>> com.mlkit.sample.vision <<<
+12-23 17:34:13.942 20587 20587 F DEBUG   : uid: 10547
+12-23 17:34:13.942 20587 20587 F DEBUG   : signal 11 (SIGSEGV), code 2 (SEGV_ACCERR), fault addr 0x7487b99000
+12-23 17:34:13.943 20587 20587 F DEBUG   :     x0  0000007487b20000  x1  0000007370991994  x2  00000073f5200000  x3  0000000000000002
+12-23 17:34:13.943 20587 20587 F DEBUG   :     x4  00000000000000c6  x5  000000736299d7c0  x6  0000000b00000001  x7  0000016000000160
+12-23 17:34:13.943 20587 20587 F DEBUG   :     x8  000000736d9790f0  x9  0000007487b20000  x10 0000000000000000  x11 000000000001e400
+12-23 17:34:13.943 20587 20587 F DEBUG   :     x12 000000000001e400  x13 0000000000005200  x14 0000000000000030  x15 aaaaaaaaaaaaaaab
+12-23 17:34:13.943 20587 20587 F DEBUG   :     x16 0000007482baaa30  x17 0000007482b9ef80  x18 000000734d7d3940  x19 00000074021f4400
+12-23 17:34:13.943 20587 20587 F DEBUG   :     x20 0000000000000000  x21 00000074021f4400  x22 000000736d97d0a0  x23 00000073a0a68b40
+12-23 17:34:13.943 20587 20587 F DEBUG   :     x24 0000000000000040  x25 000000736d97f020  x26 00000074021f44b0  x27 0000000000000001
+12-23 17:34:13.943 20587 20587 F DEBUG   :     x28 000000736d97cdf0  x29 000000736d97cdf0
+12-23 17:34:13.943 20587 20587 F DEBUG   :     sp  000000736d978880  lr  000000737054b910  pc  000000737054b9a4
+12-23 17:34:14.126 20587 20587 F DEBUG   : 
+12-23 17:34:14.126 20587 20587 F DEBUG   : backtrace:
+12-23 17:34:14.126 20587 20587 F DEBUG   :     NOTE: Function names and BuildId information is missing for some frames due
+12-23 17:34:14.126 20587 20587 F DEBUG   :     NOTE: to unreadable libraries. For unwinds of apps, only shared libraries
+12-23 17:34:14.126 20587 20587 F DEBUG   :     NOTE: found under the lib/ directory are readable.
+12-23 17:34:14.126 20587 20587 F DEBUG   :       #00 pc 000000000013b9a4  /data/user_de/0/com.huawei.android.hsf/modules/external/huawei_module_mlkit_imgseg/30200300/arm64-v8a/libmlkit-segmentation.so
+12-23 17:34:14.126 20587 20587 F DEBUG   :       #01 pc 0000000000150350  /apex/com.android.runtime/lib64/libart.so (art_quick_generic_jni_trampoline+144) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
+12-23 17:34:14.126 20587 20587 F DEBUG   :       #02 pc 0000000000147334  /apex/com.android.runtime/lib64/libart.so (art_quick_invoke_stub+548) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
+12-23 17:34:14.127 20587 20587 F DEBUG   :       #03 pc 00000000001561b4  /apex/com.android.runtime/lib64/libart.so!libart.so (offset 0x156000) (art::ArtMethod::Invoke(art::Thread*, unsigned int*, unsigned int, art::JValue*, char const*)+252) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
+12-23 17:34:14.127 20587 20587 F DEBUG   :       #04 pc 00000000002fd900  /apex/com.android.runtime/lib64/libart.so!libart.so (offset 0x157000) (art::interpreter::ArtInterpreterToCompiledCodeBridge(art::Thread*, art::ArtMethod*, art::ShadowFrame*, unsigned short, art::JValue*)+384) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
+12-23 17:34:14.127 20587 20587 F DEBUG   :       #05 pc 00000000002f9c64  /apex/com.android.runtime/lib64/libart.so!libart.so (offset 0x157000) (bool art::interpreter::DoCall<true, false>(art::ArtMethod*, art::Thread*, art::ShadowFrame&, art::Instruction const*, unsigned short, art::JValue*)+656) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
+12-23 17:34:14.127 20587 20587 F DEBUG   :       #06 pc 00000000005cea40  /apex/com.android.runtime/lib64/libart.so!libart.so (offset 0x3a1000) (MterpInvokeVirtualRange+512) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
+12-23 17:34:14.127 20587 20587 F DEBUG   :       #07 pc 0000000000141b14  /apex/com.android.runtime/lib64/libart.so (mterp_op_invoke_virtual_range+20) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
+12-23 17:34:14.127 20587 20587 F DEBUG   :       #08 pc 000000000002f6ca  [anon:dalvik-classes.dex extracted in memory from /data/user_de/0/com.huawei.android.hsf/modules/external/huawei_module_mlkit_imgseg/30200300/com.huawei.hms.mlkit.imgseg-30200300.apk] (com.huawei.hms.mlkit.imgseg.HMSNativateImageSegmentation.a+378)
+12-23 17:34:14.127 20587 20587 F DEBUG   :       #09 pc 00000000005cec60  /apex/com.android.runtime/lib64/libart.so!libart.so (offset 0x3a1000) (MterpInvokeVirtualRange+1056) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
+12-23 17:34:14.127 20587 20587 F DEBUG   :       #10 pc 0000000000141b14  /apex/com.android.runtime/lib64/libart.so (mterp_op_invoke_virtual_range+20) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
+12-23 17:34:14.127 20587 20587 F DEBUG   :       #11 pc 000000000002fae6  [anon:dalvik-classes.dex extracted in memory from /data/user_de/0/com.huawei.android.hsf/modules/external/huawei_module_mlkit_imgseg/30200300/com.huawei.hms.mlkit.imgseg-30200300.apk] (com.huawei.hms.mlkit.imgseg.l3.a+210)
+12-23 17:34:14.127 20587 20587 F DEBUG   :       #12 pc 00000000005cd060  /apex/com.android.runtime/lib64/libart.so!libart.so (offset 0x3a1000) (MterpInvokeInterface+1752) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
+12-23 17:34:14.127 20587 20587 F DEBUG   :       #13 pc 0000000000141a14  /apex/com.android.runtime/lib64/libart.so (mterp_op_invoke_interface+20) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
+12-23 17:34:14.127 20587 20587 F DEBUG   :       #14 pc 000000000002d630  [anon:dalvik-classes.dex extracted in memory from /data/user_de/0/com.huawei.android.hsf/modules/external/huawei_module_mlkit_imgseg/30200300/com.huawei.hms.mlkit.imgseg-30200300.apk] (com.huawei.hms.mlkit.imgseg.h3$a.onTransact+180)
+12-23 17:34:14.127 20587 20587 F DEBUG   :       #15 pc 00000000005cb860  /apex/com.android.runtime/lib64/libart.so!libart.so (offset 0x3a1000) (MterpInvokeVirtual+1432) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
+12-23 17:34:14.127 20587 20587 F DEBUG   :       #16 pc 0000000000141814  /apex/com.android.runtime/lib64/libart.so (mterp_op_invoke_virtual+20) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
+12-23 17:34:14.127 20587 20587 F DEBUG   :       #17 pc 0000000000300690  /system/framework/framework.jar (android.os.Binder.transact+12)
+12-23 17:34:14.127 20587 20587 F DEBUG   :       #18 pc 00000000005cd060  /apex/com.android.runtime/lib64/libart.so!libart.so (offset 0x3a1000) (MterpInvokeInterface+1752) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
+12-23 17:34:14.127 20587 20587 F DEBUG   :       #19 pc 0000000000141a14  /apex/com.android.runtime/lib64/libart.so (mterp_op_invoke_interface+20) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
+12-23 17:34:14.127 20587 20587 F DEBUG   :       #20 pc 000000000034476c  [anon:dalvik-classes.dex extracted in memory from /data/app/com.mlkit.sample.vision-lr-Z71dI4h3r7Ntzw-9_XQ==/base.apk] (com.huawei.hms.ml.common.imgseg.IRemoteImageSegmentationDecoderDelegate$Stub$Proxy.detect+108)
+12-23 17:34:14.127 20587 20587 F DEBUG   :       #21 pc 00000000005cd060  /apex/com.android.runtime/lib64/libart.so!libart.so (offset 0x3a1000) (MterpInvokeInterface+1752) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
+12-23 17:34:14.127 20587 20587 F DEBUG   :       #22 pc 0000000000141a14  /apex/com.android.runtime/lib64/libart.so (mterp_op_invoke_interface+20) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
+12-23 17:34:14.127 20587 20587 F DEBUG   :       #23 pc 000000000036e402  [anon:dalvik-classes.dex extracted in memory from /data/app/com.mlkit.sample.vision-lr-Z71dI4h3r7Ntzw-9_XQ==/base.apk] (com.huawei.hms.mlsdk.imgseg.client.RemoteImageSegmentationDecoder.detect+122)
+12-23 17:34:14.127 20587 20587 F DEBUG   :       #24 pc 00000000005cb860  /apex/com.android.runtime/lib64/libart.so!libart.so (offset 0x3a1000) (MterpInvokeVirtual+1432) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
+12-23 17:34:14.127 20587 20587 F DEBUG   :       #25 pc 0000000000141814  /apex/com.android.runtime/lib64/libart.so (mterp_op_invoke_virtual+20) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
+12-23 17:34:14.127 20587 20587 F DEBUG   :       #26 pc 000000000036dba0  [anon:dalvik-classes.dex extracted in memory from /data/app/com.mlkit.sample.vision-lr-Z71dI4h3r7Ntzw-9_XQ==/base.apk] (com.huawei.hms.mlsdk.imgseg.MLImageSegmentationAnalyzer$1.call+48)
+12-23 17:34:14.127 20587 20587 F DEBUG   :       #27 pc 00000000005cb860  /apex/com.android.runtime/lib64/libart.so!libart.so (offset 0x3a1000) (MterpInvokeVirtual+1432) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
+12-23 17:34:14.127 20587 20587 F DEBUG   :       #28 pc 0000000000141814  /apex/com.android.runtime/lib64/libart.so (mterp_op_invoke_virtual+20) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
+12-23 17:34:14.127 20587 20587 F DEBUG   :       #29 pc 000000000036dbd4  [anon:dalvik-classes.dex extracted in memory from /data/app/com.mlkit.sample.vision-lr-Z71dI4h3r7Ntzw-9_XQ==/base.apk] (com.huawei.hms.mlsdk.imgseg.MLImageSegmentationAnalyzer$1.call)
+12-23 17:34:14.127 20587 20587 F DEBUG   :       #30 pc 00000000005cd060  /apex/com.android.runtime/lib64/libart.so!libart.so (offset 0x3a1000) (MterpInvokeInterface+1752) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
+12-23 17:34:14.127 20587 20587 F DEBUG   :       #31 pc 0000000000141a14  /apex/com.android.runtime/lib64/libart.so (mterp_op_invoke_interface+20) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
+12-23 17:34:14.127 20587 20587 F DEBUG   :       #32 pc 0000000000307abc  [anon:dalvik-classes.dex extracted in memory from /data/app/com.mlkit.sample.vision-lr-Z71dI4h3r7Ntzw-9_XQ==/base.apk] (com.huawei.hmf.tasks.a.j$1.run+8)
+12-23 17:34:14.127 20587 20587 F DEBUG   :       #33 pc 00000000005cd060  /apex/com.android.runtime/lib64/libart.so!libart.so (offset 0x3a1000) (MterpInvokeInterface+1752) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
+12-23 17:34:14.127 20587 20587 F DEBUG   :       #34 pc 0000000000141a14  /apex/com.android.runtime/lib64/libart.so (mterp_op_invoke_interface+20) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
+12-23 17:34:14.127 20587 20587 F DEBUG   :       #35 pc 00000000001f825e  /apex/com.android.runtime/javalib/core-oj.jar (java.util.concurrent.ThreadPoolExecutor.runWorker+158)
+12-23 17:34:14.127 20587 20587 F DEBUG   :       #36 pc 00000000005cb860  /apex/com.android.runtime/lib64/libart.so!libart.so (offset 0x3a1000) (MterpInvokeVirtual+1432) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
+12-23 17:34:14.127 20587 20587 F DEBUG   :       #37 pc 0000000000141814  /apex/com.android.runtime/lib64/libart.so (mterp_op_invoke_virtual+20) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
+12-23 17:34:14.127 20587 20587 F DEBUG   :       #38 pc 00000000001f700c  /apex/com.android.runtime/javalib/core-oj.jar (java.util.concurrent.ThreadPoolExecutor$Worker.run+4)
+12-23 17:34:14.127 20587 20587 F DEBUG   :       #39 pc 00000000005cd060  /apex/com.android.runtime/lib64/libart.so!libart.so (offset 0x3a1000) (MterpInvokeInterface+1752) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
+12-23 17:34:14.127 20587 20587 F DEBUG   :       #40 pc 0000000000141a14  /apex/com.android.runtime/lib64/libart.so (mterp_op_invoke_interface+20) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
+12-23 17:34:14.127 20587 20587 F DEBUG   :       #41 pc 00000000000eabdc  /apex/com.android.runtime/javalib/core-oj.jar (java.lang.Thread.run+8)
+12-23 17:34:14.127 20587 20587 F DEBUG   :       #42 pc 00000000002ce22c  /apex/com.android.runtime/lib64/libart.so!libart.so (offset 0x157000) (_ZN3art11interpreterL7ExecuteEPNS_6ThreadERKNS_20CodeItemDataAccessorERNS_11ShadowFrameENS_6JValueEbb.llvm.10887373532384510885+320) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
+12-23 17:34:14.127 20587 20587 F DEBUG   :       #43 pc 00000000005bc090  /apex/com.android.runtime/lib64/libart.so!libart.so (offset 0x3a1000) (artQuickToInterpreterBridge+1012) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
+12-23 17:34:14.127 20587 20587 F DEBUG   :       #44 pc 0000000000150468  /apex/com.android.runtime/lib64/libart.so (art_quick_to_interpreter_bridge+88) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
+12-23 17:34:14.127 20587 20587 F DEBUG   :       #45 pc 0000000000147334  /apex/com.android.runtime/lib64/libart.so (art_quick_invoke_stub+548) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
+12-23 17:34:14.127 20587 20587 F DEBUG   :       #46 pc 00000000001561b4  /apex/com.android.runtime/lib64/libart.so!libart.so (offset 0x156000) (art::ArtMethod::Invoke(art::Thread*, unsigned int*, unsigned int, art::JValue*, char const*)+252) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
+12-23 17:34:14.127 20587 20587 F DEBUG   :       #47 pc 00000000004d8820  /apex/com.android.runtime/lib64/libart.so!libart.so (offset 0x3a1000) (art::(anonymous namespace)::InvokeWithArgArray(art::ScopedObjectAccessAlreadyRunnable const&, art::ArtMethod*, art::(anonymous namespace)::ArgArray*, art::JValue*, char const*)+104) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
+12-23 17:34:14.127 20587 20587 F DEBUG   :       #48 pc 00000000004d98b4  /apex/com.android.runtime/lib64/libart.so!libart.so (offset 0x3a1000) (art::InvokeVirtualOrInterfaceWithJValues(art::ScopedObjectAccessAlreadyRunnable const&, _jobject*, _jmethodID*, jvalue const*)+416) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
+12-23 17:34:14.127 20587 20587 F DEBUG   :       #49 pc 000000000051ca8c  /apex/com.android.runtime/lib64/libart.so!libart.so (offset 0x3a1000) (art::Thread::CreateCallback(void*)+1232) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
+12-23 17:34:14.127 20587 20587 F DEBUG   :       #50 pc 00000000000cf7c0  /apex/com.android.runtime/lib64/bionic/libc.so!libc.so (offset 0xcf000) (__pthread_start(void*)+36) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+12-23 17:34:14.127 20587 20587 F DEBUG   :       #51 pc 00000000000721a8  /apex/com.android.runtime/lib64/bionic/libc.so!libc.so (offset 0x71000) (__start_thread+64) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)

@@ -26,6 +26,14 @@ def on_message(message, data):
             with open(g_log_file, "a+") as fwh:
                 fwh.write("************ model offset: {} crashed the server. ************\n".format(
                     hex(g_obj_content_offset)))
+        if message["payload"].find("app_exception") != -1:
+            msg = message["payload"].strip().split(":")
+            g_obj_content_offset = int(msg[1])
+
+            print("[*] logging app exception")
+            with open(g_log_file, "a+") as fwh:
+                fwh.write("************ model offset: {} crashed the app (message from exception handler). ************\n".format(
+                    hex(g_obj_content_offset)))
         if message["payload"].find("ready") != -1:
             p = subprocess.Popen("adb logcat -b crash -d",
                                     shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
@@ -40,7 +48,7 @@ def on_message(message, data):
             if stdout.decode().find("Build fingerprint") != -1 and g_obj_content_offset != 0:
                 print("[*] logging crash")
                 with open(g_log_file, "a+") as fwh:
-                    fwh.write("------------ model offset: {} crashed the app. ------------\n".format(hex(g_obj_content_offset - 4)))
+                    fwh.write("------------ model offset: {} crashed the app (message from logcat). ------------\n".format(hex(g_obj_content_offset - 4)))
                     fwh.write(stdout.decode())
 
             p = subprocess.Popen("adb logcat -c",

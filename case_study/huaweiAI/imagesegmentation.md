@@ -450,5 +450,7 @@ By observation, I would like to fuzz blocks #2, #3, #4, #5, #6, #7, #8 and #9, f
 0x11 (#2), 0x10 (#3, #4), 0x13 (#5, #6, #7), 0x1b (#8) and 0x14 (#9).
 2. We notice that the first lunch of the app issues lots of parcels, but the following operation does not (does not load model). This means that the replay strategy does not work. So we modify the source code of the app to re-launch the app.
 3. I find the service can't be restarted automatically, so I detach to stop sending message.
+4. This module works really slow, I removed most of the mutations.
+
 # fuzz result 
 The fuzz result is stored in imagesegmentation_crash.log file.

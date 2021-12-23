@@ -28,20 +28,23 @@ Java.perform(function () {
     var g_peekhole_seed     = 0;
 
 
-    function genSeed(org_value)     // length: 38
+    function genSeed(org_value)
     {
         return [//org_value,           // replay (test double-free?)
+// I removed most of them, for it works really slow.
                         ~org_value,
-                        org_value & 0xffffff00, org_value & 0xffff00ff, org_value & 0xff00ffff, org_value & 0x00ffffff,
-                        org_value | 0x000000ff, org_value | 0x0000ff00, org_value | 0x00ff0000, org_value | 0xff000000,
-                        org_value & 0xffffff00 + 0x7f, org_value & 0xffff00ff + 0x7f00, org_value & 0xff00ffff + 0x7f0000, org_value & 0x00ffffff + 0x7f000000,
-                        org_value & 0xffffff00 + 0x80, org_value & 0xffff00ff + 0x8000, org_value & 0xff00ffff + 0x800000, org_value & 0x00ffffff + 0x80000000,
+//                        org_value & 0xffffff00, org_value & 0xffff00ff, org_value & 0xff00ffff, org_value & 0x00ffffff,
+//                        org_value | 0x000000ff, org_value | 0x0000ff00, org_value | 0x00ff0000, org_value | 0xff000000,
+//                        org_value & 0xffffff00 + 0x7f, org_value & 0xffff00ff + 0x7f00, org_value & 0xff00ffff + 0x7f0000, org_value & 0x00ffffff + 0x7f000000,
+//                        org_value & 0xffffff00 + 0x80, org_value & 0xffff00ff + 0x8000, org_value & 0xff00ffff + 0x800000, org_value & 0x00ffffff + 0x80000000,
                         0,
-                        0x7f, 0x7fff, 0x7fffff, 0x7fffffff,
-                        0x80, 0x8000, 0x800000, 0x80000000,
-                        0xff, 0xffff, 0xffffff, 0xffffffff,
-                        org_value + 1, org_value + 0x100, org_value + 0x10000, org_value + 0x1000000,
-                        org_value - 1, org_value - 0x100, org_value - 0x10000, org_value - 0x1000000
+//                        0x7f, 0x7fff, 0x7fffff, 0x7fffffff,
+//                        0x80, 0x8000, 0x800000, 0x80000000,
+//                        0xff, 0xffff, 0xffffff,
+                        0xffffffff,
+//                        org_value + 1, org_value + 0x100, org_value + 0x10000, org_value + 0x1000000,
+//                        org_value - 1, org_value - 0x100, org_value - 0x10000, org_value - 0x1000000,
+                        0x41414141,
                         ];
     }
 
@@ -156,7 +159,7 @@ Java.perform(function () {
     const g_cur_process = [
         0x11, /* which tag */
         0, /* which hidl_handle */
-        -4 + 4, /* offset */
+        0x5f4 + 4, /* offset */
         ];
 
     // collect manually
@@ -169,9 +172,6 @@ Java.perform(function () {
 //    |-----------------|-----|-----|----------|-----------------------|--------------------|-------------|----------|-----
 //    | interface token | int | int | hidl_vec | hidl_vec<hidl_handle> | native_handle_size | hidl_handle | fd_array | ...
 //                                                                     \--------------------------- zero or more --------
-
-        if (mData_pos.add(0x3c).readU32() != g_cur_process[0])
-            return;
 
         var binder_object_offset    = mObjects_pos.add(2 * 0x8 + g_cur_process[1] * 0x10).readU64();
         var binder_object_pos       = mData_pos.add(binder_object_offset);
@@ -304,6 +304,11 @@ Java.perform(function () {
         if (args[2].add(mData_LOC).readPointer().readUtf8String().indexOf(fuzzInterface) == -1)
             return
 
+        var mData_offset = args[2].add(mData_LOC);
+        var mData_pos = mData_offset.readPointer();
+        if (mData_pos.add(0x3c).readU32() != g_cur_process[0])
+            return;
+
 //        console.log('[i] call stack:\n' +
 //            Thread.backtrace(that.context, Backtracer.ACCURATE)
 //            .map(DebugSymbol.fromAddress).join('\n') + '\n');
@@ -371,6 +376,16 @@ Java.perform(function () {
 
     console.log('[*] Frida js is running.');
 
+
+    // may help exploring the stealthy exception.
+    // in testing.
+    Process.setExceptionHandler(function(error)
+    {
+        send("app_exception:" + g_cur_process[2]);
+        console.warn("|-[i] app exception received. current offset: 0x" + g_cur_process[2].toString(16));
+        return false;
+    })
+
     // return
     // Use the mangled name
     var BpHwBinder_transact_p = Module.getExportByName("/system/lib64/libhidlbase.so", '_ZN7android8hardware10BpHwBinder8transactEjRKNS0_6ParcelEPS2_jNSt3__18functionIFvRS2_EEE');
@@ -391,7 +406,7 @@ Java.perform(function () {
 //            console.log("|-[i] ret value: " + retval);
             if (retval.toInt32() == DEAD_OBJECT)
             {
-                g_dead_obj_lst.push(g_cur_process[2], g_obj_content_seed);    // should tell em apart
+                g_dead_obj_lst.push(g_cur_process[2], g_obj_content_seed);
                 send("dead_object:" + g_cur_process[2]);
                 console.warn("|-[i] dead object received, stop intercepting. current offset: 0x" + g_cur_process[2].toString(16));
                 Interceptor.detachAll();
@@ -416,7 +431,7 @@ Java.perform(function () {
 //            console.log("|-[i] ret value: " + retval);
             if (retval.toInt32() == DEAD_OBJECT)
             {
-                g_dead_obj_lst.push(g_cur_process[2], g_obj_content_seed);    // should tell them apart
+                g_dead_obj_lst.push(g_cur_process[2], g_obj_content_seed);
                 send("dead_object:" + g_cur_process[2]);
 //                g_dead_obj_lst.push(g_object_offset, g_object_index);
                 console.warn("|-[i] dead object received, stop intercepting. current offset: 0x" + g_cur_process[2].toString(16));
