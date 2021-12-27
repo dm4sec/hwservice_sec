@@ -159,7 +159,7 @@ Java.perform(function () {
     const g_cur_process = [
         0x11, /* which tag */
         0, /* which hidl_handle */
-        0x5f4 + 4, /* offset */
+        0x158c + 4, /* offset */
         ];
 
     // collect manually

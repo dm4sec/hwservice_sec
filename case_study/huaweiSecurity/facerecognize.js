@@ -445,6 +445,14 @@ Java.perform(function () {
         "android.content.IContentProvider",
         "com.huawei.iaware.sdk.ISDKManager",
         "android.pc.IHwPCManager",
+        "android.hardware.input.IInputManager",
+        "com.huawei.android.view.IHwWindowManager",
+        "com.android.internal.view.IInputMethodManager",
+        "android.app.IActivityTaskManager",
+        "android.content.pm.IPackageManager",
+        "android.os.IServiceManager",
+        "android.aps.IHwApsManager",
+
         ];
 
     const white_interface_list = [

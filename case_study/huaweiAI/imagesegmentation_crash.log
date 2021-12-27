@@ -124,3 +124,197 @@
 12-23 17:34:14.127 20587 20587 F DEBUG   :       #49 pc 000000000051ca8c  /apex/com.android.runtime/lib64/libart.so!libart.so (offset 0x3a1000) (art::Thread::CreateCallback(void*)+1232) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
 12-23 17:34:14.127 20587 20587 F DEBUG   :       #50 pc 00000000000cf7c0  /apex/com.android.runtime/lib64/bionic/libc.so!libc.so (offset 0xcf000) (__pthread_start(void*)+36) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
 12-23 17:34:14.127 20587 20587 F DEBUG   :       #51 pc 00000000000721a8  /apex/com.android.runtime/lib64/bionic/libc.so!libc.so (offset 0x71000) (__start_thread+64) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+------------ model offset: 0x988 crashed the app (msg from logcat). ------------
+12-24 09:19:33.467 16980 17722 E AndroidRuntime: FATAL EXCEPTION: pool-6-thread-1
+12-24 09:19:33.467 16980 17722 E AndroidRuntime: Process: com.mlkit.sample.vision, PID: 16980
+12-24 09:19:33.467 16980 17722 E AndroidRuntime: java.lang.OutOfMemoryError: Failed to allocate a 2359304 byte allocation with 1340248 free bytes and 1308KB until OOM, target footprint 402653184, growth limit 402653184
+12-24 09:19:33.467 16980 17722 E AndroidRuntime: 	at java.util.Arrays.copyOf(Arrays.java:3257)
+12-24 09:19:33.467 16980 17722 E AndroidRuntime: 	at java.lang.AbstractStringBuilder.ensureCapacityInternal(AbstractStringBuilder.java:124)
+12-24 09:19:33.467 16980 17722 E AndroidRuntime: 	at java.lang.AbstractStringBuilder.append(AbstractStringBuilder.java:649)
+12-24 09:19:33.467 16980 17722 E AndroidRuntime: 	at java.lang.StringBuilder.append(StringBuilder.java:203)
+12-24 09:19:33.467 16980 17722 E AndroidRuntime: 	at org.json.JSONStringer.string(JSONStringer.java:354)
+12-24 09:19:33.467 16980 17722 E AndroidRuntime: 	at org.json.JSONStringer.value(JSONStringer.java:261)
+12-24 09:19:33.467 16980 17722 E AndroidRuntime: 	at org.json.JSONObject.writeTo(JSONObject.java:733)
+12-24 09:19:33.467 16980 17722 E AndroidRuntime: 	at org.json.JSONStringer.value(JSONStringer.java:246)
+12-24 09:19:33.467 16980 17722 E AndroidRuntime: 	at org.json.JSONArray.writeTo(JSONArray.java:616)
+12-24 09:19:33.467 16980 17722 E AndroidRuntime: 	at org.json.JSONArray.toString(JSONArray.java:587)
+12-24 09:19:33.467 16980 17722 E AndroidRuntime: 	at com.huawei.hms.mlkit.imgseg.h.run(Unknown Source:129)
+12-24 09:19:33.467 16980 17722 E AndroidRuntime: 	at com.huawei.hms.mlkit.imgseg.j$a.run(Unknown Source:4)
+12-24 09:19:33.467 16980 17722 E AndroidRuntime: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1167)
+12-24 09:19:33.467 16980 17722 E AndroidRuntime: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:641)
+12-24 09:19:33.467 16980 17722 E AndroidRuntime: 	at java.lang.Thread.run(Thread.java:929)
+------------ model offset: 0xabc crashed the app (msg from logcat). ------------
+12-24 09:35:31.366 17158 21029 E AndroidRuntime: FATAL EXCEPTION: pool-7-thread-1
+12-24 09:35:31.366 17158 21029 E AndroidRuntime: Process: com.mlkit.sample.vision, PID: 17158
+12-24 09:35:31.366 17158 21029 E AndroidRuntime: java.lang.OutOfMemoryError: Failed to allocate a 2359304 byte allocation with 1633072 free bytes and 1594KB until OOM, target footprint 402653184, growth limit 402653184
+12-24 09:35:31.366 17158 21029 E AndroidRuntime: 	at java.util.Arrays.copyOf(Arrays.java:3257)
+12-24 09:35:31.366 17158 21029 E AndroidRuntime: 	at java.lang.AbstractStringBuilder.ensureCapacityInternal(AbstractStringBuilder.java:124)
+12-24 09:35:31.366 17158 21029 E AndroidRuntime: 	at java.lang.AbstractStringBuilder.append(AbstractStringBuilder.java:649)
+12-24 09:35:31.366 17158 21029 E AndroidRuntime: 	at java.lang.StringBuilder.append(StringBuilder.java:203)
+12-24 09:35:31.366 17158 21029 E AndroidRuntime: 	at org.json.JSONStringer.string(JSONStringer.java:354)
+12-24 09:35:31.366 17158 21029 E AndroidRuntime: 	at org.json.JSONStringer.value(JSONStringer.java:261)
+12-24 09:35:31.366 17158 21029 E AndroidRuntime: 	at org.json.JSONObject.writeTo(JSONObject.java:733)
+12-24 09:35:31.366 17158 21029 E AndroidRuntime: 	at org.json.JSONStringer.value(JSONStringer.java:246)
+12-24 09:35:31.366 17158 21029 E AndroidRuntime: 	at org.json.JSONArray.writeTo(JSONArray.java:616)
+12-24 09:35:31.366 17158 21029 E AndroidRuntime: 	at org.json.JSONArray.toString(JSONArray.java:587)
+12-24 09:35:31.366 17158 21029 E AndroidRuntime: 	at com.huawei.hms.mlkit.imgseg.h.run(Unknown Source:129)
+12-24 09:35:31.366 17158 21029 E AndroidRuntime: 	at com.huawei.hms.mlkit.imgseg.j$a.run(Unknown Source:4)
+12-24 09:35:31.366 17158 21029 E AndroidRuntime: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1167)
+12-24 09:35:31.366 17158 21029 E AndroidRuntime: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:641)
+12-24 09:35:31.366 17158 21029 E AndroidRuntime: 	at java.lang.Thread.run(Thread.java:929)
+------------ model offset: 0xbf0 crashed the app (msg from logcat). ------------
+12-24 10:35:57.887 22741 25841 E AndroidRuntime: FATAL EXCEPTION: pool-7-thread-1
+12-24 10:35:57.887 22741 25841 E AndroidRuntime: Process: com.mlkit.sample.vision, PID: 22741
+12-24 10:35:57.887 22741 25841 E AndroidRuntime: java.lang.OutOfMemoryError: Failed to allocate a 2359304 byte allocation with 1525720 free bytes and 1489KB until OOM, target footprint 402653184, growth limit 402653184
+12-24 10:35:57.887 22741 25841 E AndroidRuntime: 	at java.util.Arrays.copyOf(Arrays.java:3257)
+12-24 10:35:57.887 22741 25841 E AndroidRuntime: 	at java.lang.AbstractStringBuilder.ensureCapacityInternal(AbstractStringBuilder.java:124)
+12-24 10:35:57.887 22741 25841 E AndroidRuntime: 	at java.lang.AbstractStringBuilder.append(AbstractStringBuilder.java:649)
+12-24 10:35:57.887 22741 25841 E AndroidRuntime: 	at java.lang.StringBuilder.append(StringBuilder.java:203)
+12-24 10:35:57.887 22741 25841 E AndroidRuntime: 	at org.json.JSONStringer.string(JSONStringer.java:354)
+12-24 10:35:57.887 22741 25841 E AndroidRuntime: 	at org.json.JSONStringer.value(JSONStringer.java:261)
+12-24 10:35:57.887 22741 25841 E AndroidRuntime: 	at org.json.JSONObject.writeTo(JSONObject.java:733)
+12-24 10:35:57.887 22741 25841 E AndroidRuntime: 	at org.json.JSONStringer.value(JSONStringer.java:246)
+12-24 10:35:57.887 22741 25841 E AndroidRuntime: 	at org.json.JSONArray.writeTo(JSONArray.java:616)
+12-24 10:35:57.887 22741 25841 E AndroidRuntime: 	at org.json.JSONArray.toString(JSONArray.java:587)
+12-24 10:35:57.887 22741 25841 E AndroidRuntime: 	at com.huawei.hms.mlkit.imgseg.h.run(Unknown Source:129)
+12-24 10:35:57.887 22741 25841 E AndroidRuntime: 	at com.huawei.hms.mlkit.imgseg.j$a.run(Unknown Source:4)
+12-24 10:35:57.887 22741 25841 E AndroidRuntime: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1167)
+12-24 10:35:57.887 22741 25841 E AndroidRuntime: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:641)
+12-24 10:35:57.887 22741 25841 E AndroidRuntime: 	at java.lang.Thread.run(Thread.java:929)
+------------ model offset: 0xd28 crashed the app (msg from logcat). ------------
+12-24 10:57:58.157 25658 29104 E AndroidRuntime: FATAL EXCEPTION: pool-6-thread-1
+12-24 10:57:58.157 25658 29104 E AndroidRuntime: Process: com.mlkit.sample.vision, PID: 25658
+12-24 10:57:58.157 25658 29104 E AndroidRuntime: java.lang.OutOfMemoryError: Failed to allocate a 2359304 byte allocation with 1351976 free bytes and 1320KB until OOM, target footprint 402653184, growth limit 402653184
+12-24 10:57:58.157 25658 29104 E AndroidRuntime: 	at java.util.Arrays.copyOf(Arrays.java:3257)
+12-24 10:57:58.157 25658 29104 E AndroidRuntime: 	at java.lang.AbstractStringBuilder.ensureCapacityInternal(AbstractStringBuilder.java:124)
+12-24 10:57:58.157 25658 29104 E AndroidRuntime: 	at java.lang.AbstractStringBuilder.append(AbstractStringBuilder.java:649)
+12-24 10:57:58.157 25658 29104 E AndroidRuntime: 	at java.lang.StringBuilder.append(StringBuilder.java:203)
+12-24 10:57:58.157 25658 29104 E AndroidRuntime: 	at org.json.JSONStringer.string(JSONStringer.java:354)
+12-24 10:57:58.157 25658 29104 E AndroidRuntime: 	at org.json.JSONStringer.value(JSONStringer.java:261)
+12-24 10:57:58.157 25658 29104 E AndroidRuntime: 	at org.json.JSONObject.writeTo(JSONObject.java:733)
+12-24 10:57:58.157 25658 29104 E AndroidRuntime: 	at org.json.JSONStringer.value(JSONStringer.java:246)
+12-24 10:57:58.157 25658 29104 E AndroidRuntime: 	at org.json.JSONArray.writeTo(JSONArray.java:616)
+12-24 10:57:58.157 25658 29104 E AndroidRuntime: 	at org.json.JSONArray.toString(JSONArray.java:587)
+12-24 10:57:58.157 25658 29104 E AndroidRuntime: 	at com.huawei.hms.mlkit.imgseg.h.run(Unknown Source:129)
+12-24 10:57:58.157 25658 29104 E AndroidRuntime: 	at com.huawei.hms.mlkit.imgseg.j$a.run(Unknown Source:4)
+12-24 10:57:58.157 25658 29104 E AndroidRuntime: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1167)
+12-24 10:57:58.157 25658 29104 E AndroidRuntime: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:641)
+12-24 10:57:58.157 25658 29104 E AndroidRuntime: 	at java.lang.Thread.run(Thread.java:929)
+------------ model offset: 0xe50 crashed the app (msg from exception handler). ------------
+------------ model offset: 0xe50 crashed the app (msg from exception handler). ------------
+------------ model offset: 0xe5c crashed the app (msg from logcat). ------------
+12-24 11:13:54.149 28850 32403 E AndroidRuntime: FATAL EXCEPTION: pool-6-thread-1
+12-24 11:13:54.149 28850 32403 E AndroidRuntime: Process: com.mlkit.sample.vision, PID: 28850
+12-24 11:13:54.149 28850 32403 E AndroidRuntime: java.lang.OutOfMemoryError: Failed to allocate a 2359304 byte allocation with 1632048 free bytes and 1593KB until OOM, target footprint 402653184, growth limit 402653184
+12-24 11:13:54.149 28850 32403 E AndroidRuntime: 	at java.util.Arrays.copyOf(Arrays.java:3257)
+12-24 11:13:54.149 28850 32403 E AndroidRuntime: 	at java.lang.AbstractStringBuilder.ensureCapacityInternal(AbstractStringBuilder.java:124)
+12-24 11:13:54.149 28850 32403 E AndroidRuntime: 	at java.lang.AbstractStringBuilder.append(AbstractStringBuilder.java:649)
+12-24 11:13:54.149 28850 32403 E AndroidRuntime: 	at java.lang.StringBuilder.append(StringBuilder.java:203)
+12-24 11:13:54.149 28850 32403 E AndroidRuntime: 	at org.json.JSONStringer.string(JSONStringer.java:354)
+12-24 11:13:54.149 28850 32403 E AndroidRuntime: 	at org.json.JSONStringer.value(JSONStringer.java:261)
+12-24 11:13:54.149 28850 32403 E AndroidRuntime: 	at org.json.JSONObject.writeTo(JSONObject.java:733)
+12-24 11:13:54.149 28850 32403 E AndroidRuntime: 	at org.json.JSONStringer.value(JSONStringer.java:246)
+12-24 11:13:54.149 28850 32403 E AndroidRuntime: 	at org.json.JSONArray.writeTo(JSONArray.java:616)
+12-24 11:13:54.149 28850 32403 E AndroidRuntime: 	at org.json.JSONArray.toString(JSONArray.java:587)
+12-24 11:13:54.149 28850 32403 E AndroidRuntime: 	at com.huawei.hms.mlkit.imgseg.h.run(Unknown Source:129)
+12-24 11:13:54.149 28850 32403 E AndroidRuntime: 	at com.huawei.hms.mlkit.imgseg.j$a.run(Unknown Source:4)
+12-24 11:13:54.149 28850 32403 E AndroidRuntime: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1167)
+12-24 11:13:54.149 28850 32403 E AndroidRuntime: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:641)
+12-24 11:13:54.149 28850 32403 E AndroidRuntime: 	at java.lang.Thread.run(Thread.java:929)
+------------ model offset: 0xf90 crashed the app (msg from logcat). ------------
+12-24 11:29:45.817 28856  5237 E AndroidRuntime: FATAL EXCEPTION: pool-7-thread-1
+12-24 11:29:45.817 28856  5237 E AndroidRuntime: Process: com.mlkit.sample.vision, PID: 28856
+12-24 11:29:45.817 28856  5237 E AndroidRuntime: java.lang.OutOfMemoryError: Failed to allocate a 2359304 byte allocation with 1358968 free bytes and 1327KB until OOM, target footprint 402653184, growth limit 402653184
+12-24 11:29:45.817 28856  5237 E AndroidRuntime: 	at java.util.Arrays.copyOf(Arrays.java:3257)
+12-24 11:29:45.817 28856  5237 E AndroidRuntime: 	at java.lang.AbstractStringBuilder.ensureCapacityInternal(AbstractStringBuilder.java:124)
+12-24 11:29:45.817 28856  5237 E AndroidRuntime: 	at java.lang.AbstractStringBuilder.append(AbstractStringBuilder.java:649)
+12-24 11:29:45.817 28856  5237 E AndroidRuntime: 	at java.lang.StringBuilder.append(StringBuilder.java:203)
+12-24 11:29:45.817 28856  5237 E AndroidRuntime: 	at org.json.JSONStringer.string(JSONStringer.java:354)
+12-24 11:29:45.817 28856  5237 E AndroidRuntime: 	at org.json.JSONStringer.value(JSONStringer.java:261)
+12-24 11:29:45.817 28856  5237 E AndroidRuntime: 	at org.json.JSONObject.writeTo(JSONObject.java:733)
+12-24 11:29:45.817 28856  5237 E AndroidRuntime: 	at org.json.JSONStringer.value(JSONStringer.java:246)
+12-24 11:29:45.817 28856  5237 E AndroidRuntime: 	at org.json.JSONArray.writeTo(JSONArray.java:616)
+12-24 11:29:45.817 28856  5237 E AndroidRuntime: 	at org.json.JSONArray.toString(JSONArray.java:587)
+12-24 11:29:45.817 28856  5237 E AndroidRuntime: 	at com.huawei.hms.mlkit.imgseg.h.run(Unknown Source:129)
+12-24 11:29:45.817 28856  5237 E AndroidRuntime: 	at com.huawei.hms.mlkit.imgseg.j$a.run(Unknown Source:4)
+12-24 11:29:45.817 28856  5237 E AndroidRuntime: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1167)
+12-24 11:29:45.817 28856  5237 E AndroidRuntime: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:641)
+12-24 11:29:45.817 28856  5237 E AndroidRuntime: 	at java.lang.Thread.run(Thread.java:929)
+------------ model offset: 0x10c4 crashed the app (msg from logcat). ------------
+12-24 11:45:36.906  4984  8737 E AndroidRuntime: FATAL EXCEPTION: pool-6-thread-1
+12-24 11:45:36.906  4984  8737 E AndroidRuntime: Process: com.mlkit.sample.vision, PID: 4984
+12-24 11:45:36.906  4984  8737 E AndroidRuntime: java.lang.OutOfMemoryError: Failed to allocate a 2359304 byte allocation with 1622080 free bytes and 1584KB until OOM, target footprint 402653184, growth limit 402653184
+12-24 11:45:36.906  4984  8737 E AndroidRuntime: 	at java.util.Arrays.copyOf(Arrays.java:3257)
+12-24 11:45:36.906  4984  8737 E AndroidRuntime: 	at java.lang.AbstractStringBuilder.ensureCapacityInternal(AbstractStringBuilder.java:124)
+12-24 11:45:36.906  4984  8737 E AndroidRuntime: 	at java.lang.AbstractStringBuilder.append(AbstractStringBuilder.java:649)
+12-24 11:45:36.906  4984  8737 E AndroidRuntime: 	at java.lang.StringBuilder.append(StringBuilder.java:203)
+12-24 11:45:36.906  4984  8737 E AndroidRuntime: 	at org.json.JSONStringer.string(JSONStringer.java:354)
+12-24 11:45:36.906  4984  8737 E AndroidRuntime: 	at org.json.JSONStringer.value(JSONStringer.java:261)
+12-24 11:45:36.906  4984  8737 E AndroidRuntime: 	at org.json.JSONObject.writeTo(JSONObject.java:733)
+12-24 11:45:36.906  4984  8737 E AndroidRuntime: 	at org.json.JSONStringer.value(JSONStringer.java:246)
+12-24 11:45:36.906  4984  8737 E AndroidRuntime: 	at org.json.JSONArray.writeTo(JSONArray.java:616)
+12-24 11:45:36.906  4984  8737 E AndroidRuntime: 	at org.json.JSONArray.toString(JSONArray.java:587)
+12-24 11:45:36.906  4984  8737 E AndroidRuntime: 	at com.huawei.hms.mlkit.imgseg.h.run(Unknown Source:129)
+12-24 11:45:36.906  4984  8737 E AndroidRuntime: 	at com.huawei.hms.mlkit.imgseg.j$a.run(Unknown Source:4)
+12-24 11:45:36.906  4984  8737 E AndroidRuntime: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1167)
+12-24 11:45:36.906  4984  8737 E AndroidRuntime: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:641)
+12-24 11:45:36.906  4984  8737 E AndroidRuntime: 	at java.lang.Thread.run(Thread.java:929)
+------------ model offset: 0x11e8 crashed the app (msg from exception handler). ------------
+------------ model offset: 0x11f8 crashed the app (msg from logcat). ------------
+12-24 14:08:35.085  8098 12605 E AndroidRuntime: FATAL EXCEPTION: pool-6-thread-1
+12-24 14:08:35.085  8098 12605 E AndroidRuntime: Process: com.mlkit.sample.vision, PID: 8098
+12-24 14:08:35.085  8098 12605 E AndroidRuntime: java.lang.OutOfMemoryError: Failed to allocate a 2359304 byte allocation with 1622920 free bytes and 1584KB until OOM, target footprint 402653184, growth limit 402653184
+12-24 14:08:35.085  8098 12605 E AndroidRuntime: 	at java.util.Arrays.copyOf(Arrays.java:3257)
+12-24 14:08:35.085  8098 12605 E AndroidRuntime: 	at java.lang.AbstractStringBuilder.ensureCapacityInternal(AbstractStringBuilder.java:124)
+12-24 14:08:35.085  8098 12605 E AndroidRuntime: 	at java.lang.AbstractStringBuilder.append(AbstractStringBuilder.java:649)
+12-24 14:08:35.085  8098 12605 E AndroidRuntime: 	at java.lang.StringBuilder.append(StringBuilder.java:203)
+12-24 14:08:35.085  8098 12605 E AndroidRuntime: 	at org.json.JSONStringer.string(JSONStringer.java:354)
+12-24 14:08:35.085  8098 12605 E AndroidRuntime: 	at org.json.JSONStringer.value(JSONStringer.java:261)
+12-24 14:08:35.085  8098 12605 E AndroidRuntime: 	at org.json.JSONObject.writeTo(JSONObject.java:733)
+12-24 14:08:35.085  8098 12605 E AndroidRuntime: 	at org.json.JSONStringer.value(JSONStringer.java:246)
+12-24 14:08:35.085  8098 12605 E AndroidRuntime: 	at org.json.JSONArray.writeTo(JSONArray.java:616)
+12-24 14:08:35.085  8098 12605 E AndroidRuntime: 	at org.json.JSONArray.toString(JSONArray.java:587)
+12-24 14:08:35.085  8098 12605 E AndroidRuntime: 	at com.huawei.hms.mlkit.imgseg.h.run(Unknown Source:129)
+12-24 14:08:35.085  8098 12605 E AndroidRuntime: 	at com.huawei.hms.mlkit.imgseg.j$a.run(Unknown Source:4)
+12-24 14:08:35.085  8098 12605 E AndroidRuntime: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1167)
+12-24 14:08:35.085  8098 12605 E AndroidRuntime: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:641)
+12-24 14:08:35.085  8098 12605 E AndroidRuntime: 	at java.lang.Thread.run(Thread.java:929)
+------------ model offset: 0x132c crashed the app (msg from logcat). ------------
+12-24 14:24:14.818 14864 16207 E AndroidRuntime: FATAL EXCEPTION: pool-7-thread-1
+12-24 14:24:14.818 14864 16207 E AndroidRuntime: Process: com.mlkit.sample.vision, PID: 14864
+12-24 14:24:14.818 14864 16207 E AndroidRuntime: java.lang.OutOfMemoryError: Failed to allocate a 2359304 byte allocation with 1343048 free bytes and 1311KB until OOM, target footprint 402653184, growth limit 402653184
+12-24 14:24:14.818 14864 16207 E AndroidRuntime: 	at java.util.Arrays.copyOf(Arrays.java:3257)
+12-24 14:24:14.818 14864 16207 E AndroidRuntime: 	at java.lang.AbstractStringBuilder.ensureCapacityInternal(AbstractStringBuilder.java:124)
+12-24 14:24:14.818 14864 16207 E AndroidRuntime: 	at java.lang.AbstractStringBuilder.append(AbstractStringBuilder.java:649)
+12-24 14:24:14.818 14864 16207 E AndroidRuntime: 	at java.lang.StringBuilder.append(StringBuilder.java:203)
+12-24 14:24:14.818 14864 16207 E AndroidRuntime: 	at org.json.JSONStringer.string(JSONStringer.java:354)
+12-24 14:24:14.818 14864 16207 E AndroidRuntime: 	at org.json.JSONStringer.value(JSONStringer.java:261)
+12-24 14:24:14.818 14864 16207 E AndroidRuntime: 	at org.json.JSONObject.writeTo(JSONObject.java:733)
+12-24 14:24:14.818 14864 16207 E AndroidRuntime: 	at org.json.JSONStringer.value(JSONStringer.java:246)
+12-24 14:24:14.818 14864 16207 E AndroidRuntime: 	at org.json.JSONArray.writeTo(JSONArray.java:616)
+12-24 14:24:14.818 14864 16207 E AndroidRuntime: 	at org.json.JSONArray.toString(JSONArray.java:587)
+12-24 14:24:14.818 14864 16207 E AndroidRuntime: 	at com.huawei.hms.mlkit.imgseg.h.run(Unknown Source:129)
+12-24 14:24:14.818 14864 16207 E AndroidRuntime: 	at com.huawei.hms.mlkit.imgseg.j$a.run(Unknown Source:4)
+12-24 14:24:14.818 14864 16207 E AndroidRuntime: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1167)
+12-24 14:24:14.818 14864 16207 E AndroidRuntime: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:641)
+12-24 14:24:14.818 14864 16207 E AndroidRuntime: 	at java.lang.Thread.run(Thread.java:929)
+------------ model offset: 0x1458 crashed the app (msg from exception handler). ------------
+------------ model offset: 0x145c crashed the app (msg from logcat). ------------
+12-24 14:46:29.753 15061 19541 E AndroidRuntime: FATAL EXCEPTION: pool-7-thread-1
+12-24 14:46:29.753 15061 19541 E AndroidRuntime: Process: com.mlkit.sample.vision, PID: 15061
+12-24 14:46:29.753 15061 19541 E AndroidRuntime: java.lang.OutOfMemoryError: Failed to allocate a 2359304 byte allocation with 1494280 free bytes and 1459KB until OOM, target footprint 402653184, growth limit 402653184
+12-24 14:46:29.753 15061 19541 E AndroidRuntime: 	at java.util.Arrays.copyOf(Arrays.java:3257)
+12-24 14:46:29.753 15061 19541 E AndroidRuntime: 	at java.lang.AbstractStringBuilder.ensureCapacityInternal(AbstractStringBuilder.java:124)
+12-24 14:46:29.753 15061 19541 E AndroidRuntime: 	at java.lang.AbstractStringBuilder.append(AbstractStringBuilder.java:649)
+12-24 14:46:29.753 15061 19541 E AndroidRuntime: 	at java.lang.StringBuilder.append(StringBuilder.java:203)
+12-24 14:46:29.753 15061 19541 E AndroidRuntime: 	at org.json.JSONStringer.string(JSONStringer.java:354)
+12-24 14:46:29.753 15061 19541 E AndroidRuntime: 	at org.json.JSONStringer.value(JSONStringer.java:261)
+12-24 14:46:29.753 15061 19541 E AndroidRuntime: 	at org.json.JSONObject.writeTo(JSONObject.java:733)
+12-24 14:46:29.753 15061 19541 E AndroidRuntime: 	at org.json.JSONStringer.value(JSONStringer.java:246)
+12-24 14:46:29.753 15061 19541 E AndroidRuntime: 	at org.json.JSONArray.writeTo(JSONArray.java:616)
+12-24 14:46:29.753 15061 19541 E AndroidRuntime: 	at org.json.JSONArray.toString(JSONArray.java:587)
+12-24 14:46:29.753 15061 19541 E AndroidRuntime: 	at com.huawei.hms.mlkit.imgseg.h.run(Unknown Source:129)
+12-24 14:46:29.753 15061 19541 E AndroidRuntime: 	at com.huawei.hms.mlkit.imgseg.j$a.run(Unknown Source:4)
+12-24 14:46:29.753 15061 19541 E AndroidRuntime: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1167)
+12-24 14:46:29.753 15061 19541 E AndroidRuntime: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:641)
+12-24 14:46:29.753 15061 19541 E AndroidRuntime: 	at java.lang.Thread.run(Thread.java:929)

@@ -50,7 +50,7 @@ def main():
     # process = frida.get_usb_device().attach("Camera")
     process = frida.get_usb_device().attach("Gadget")
 
-    JSFile = open('face_recognize.js')
+    JSFile = open('facerecognize.js')
     JsCodeFromfile = JSFile.read()
     script = process.create_script(JsCodeFromfile)
 

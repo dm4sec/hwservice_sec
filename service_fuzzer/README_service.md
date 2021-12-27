@@ -47,6 +47,10 @@ Since this is just a PoC, only the peekholes (e.g., the `mData` exclude `mObject
 `BpBinder::transact` is a wrapper of `IPCThreadState::self()->transact`, such that we can invoke the later function over and over. 
 
 
-### 2 Reference
-The same as hwservice.
+## 2 Reference
+system/tools/aidl/tests
+https://developer.android.com/guide/components/aidl
+https://android.googlesource.com/platform/system/tools/aidl/+/brillo-m10-dev/docs/aidl-cpp.md
+https://source.android.com/devices/architecture/aidl/aidl-backends
+https://juejin.cn/post/6858235310891859981
 

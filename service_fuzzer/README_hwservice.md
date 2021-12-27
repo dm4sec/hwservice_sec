@@ -128,5 +128,6 @@ C) The most reliable method is to catch the crash log. There are lots of [litera
 ```
 
 ### 2 Reference
+https://source.android.com/devices/architecture/hidl \
 https://frida.re/docs/javascript-api/
 
