@@ -156,7 +156,7 @@ Java.perform(function () {
 
     // 0x11 (#2), 0x10 (#3, #4), 0x13 (#5, #6, #7), 0x1b (#8) and 0x14 (#9)
     // set manually
-    const g_cur_process = [
+    const g_cur_progress = [
         0x11, /* which tag */
         0, /* which hidl_handle */
         0x158c + 4, /* offset */
@@ -173,7 +173,7 @@ Java.perform(function () {
 //    | interface token | int | int | hidl_vec | hidl_vec<hidl_handle> | native_handle_size | hidl_handle | fd_array | ...
 //                                                                     \--------------------------- zero or more --------
 
-        var binder_object_offset    = mObjects_pos.add(2 * 0x8 + g_cur_process[1] * 0x10).readU64();
+        var binder_object_offset    = mObjects_pos.add(2 * 0x8 + g_cur_progress[1] * 0x10).readU64();
         var binder_object_pos       = mData_pos.add(binder_object_offset);
 
         var buffer_pos              = binder_object_pos.add(0x8);
@@ -225,18 +225,18 @@ Java.perform(function () {
         var dummy_seed = genSeed(0);
         if (g_obj_content_seed >= dummy_seed.length)
         {
-            g_cur_process[2] += 4;
+            g_cur_progress[2] += 4;
             g_obj_content_seed = 0;
-//            while(g_collected_crash.includes(g_cur_process[2])) // skip those crash the app
+//            while(g_collected_crash.includes(g_cur_progress[2])) // skip those crash the app
 //            {
-//                g_cur_process[2] += 4;
+//                g_cur_progress[2] += 4;
 //            }
         }
 
         if (g_obj_content_seed == 0)
         {
             // send message to host.
-            send("ready:" + g_cur_process[2]);
+            send("ready:" + g_cur_progress[2]);
             // wait the host to finish it's task.
             var foo = recv('synchronize', function(value) {
                 console.log("|-----[i] host ready message received, continue.");
@@ -244,19 +244,19 @@ Java.perform(function () {
             foo.wait();
         }
 
-        if (g_cur_process[2] >= this_size)
+        if (g_cur_progress[2] >= this_size)
         {
             console.error("|[*] fuzz_imagesegmentation fuzz done");
             Interceptor.detachAll();
         }
 
-        var org_value = this_fd_memory.add(g_cur_process[2]).readS32();
+        var org_value = this_fd_memory.add(g_cur_progress[2]).readS32();
         var new_value = genSeed(org_value);
 
-        console.log("|-----[i] g_cur_process[2]: 0x" + g_cur_process[2].toString(16) + ", g_obj_content_seed: 0x" + g_obj_content_seed.toString(16));
-        console.log("|-----[i] fuzz memory: " + this_fd_memory.toString(16) + ", with offset: 0x" + g_cur_process[2].toString(16) + ", with seed: 0x" + new_value[g_obj_content_seed].toString(16));
+        console.log("|-----[i] g_cur_progress[2]: 0x" + g_cur_progress[2].toString(16) + ", g_obj_content_seed: 0x" + g_obj_content_seed.toString(16));
+        console.log("|-----[i] fuzz memory: " + this_fd_memory.toString(16) + ", with offset: 0x" + g_cur_progress[2].toString(16) + ", with seed: 0x" + new_value[g_obj_content_seed].toString(16));
 
-        this_fd_memory.add(g_cur_process[2]).writeS32(new_value[g_obj_content_seed]);
+        this_fd_memory.add(g_cur_progress[2]).writeS32(new_value[g_obj_content_seed]);
 
         var this_munmap_p = Module.getExportByName("libai_hidl_request_client.so", 'munmap');
         console.log("|-----[i] munmap addr: " + this_munmap_p);
@@ -306,7 +306,7 @@ Java.perform(function () {
 
         var mData_offset = args[2].add(mData_LOC);
         var mData_pos = mData_offset.readPointer();
-        if (mData_pos.add(0x3c).readU32() != g_cur_process[0])
+        if (mData_pos.add(0x3c).readU32() != g_cur_progress[0])
             return;
 
 //        console.log('[i] call stack:\n' +
@@ -381,8 +381,8 @@ Java.perform(function () {
     // in testing.
     Process.setExceptionHandler(function(error)
     {
-        send("app_exception:" + g_cur_process[2]);
-        console.warn("|-[i] app exception received. current offset: 0x" + g_cur_process[2].toString(16));
+        send("app_exception:" + g_cur_progress[2]);
+        console.warn("|-[i] app exception received. current offset: 0x" + g_cur_progress[2].toString(16));
         return false;
     })
 
@@ -406,9 +406,9 @@ Java.perform(function () {
 //            console.log("|-[i] ret value: " + retval);
             if (retval.toInt32() == DEAD_OBJECT)
             {
-                g_dead_obj_lst.push(g_cur_process[2], g_obj_content_seed);
-                send("dead_object:" + g_cur_process[2]);
-                console.warn("|-[i] dead object received, stop intercepting. current offset: 0x" + g_cur_process[2].toString(16));
+                g_dead_obj_lst.push(g_cur_progress[2], g_obj_content_seed);
+                send("dead_object:" + g_cur_progress[2]);
+                console.warn("|-[i] dead object received, stop intercepting. current offset: 0x" + g_cur_progress[2].toString(16));
                 Interceptor.detachAll();
 //                g_dead_obj_lst.push(g_object_offset, g_object_index);
             }
@@ -431,10 +431,10 @@ Java.perform(function () {
 //            console.log("|-[i] ret value: " + retval);
             if (retval.toInt32() == DEAD_OBJECT)
             {
-                g_dead_obj_lst.push(g_cur_process[2], g_obj_content_seed);
-                send("dead_object:" + g_cur_process[2]);
+                g_dead_obj_lst.push(g_cur_progress[2], g_obj_content_seed);
+                send("dead_object:" + g_cur_progress[2]);
 //                g_dead_obj_lst.push(g_object_offset, g_object_index);
-                console.warn("|-[i] dead object received, stop intercepting. current offset: 0x" + g_cur_process[2].toString(16));
+                console.warn("|-[i] dead object received, stop intercepting. current offset: 0x" + g_cur_progress[2].toString(16));
                 Interceptor.detachAll();
             }
 //            send("done");

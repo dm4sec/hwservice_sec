@@ -49,6 +49,9 @@ Since this is just a PoC, only the peekholes (e.g., the `mData` exclude `mObject
 
 ## 2 Reference
 system/tools/aidl/tests
+out/soong/.intermediates/system/tools/aidl/libaidl-integration-test/android_arm_armv8-a_kryo_core_shared/gen/aidl/system/tools/aidl/tests/android/aidl/tests/ITestService.cpp
+out/soong/.intermediates/system/tools/aidl/libaidl-integration-test/android_arm64_armv8-a_kryo_core_shared/gen/aidl/system/tools/aidl/tests/android/aidl/tests/ITestService.cpp
+
 https://developer.android.com/guide/components/aidl
 https://android.googlesource.com/platform/system/tools/aidl/+/brillo-m10-dev/docs/aidl-cpp.md
 https://source.android.com/devices/architecture/aidl/aidl-backends
