@@ -80,7 +80,7 @@ Java.perform(function () {
 
 
     // study the object
-    function studyObject(mData_pos, mObjects_pos, mObjectsSize, mHandle, code, data, reply, flags){
+    function studyObject(mData_pos, mDataSize, mObjects_pos, mObjectsSize, mHandle, code, data, reply, flags){
         console.log("|---[i] start dumping binder objects in mData");
 
         // parse each Object
@@ -235,32 +235,74 @@ Java.perform(function () {
             }
             else if (type_pos.readU32() == BINDER_TYPE_BINDER)
             {
-                // check `BHwBinder` in system/libhwbinder/include/hwbinder/Binder.h, I don't think there are any thing we can fuzz.
                 console.log("|----[i] identified as BINDER_TYPE_BINDER, parse by struct `flat_binder_object`.");
 
-                /*
-                struct binder_object_header {
-                    __u32        type;
-                };
+//                struct binder_object_header {
+//                    __u32        type;
+//                };
 
-                struct flat_binder_object {
-                    struct binder_object_header	hdr;
-                    __u32				flags;
-
-                    union {
-                        binder_uintptr_t	binder;
-                        __u32			handle;
-                    };
-
-                    binder_uintptr_t	cookie;
-                };
-                */
+//                struct flat_binder_object {
+//                    struct binder_object_header	hdr;
+//                    __u32				flags;
+//
+//                    /* 8 bytes of data. */
+//                    union {
+//                        binder_uintptr_t	binder;	/* local object */
+//                        __u32			handle;	/* remote object */
+//                    };
+//
+//                    /* extra data associated with local object */
+//                    binder_uintptr_t	cookie;
+//                };
 
                 var flags_pos               = binder_object_pos.add(0x4);
                 var binder_or_handle_pos    = binder_object_pos.add(0x8);
                 var cookie_pos              = binder_object_pos.add(0x10);
 
-                console.log("|----[i] flags: 0x" + flags_pos.readU32().toString(16));
+	            const FLAT_BINDER_FLAG_PRIORITY_MASK        = 0xff;
+	            const FLAT_BINDER_FLAG_ACCEPTS_FDS          = 0x100;
+	            const FLAT_BINDER_FLAG_TXN_SECURITY_CTX     = 0x1000;
+
+                var this_flags              = flags_pos.readU32();
+                var this_binder             = binder_or_handle_pos.readU64();
+                var this_handle             = binder_or_handle_pos.readU32();
+                var this_cookie             = cookie_pos.readU64();
+
+                console.log("|----[i] flags: 0x" + this_flags.toString(16));
+
+
+                if ((0x7f | FLAT_BINDER_FLAG_ACCEPTS_FDS) == this_flags)
+                {
+                    console.log("|----[i] flatten_binder (wp)");
+                }
+                else if (FLAT_BINDER_FLAG_ACCEPTS_FDS == this_flags)
+                {
+                    console.log("|----[i] flatten_binder (sp, backgroundSchedulingDisabled)");
+                }
+                else if ((0x13 | FLAT_BINDER_FLAG_ACCEPTS_FDS) == this_flags)
+                {
+                    console.log("|----[i] flatten_binder (sp, !backgroundSchedulingDisabled)");
+                    if (this_cookie != 0)
+                    {
+                        console.log("|----[i] local binder");
+//                        console.log(hexdump(ptr(this_binder).add(0x8).readPointer(), {
+//                            offset: 0,
+//                            length: 0x80,
+//                            header: true,
+//                            ansi: true
+//                        }));
+
+                    }
+                    else
+                    {
+                        console.log("|----[i] TODO");
+                    }
+                }
+                else
+                {
+                    console.log("|----[i] flatten_binder (sp, backgroundSchedulingDisabled | !backgroundSchedulingDisabled, isRequestingSid)");
+                }
+
 
                 if (binder_or_handle_pos.readU64() == 0)
                 {
@@ -508,7 +550,7 @@ Java.perform(function () {
             ansi: true
         }));
 
-        studyObject(mData_pos, mObjects_pos, mObjectsSize, mHandle, args[1].toInt32(), args[2], args[3], args[4].toInt32());
+        studyObject(mData_pos, mDataSize, mObjects_pos, mObjectsSize, mHandle, args[1].toInt32(), args[2], args[3], args[4].toInt32());
 
         // I would like to fuzz in runtime, such that I can covert back to the original mData.
         // fuzzPeekhole(mData_pos, mDataSize, mObjects_pos, mObjectsSize, mHandle, args[1].toInt32(), args[2], args[3], args[4].toInt32());
@@ -534,6 +576,10 @@ Java.perform(function () {
 
             if (args[1].toInt32() != target_transaction_code)
                 return
+
+            console.log('[i] called from:\n' +
+                Thread.backtrace(this.context, Backtracer.ACCURATE)
+                .map(DebugSymbol.fromAddress).join('\n') + '\n');
 
             parseParcel(args)
         },
