@@ -3,8 +3,58 @@
 # @Time    : 2021/9/23 15:54
 
 from __future__ import print_function
+
+import subprocess
+
 import frida
 import sys
+
+g_obj_content_offset = 0
+g_script = 0
+
+
+def on_message(message, data):
+    global g_obj_content_offset
+    global g_obj_content_seed
+
+    if message["type"] == "send":
+        print("send_message", message)
+        if message["payload"].find("dead_object") != -1:
+            msg = message["payload"].strip().split(":")
+            g_obj_content_offset = int(msg[1])
+
+            print("[*] logging dead_object")
+            with open("textsuperresolution_crash.log", "a+") as fwh:
+                fwh.write("************ model offset: {} crashed the server. ************\n".format(
+                    hex(g_obj_content_offset)))
+
+        if message["payload"].find("ready") != -1:
+            print("ready...")
+            p = subprocess.Popen("adb logcat -b crash -d",
+                                 shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                                 stderr=subprocess.PIPE
+                                 )
+
+            stdout, stderr = p.communicate()
+
+            msg = message["payload"].strip().split(":")
+            g_obj_content_offset = int(msg[1])
+
+            if stdout.decode().find("Build fingerprint") != -1 and g_obj_content_offset != 0:
+                print("[*] logging crash")
+                with open("scenedection_crash.log", "a+") as fwh:
+                    fwh.write("------------ model offset: {} crashed the app. ------------\n".format(
+                        hex(g_obj_content_offset - 4)))
+                    fwh.write(stdout.decode())
+
+            p = subprocess.Popen("adb logcat -c",
+                                 shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                                 stderr=subprocess.PIPE
+                                 )
+            stdout, stderr = p.communicate()
+
+            print("post synchronize")
+            g_script.post({'type': 'synchronize', 'payload': 'roll'})
 
 
 def main():
@@ -48,13 +98,13 @@ def main():
     # #     print(app)
     #     if proc.pid < 2000:
 
-    process = frida.get_usb_device().attach("Gadget")
-
+    session = frida.get_usb_device().attach("Gadget")
     JSFile = open('scenedection.js')
     JsCodeFromfile = JSFile.read()
-    script = process.create_script(JsCodeFromfile)
-
-    script.load()
+    global g_script
+    g_script = session.create_script(JsCodeFromfile)
+    g_script.on('message', on_message)
+    g_script.load()
     sys.stdin.read()
 
 
