@@ -239,98 +239,29 @@ C: 0x69634 -> 0x73690: android::hardware::writeEmbeddedToParcel(android::hardwar
 
 
 ```
-0                0x3c  0x40  0x44       0x68                    0x90                 0x98          0xc0       0xe8
-|-----------------|-----|-----|----------|-----------------------|--------------------|-------------|----------|----- 
-| interface token | int | int | hidl_vec | hidl_vec<hidl_handle> | native_handle_size | hidl_handle | fd_array | ...    
-                                                                 \--------------------------- zero or more --------                       
-```
+0                0x2c  0x30  0x34
+|-----------------|-----|-----|-
+| interface token | int | int |.
 
+0x34       0x5c                    0x84                 0x8c          0xb4       0xd4
+-|----------|-----------------------|--------------------|-------------|----------|-
+.| hidl_vec | hidl_vec<hidl_handle> | native_handle_size | hidl_handle | fd_array |. 
 
-\#1:
-first fd_array (`buffer_object No.4`)
-```
-Deal buffer_object No.4
-   [binder object] pos: 0x737d94e7b4, size: 0x20
-             0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F  0123456789ABCDEF
-737d94e7b4  85 61 64 66 00 00 00 00 01 00 00 00 00 00 00 00  .adf............
-737d94e7c4  02 00 00 00 00 00 00 00 0c 00 00 00 00 00 00 00  ................
+0xd4       0xfc                          0x124 
+-|----------|-----------------------------|-
+.| hidl_vec | hidl_vec<TensorDescription> |. 
 
-|----[i] parent(mObject_index): 2 --> No.3
-|----[i] parent_offset: 0xc
-|------[i] mmap addr: 0x7482b8aa80
-```
-parent (`buffer_object No.3`)
-```
-Deal buffer_object No.3
-   [binder object] pos: 0x737d94e78c, size: 0x28
-   
-             0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F  0123456789ABCDEF
-737d94e78c  85 2a 74 70 01 00 00 00 60 89 5d f9 73 00 00 00  .*tp....`.].s...
-737d94e79c  24 00 00 00 00 00 00 00 01 00 00 00 00 00 00 00  $...............
-737d94e7ac  00 00 00 00 00 00 00 00                          ........
+0x124     0x14c                    0x174                0x17c         0x1a4      0x1c4
+-|---------|------------------------|--------------------|-------------|----------|-
+.| hidl_vec | hidl_vec<hidl_handle> | native_handle_size | hidl_handle | fd_array |. 
 
-|--[Parcel] [mObject] [BINDER_TYPE_PTR] 
-PTR_binder flags: 0x1
-PTR_binder assembled by `writeEmbeddedBuffer`
-PTR_binder binder buffer_pos: 0x73f95d8960, buffer_length: 0x24
+0x1c4      0x1ec                         0x214 
+-|----------|-----------------------------|-
+.| hidl_vec | hidl_vec<TensorDescription> |. 
 
-             0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F  0123456789ABCDEF
-73f95d8960  0c 00 00 00 01 00 00 00 05 00 00 00 7b 00 00 00  ............{...
-73f95d8970  92 15 14 03 03 00 00 00 00 30 09 00 01 00 00 00  .........0......
-73f95d8980  11 00 00 00                                      ....
-```
-
-fd_1 == 0x7b, size_1 == 0x93000
-
-\#2:
-second fd_array (`buffer_object No.10`)
-```
-Deal buffer_object No.10
-   [binder object] pos: 0x737d94e8a4, size: 0x20
-             0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F  0123456789ABCDEF
-737d94e8a4  85 61 64 66 00 00 00 00 01 00 00 00 00 00 00 00  .adf............
-737d94e8b4  08 00 00 00 00 00 00 00 0c 00 00 00 00 00 00 00  ................
-
-|----[i] parent(mObject_index): 8 --> No.9
-|----[i] parent_offset: 0xc
-|------[i] mmap addr: 0x7482b8aa80
-```
-
-parent (`buffer_object No.9`)
-```
-Deal buffer_object No.9
-   [binder object] pos: 0x737d94e87c, size: 0x28
-             0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F  0123456789ABCDEF
-737d94e87c  85 2a 74 70 01 00 00 00 40 8b 5d f9 73 00 00 00  .*tp....@.].s...
-737d94e88c  24 00 00 00 00 00 00 00 07 00 00 00 00 00 00 00  $...............
-737d94e89c  00 00 00 00 00 00 00 00                          ........
-|--[Parcel] [mObject] [BINDER_TYPE_PTR] 
-PTR_binder flags: 0x1
-PTR_binder assembled by `writeEmbeddedBuffer`
-PTR_binder binder buffer_pos: 0x73f95d8b40, buffer_length: 0x24
-             0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F  0123456789ABCDEF
-73f95d8b40  0c 00 00 00 01 00 00 00 05 00 00 00 7c 00 00 00  ............|...
-73f95d8b50  92 15 14 03 03 00 00 00 9c 01 00 00 01 00 00 00  ................
-73f95d8b60  12 00 00 00                                      ....
-```
-fd_2 == 0x7c, size_2 == 0x19c
-
-### 3 Confirm target
-fd_1 == 0x7b, size_1 == 0x93000
-fd_2 == 0x7c, size_2 == 0x19c
-
-get logcat
-```
-12-31 17:20:09.150  9011  9011 I aiclient: HIAI_TensorBuffer_CreateWithDataType: N[1] C[3] H[224] W[224] dataType[1].
-12-31 17:20:09.151  9011  9011 I aiclient: N[1] C[3] H[224] W[224] data[0x739308d000] size[602112] name[]
-12-31 17:20:09.151  9011  9011 I aiclient: HIAI_TensorBuffer_CreateWithDataType: N[1] C[103] H[1] W[1] dataType[1].
-12-31 17:20:09.151  9011  9011 I aiclient: N[1] C[103] H[1] W[1] data[0x748355a000] size[412] name[]
-12-31 17:20:09.179  9011  9011 E aiclient: AiModelManagerImpl::RunModel(multi inputs multi outputs) [fail]
-12-31 17:20:09.179  9011  9011 I aiclient: ret[1000], nInput[1], nOutput[1].
-12-31 17:20:09.179  9011  9011 I aiclient: ~NativeHandleWrapper   fd:120.
-12-31 17:20:09.179  9011  9011 I aiclient: success
-12-31 17:20:09.179  9011  9011 I aiclient: ~NativeHandleWrapper   fd:119.
-12-31 17:20:09.179  9011  9011 I aiclient: success
+0x214 0x218              0x240         0x268
+-|-----|------------------|-------------|
+.| int | hidl_string addr | hidl_string |  
 ```
 
 ### 4 Fuzz

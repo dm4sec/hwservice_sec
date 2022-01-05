@@ -17,6 +17,7 @@ g_log_file = "scenedection_crash.log"
 def on_message(message, data):
     global g_obj_content_offset
     global g_obj_content_seed
+    global g_log_file
 
     if message["type"] == "send":
         print("send_message", message)
@@ -60,8 +61,8 @@ def on_message(message, data):
                                  )
             stdout, stderr = p.communicate()
 
-            print("post synchronize")
-            g_script.post({'type': 'synchronize', 'payload': 'roll'})
+            print("post synchronize signal")
+            g_script.post({'type': 'sig_synchronize', 'payload': 'roll'})
 
 def main():
     '''
@@ -105,7 +106,7 @@ def main():
     #     if proc.pid < 2000:
 
     session = frida.get_usb_device().attach("Gadget")
-    JSFile = open('scenedection_replace.js')
+    JSFile = open('scenedection_replace(Deprecated).js')
     JsCodeFromfile = JSFile.read()
     global g_script
     g_script = session.create_script(JsCodeFromfile)
