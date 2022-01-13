@@ -38,14 +38,22 @@ demo@demo:~/Downloads$ objdump -tT libbinder.so | grep "self"
 000000000007d4b8 g    DF .text	00000000000000f0  Base        _ZN7android12ProcessState4selfEv
 000000000007d8e8 g    DF .text	0000000000000068  Base        _ZN7android12ProcessState10selfOrNullEv
 ```
-**NOTE**: `libbinder.so` is the binary for my `pixel3` and `honor` boxes.
+`libbinder.so` is the binary for my `pixel3` and `honor` boxes.
+
+**NOTE**: This scheme is deprecated, for we now have a better solution to get the target.
 
 ### 1.2 Select the fuzz target
 Since this is just a PoC, only the peekholes (e.g., the `mData` exclude `mObjects`) are fuzzed.
 
 ### 1.3 How to replay
-`BpBinder::transact` is a wrapper of `IPCThreadState::self()->transact`, such that we can invoke the later function over and over. 
+~~BpBinder::transact is a wrapper of IPCThreadState::self()->transact, such that we can invoke the later function over and over.~~
+1. If `Interceptor.attach` used, just let it go without `return` statement.
+2. Else if `Interceptor.replace` used, call the original function and return the ret value.
 
+Considering that the target for fuzzing depends on the previous steps (state machine), to ease the work, we adopt to use app to do the replay work. 
+In such scenario, we can use either the 1st scheme which modify the input and let it go, or the 2nd scheme, which modify the input and return the original return value. 
+
+For these targets that can run standalone, we use the 2nd scheme for replaying. For the 1st scheme will lead to an infinite loop when replaying in our interceptor.
 
 ## 2 Reference
 system/tools/aidl/tests
@@ -57,3 +65,5 @@ https://android.googlesource.com/platform/system/tools/aidl/+/brillo-m10-dev/doc
 https://source.android.com/devices/architecture/aidl/aidl-backends
 https://juejin.cn/post/6858235310891859981
 
+### 3 TODO
+1. To parse objects in Parcel, especially those `binder object`s.
