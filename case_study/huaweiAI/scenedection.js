@@ -1,26 +1,5 @@
 Java.perform(function () {
-
-    function genSeed(org_value)     // length: 38
-    {
-        console.log("genSeed: ", org_value)
-        return [//org_value,           // replay (test double-free?)
-                        ~org_value,
-                        org_value & 0xffffff00, org_value & 0xffff00ff, org_value & 0xff00ffff, org_value & 0x00ffffff,
-                        org_value | 0x000000ff, org_value | 0x0000ff00, org_value | 0x00ff0000, org_value | 0xff000000,
-                        org_value & 0xffffff00 + 0x7f, org_value & 0xffff00ff + 0x7f00, org_value & 0xff00ffff + 0x7f0000, org_value & 0x00ffffff + 0x7f000000,
-                        org_value & 0xffffff00 + 0x80, org_value & 0xffff00ff + 0x8000, org_value & 0xff00ffff + 0x800000, org_value & 0x00ffffff + 0x80000000,
-                        0,
-                        0x7f, 0x7fff, 0x7fffff, 0x7fffffff,
-                        0x80, 0x8000, 0x800000, 0x80000000,
-                        0xff, 0xffff, 0xffffff, 0xffffffff,
-                        org_value + 1, org_value + 0x100, org_value + 0x10000, org_value + 0x1000000,
-                        org_value - 1, org_value - 0x100, org_value - 0x10000, org_value - 0x1000000
-                        ];
-    }
-//    var g_obj_content_offset        = 0x4244 + 4;
-    var g_obj_content_offset        = 0x0;
-    var g_obj_content_seed          = 0x0;
-    var     g_dead_obj_lst          = [];
+    console.log('[*] Frida scenedection.js is running.');
 
     // data in parcel
     const mData_LOC         = 0x28;
@@ -28,7 +7,7 @@ Java.perform(function () {
     const mObjects_LOC      = 0x48;
     const mObjectsSize_LOC  = 0x50;
 
-    // binder object type
+    // type of BINDER
     const BINDER_TYPE_BINDER          = 0x73622a85                // .*bs
     const BINDER_TYPE_WEAK_BINDER     = 0x77622a85                // .*bw
     const BINDER_TYPE_HANDLE          = 0x73682a85                // .*hs
@@ -37,27 +16,17 @@ Java.perform(function () {
     const BINDER_TYPE_FDA             = 0x66646185                // .adf
     const BINDER_TYPE_PTR             = 0x70742a85                // .*tp
 
-    const BINDER_BUFFER_FLAG_HAS_PARENT = 0x01
+    const ptr_flags             = 0x4;
+    const ptr_buffer            = 0x8;
+    const ptr_length            = 0x10;      // sizeof(buffer)
+    const ptr_parent            = 0x18;
+    const ptr_parent_offset     = 0x20;
 
-    // defined in system/libhwbinder/Parcel.cpp
-    function PAD_SIZE_UNSAFE(s){
-        return (((s)+3)&~3)
-    }
+    const PROT_READ             = 0x1;
+    const PROT_WRITE            = 0x2;
+    const MAP_SHARED            = 0x1;
 
-    function dumpModuleInfo(){
-        var ms = Process.enumerateModules();
-        for (var i = 0; i < ms.length; i ++ )
-        {
-//            console.log(ms[i].name);
-            if (ms[i].path.indexOf("libc") != -1)
-                console.log(ms[i].path);
-        }
-    }
-    function printBacktrace(that){
-        console.log('   called from:\n' +
-            Thread.backtrace(that.context, Backtracer.ACCURATE)
-            .map(DebugSymbol.fromAddress).join('\n') + '\n');
-    }
+
 
     function dump(pos, length){
         console.log(hexdump(pos, {
@@ -68,83 +37,56 @@ Java.perform(function () {
         }));
     }
 
-    console.log('[*] Frida scenedection.js is running.');
-//    dumpModuleInfo();
+//    const g_BpHwBinder_transact_ptr = Module.getExportByName("/vendor/lib64/hw/android.hardware.graphics.mapper@2.0-impl-2.1.so", '_ZN7android8hardware10BpHwBinder8transactEjRKNS0_6ParcelEPS2_jNSt3__18functionIFvRS2_EEE');
+//    console.log("[i] BpHwBinder::transact addr           : " + g_BpHwBinder_transact_ptr)
+//    const g_BpHwBinder_transact_func = new NativeFunction(g_BpHwBinder_transact_ptr, 'int', ['pointer', 'int', 'pointer', 'pointer', 'int', 'pointer']);
+//    console.log("[i] BpHwBinder::transact func addr      : " + g_BpHwBinder_transact_func)
 
-    // from path: /system/lib64/libhidlbase.so
-    var BpHwBinder_transact_p = Module.getExportByName("/system/lib64/libhidlbase.so", '_ZN7android8hardware10BpHwBinder8transactEjRKNS0_6ParcelEPS2_jNSt3__18functionIFvRS2_EEE');
-    console.log("[ixx] BpHwBinder::transact addr    : " + BpHwBinder_transact_p)
 
-    var IPCThreadState_transact_p = Module.getExportByName("/system/lib64/libhidlbase.so", '_ZN7android8hardware14IPCThreadState8transactEijRKNS0_6ParcelEPS2_j');
-    console.log("[ixx] IPCThreadState::transact addr: " + IPCThreadState_transact_p)
+    const g_cur_progress        = {"offset": 1064};
+//    const g_cur_progress        = {"offset": -4 + 0x4};
+    const g_gen_seed            = {"offset": 0};
 
-    var IPCThreadState_self_p = Module.getExportByName("/system/lib64/libhidlbase.so", '_ZN7android8hardware14IPCThreadState4selfEv');
-    console.log("[ixx] IPCThreadState::self addr    : " + IPCThreadState_self_p)
+    function genSeed(org_value){    // length: 38
+        console.log("genSeed: ", org_value)
+        return [//org_value,           // replay (test double-free?)
+            ~org_value,
+            org_value & 0xffffff00, org_value & 0xffff00ff, org_value & 0xff00ffff, org_value & 0x00ffffff,
+            org_value | 0x000000ff, org_value | 0x0000ff00, org_value | 0x00ff0000, org_value | 0xff000000,
+            org_value & 0xffffff00 + 0x7f, org_value & 0xffff00ff + 0x7f00, org_value & 0xff00ffff + 0x7f0000, org_value & 0x00ffffff + 0x7f000000,
+            org_value & 0xffffff00 + 0x80, org_value & 0xffff00ff + 0x8000, org_value & 0xff00ffff + 0x800000, org_value & 0x00ffffff + 0x80000000,
+            0,
+            0x7f, 0x7fff, 0x7fffff, 0x7fffffff,
+            0x80, 0x8000, 0x800000, 0x80000000,
+            0xff, 0xffff, 0xffffff, 0xffffffff,
+            org_value + 1, org_value + 0x100, org_value + 0x10000, org_value + 0x1000000,
+            org_value - 1, org_value - 0x100, org_value - 0x10000, org_value - 0x1000000
+        ];
+    }
+
+    function getBinderObjectLen(BinderObjectPos){
+        var type_val = BinderObjectPos.readU32();
+        if (type_val == BINDER_TYPE_BINDER ||
+            type_val == BINDER_TYPE_WEAK_BINDER ||
+            type_val == BINDER_TYPE_HANDLE ||
+            type_val == BINDER_TYPE_WEAK_HANDLE)            // flat_binder_object
+            return 0x18;
+        else if (type_val == BINDER_TYPE_FD)                // flat_binder_object
+            return 0x18;
+        else if (type_val == BINDER_TYPE_FDA)               // binder_fd_array_object
+            return 0x20;
+        else if (type_val == BINDER_TYPE_PTR)               // binder_buffer_object
+            return 0x28;
+    }
 
     // from path: /system/lib64/vndk-sp-29/libhidlbase.so
-    var BpHwBinder_transact_vendor_p = Module.getExportByName("/system/lib64/vndk-sp-29/libhidlbase.so", '_ZN7android8hardware10BpHwBinder8transactEjRKNS0_6ParcelEPS2_jNSt3__18functionIFvRS2_EEE');
+    const BpHwBinder_transact_vendor_p = Module.getExportByName("/system/lib64/vndk-sp-29/libhidlbase.so", '_ZN7android8hardware10BpHwBinder8transactEjRKNS0_6ParcelEPS2_jNSt3__18functionIFvRS2_EEE');
     console.log("[i] Vendor BpHwBinder::transact addr    : " + BpHwBinder_transact_vendor_p)
 
-    var IPCThreadState_transact_vendor_p = Module.getExportByName("/system/lib64/vndk-sp-29/libhidlbase.so", '_ZN7android8hardware14IPCThreadState8transactEijRKNS0_6ParcelEPS2_j');
-    console.log("[i] Vendor IPCThreadState::transact addr: " + IPCThreadState_transact_vendor_p)
-
-    var IPCThreadState_self_vendor_p = Module.getExportByName("/system/lib64/vndk-sp-29/libhidlbase.so", '_ZN7android8hardware14IPCThreadState4selfEv');
-    console.log("[i] Vendor IPCThreadState::self addr    : " + IPCThreadState_self_vendor_p)
-
-    // attach for test
-    Interceptor.attach(BpHwBinder_transact_p, {
-        onEnter: function(args) {
-//            console.log("[*] onEnter: BpHwBinder_transact_p");
-            var name = "BpHwBinder_transact_p"
-            parseParcel(name, args, this, false);
-        },
-
-        onLeave: function(retval) {
-//            console.log("[*] onLeave: BpHwBinder_transact_p");
-//            console.log("|-[i] ret value: " + retval);
-            // print the return value
-            if (retval.toInt32() == DEAD_OBJECT){
-                g_dead_obj_lst.push(g_obj_content_offset, g_obj_content_seed);    // should tell em apart
-                send("BpHwBinder_transact_p dead_object:" + g_obj_content_offset);
-                console.warn("|-[i] dead object received, stop intercepting. current offset: 0x" + g_obj_content_offset.toString(16));
-                Interceptor.detachAll();
-            }
-//          send("done");
-        }
-    });
-
-    /*
-    Interceptor.attach(IPCThreadState_transact_p, {
-        onEnter: function(args) {
-            console.log("[*] onEnter: IPCThreadState_transact_p");
-            var name = "IPCThreadState_transact_p"
-            parseParcel(name, args, this, false);
-        },
-
-        onLeave: function(retval) {
-            console.log("[*] onLeave: IPCThreadState_transact_p");
-//            console.log("|-[i] ret value: " + retval);
-            // print the return value
-        }
-    });
-    Interceptor.attach(IPCThreadState_self_p, {
-        onEnter: function(args) {
-            console.log("[*] onEnter: IPCThreadState_self_p");
-            var name = "IPCThreadState_self_p"
-            parseParcel(name, args, this, false);
-        },
-
-        onLeave: function(retval) {
-            console.log("[*] onLeave: IPCThreadState_self_p");
-//            console.log("|-[i] ret value: " + retval);
-            // print the return value
-        }
-    });
-*/
-
-//    var fy_transact = new NativeFunction(BpHwBinder_transact_vendor_p, 'int32', ['uint32', 'pointer', 'pointer', 'uint32', 'pointer']);
-//    console.log("fy_transact = " + fy_transact);
-//    Interceptor.replace(BpHwBinder_transact_vendor_p, new NativeCallback(fy_transact,));
+    const g_mTransaction_code = [
+        11                      //vendor::huawei::hardware::ai::V1_1::BpHwAiModelMngr::_hidl_startModelFromMem2
+    ]
+    const g_fuzzInterface = "vendor.huawei.hardware.ai@1.1::IAiModelMngr"
 
     Interceptor.attach(BpHwBinder_transact_vendor_p, {
         onEnter: function(args) {
@@ -157,88 +99,34 @@ Java.perform(function () {
 //            console.log("[*] onLeave: Vendor BpHwBinder::transact");
 //            console.log("|-[i] ret value: " + retval);
 //            console.log("retval.toInt32(): " + retval.toInt32())
-            if (retval.toInt32() == DEAD_OBJECT){
-                g_dead_obj_lst.push(g_obj_content_offset, g_obj_content_seed);    // should tell them apart
-                send("BpHwBinder_transact_vendor_p dead_object:" + g_obj_content_offset);
-                console.warn("|-[i] dead object received, stop intercepting. current offset: 0x" + g_obj_content_offset.toString(16));
-                Interceptor.detachAll();
-            }
-            //            send("done");
-            // print the return value
+
+//            if (retval.toInt32() == DEAD_OBJECT){
+//                g_dead_obj_lst.push(g_obj_content_offset, g_obj_content_seed);    // should tell them apart
+//                send("BpHwBinder_transact_vendor_p dead_object:" + g_obj_content_offset);
+//                console.warn("|-[i] dead object received, stop intercepting. current offset: 0x" + g_obj_content_offset.toString(16));
+//                Interceptor.detachAll();
+//            }
+//            send("done");
         }
     });
-//    Interceptor.attach(IPCThreadState_transact_vendor_p, {
-//        onEnter: function(args) {
-//            console.log("[*] onEnter: Vendor IPCThreadState_transact_vendor_p");
-//            var name = "Vendor IPCThreadState_transact_vendor_p"
-//            parseParcel(name, args, this, true);
-//        },
-//
-//        onLeave: function(retval) {
-//            console.log("[*] onLeave: Vendor IPCThreadState_transact_vendor_pt");
-////            console.log("|-[i] ret value: " + retval);
-//            // print the return value
-//        }
-//    });
-//    Interceptor.attach(IPCThreadState_self_vendor_p, {
-//        onEnter: function(args) {
-//            console.log("[*] onEnter: Vendor IPCThreadState_self_vendor_p");
-//            var name = "Vendor IPCThreadState_self_vendor_p"
-//            parseParcel(name, args, this, true);
-//        },
-//
-//        onLeave: function(retval) {
-//            console.log("[*] onLeave: Vendor IPCThreadState_self_vendor_p");
-////            console.log("|-[i] ret value: " + retval);
-//            // print the return value
-//        }
-//    });
-
-    const whiteTransactionCode = [
-        12                      //vendor::huawei::hardware::ai::V1_1::BpHwAiModelMngr::_hidl_runModel2
-    ]
-    const fuzzInterface = "vendor.huawei.hardware.ai@1.1::IAiModelMngr"
-//    const fuzzInterface = "vendor.huawei.hardware.ai.hidlrequest@1.0::IHidlRequest"
 
 
     function parseParcel(name, args, that, isVendor){
-        // remove to enable all transactions.
-        if (whiteTransactionCode.includes(args[1].toInt32()) == false)
-            return;
-        // remove to enable all interfaces.
-//            console.log("fffff: "+args[2].add(mData_LOC).readPointer().readUtf8String())
-        if (args[2].add(mData_LOC).readPointer().readUtf8String().indexOf(fuzzInterface) == -1)
+        var mInterface_token    = args[2].add(mData_LOC).readPointer().readUtf8String();
+        var mTransaction_code   = args[1].toInt32();
+
+        if  (!g_mTransaction_code.includes(mTransaction_code) || (mInterface_token.indexOf(g_fuzzInterface) == -1))
             return;
 
-        // print backtrace
-//        printBacktrace(that)
+        console.log("-->parseParcel start: " + name)
+        console.log("[Parcel_mData] interface_token: " + mInterface_token + ", method_code: " + mTransaction_code)
 
-        console.log("-->parseParcel start:", name)
-
-        /*
-        status_t BpHwBinder::transact(
-            uint32_t code, const Parcel& data, Parcel* reply, uint32_t flags, TransactCallback callback)
-        */
 //        console.log("transact p1(this pos)          arg[0]=", args[0])
 //        console.log("transact p2(transaction_code)  arg[1]=", args[1].toInt32())
 //        console.log("transact p3(Parcel_hidl_data)  arg[2]=", args[2])
 //        console.log("transact p4(Parcel_hidl_reply) arg[3]=", args[3])
 //        console.log("transact p5(flags code)        arg[4]=", args[4].toInt32())
 //        console.log("transact p6(callback)          arg[5]=", args[5])
-
-        /*       Parcel    (*arg[2])    */
-        /*
-            const mData_LOC         = 0x28;
-            const mDataSize_LOC     = 0x30;
-            const mObjects_LOC      = 0x48;
-            const mObjectsSize_LOC  = 0x50;
-        */
-//        console.log("Parcel 数据段:")
-//        dump(args[2], 0x200)
-//        console.log("Parcel mData_size   =", "0x" + args[2].add(mDataSize_LOC).readU64().toString(16))
-//        console.log("Parcel mData_pos    =", args[2].add(mData_LOC).readPointer())
-//        console.log("Parcel mObjects_num =", args[2].add(mObjectsSize_LOC).readU64())
-//        console.log("Parcel mObjects_pos =", args[2].add(mObjects_LOC).readPointer())
 
         // mDataSize/mDataLen
         var mDataSize_pos = args[2].add(mDataSize_LOC);
@@ -247,315 +135,139 @@ Java.perform(function () {
         // mData
         var mData_offset = args[2].add(mData_LOC);
         var mData_pos = mData_offset.readPointer();
-//        console.log("|--[Parcel] mDataPos: " + mData_pos + ", mDataSize: 0x" + mDataSize.toString(16));
-//        console.log("|--[Parcel] [mData] interface_token: "+mData_pos.readUtf8String()+", method_code: "+args[1].toInt32())
-//        console.log("Memory.read: "+Memory.readU32(mData_pos.add(0x30)));
-//        Memory.writeU32(mData_pos.add(0x30), 0x12345678);       // Maybe a way of fuzz
+        console.log("[Parcel_mData] mDataPos: " + mData_pos + ", mDataSize: 0x" + mDataSize.toString(16));
 //        dump(mData_pos, mDataSize)
 
         // mObjectsSize/mObjectsLen
         var mObjectsSize_pos = args[2].add(mObjectsSize_LOC);
         var mObjectsSize = mObjectsSize_pos.readU64();
-        console.log("|--[i] mObjectsSize: 0x" + mObjectsSize.toString(16));
+//        console.log("[Parcel_mData] mObjectsSize: 0x" + mObjectsSize.toString(16));
 
         // mObjects
         var mObjects_offset = args[2].add(mObjects_LOC);
         var mObjects_pos = mObjects_offset.readPointer();
 
-//        console.log("|--[i] mObjects: ");
-//        console.log(hexdump(mObjects_pos, {
-//            offset: 0,
-//            length: mObjectsSize * 0x8,
-//            header: true,
-//            ansi: true
-//        }));
-
-        /*
-            Parse Object in Parcel
-        */
         parseObject(mData_pos, mDataSize, mObjects_pos, mObjectsSize);
         console.log("<--parseParcel   end:", name)
     }
 
+
     function parseObject(mData_pos, mDataSize, mObjects_pos, mObjectsSize){
-    /*  parcel 中各类信息的偏移
-        const mData_LOC         = 0x28;
-        const mDataSize_LOC     = 0x30;
-        const mObjects_LOC      = 0x48;
-        const mObjectsSize_LOC  = 0x50;
-    */
-    /*  参数含义
-        mData_pos       parcel 中 mData 的指针, mData 的地址保存在 (基地址 arg[2] + 偏移 mData_LOC), 通过readPointer()读取
-        mDataSize       parcel 中 mData 的长度, 长度 保存在 (基地址 arg[2] + 偏移 mDataSize_LOC), 通过readU64()读取
-        mObjects_pos    parcel 中 mObject 的指针, mObject 的地址保存在 (基地址 arg[2] + 偏移 mObjects_LOC), 通过readPointer()读取
-                                  (读出来的地址为第一个 mObject 的地址, 也是整个 mObject 数据段的起始地址，每个 mObject 固定长度0x8)
-        mObjectsSize    parcel 中 mObject 的个数, 个数 保存在 (基地址 arg[2] + 偏移 mObjectsSize_LOC), 通过readU64()读取
-
-        // arg[*] 为 transact 中的参数
-        code            arg[1]  transaction_code
-        data            arg[2]  parcel_hidl_data
-        reply           arg[3]  parcel_hidl_reply
-        flags           arg[4]  flags
-    */
-
+        /*  parcel 中各类信息的偏移
+            const mData_LOC         = 0x28;
+            const mDataSize_LOC     = 0x30;
+            const mObjects_LOC      = 0x48;
+            const mObjectsSize_LOC  = 0x50;
+        */
         var name = mData_pos.readUtf8String();
         console.log("---->>parseObject start:", name);
-        console.log("|--[Parcel] [mObject] pos: " + mObjects_pos + ", num: " + mObjectsSize)
+        console.log("[Parcel_mData] [mObjects] pos: " + mObjects_pos + ", num: " + mObjectsSize)
 //        dump(mObjects_pos, (mObjectsSize * 0x8));
 
-//        var binder_object_offset    = mObjects_pos.add(0 * 0x8).readU64();
-//        var binder_object_pos       = mData_pos.add(binder_object_offset);
-//        var buffer_pos              = binder_object_pos.add(0x8);
-//        var length_pos              = binder_object_pos.add(0x10);
-
         console.log("......... Start parse each buffer_object .........")
-        var mObjectsList = []
+        var mObjectsList = [];      //  record pos of each mObject
         for(var i = 0; i < mObjectsSize; i++){
-            // each binder object
-            console.log("Deal buffer_object No." + (i + 1))
+            console.log("[Parcel_mData] [mObjects] " + (i + 1) + "/" + mObjectsSize)
             var binder_object_offset    = mObjects_pos.add(i * 0x8).readU64();
             var binder_object_pos       = mData_pos.add(binder_object_offset);
+            var obj_len                 = getBinderObjectLen(binder_object_pos);
+//            dump(binder_object_pos, obj_len);     //  dump each object
+            mObjectsList[i] = binder_object_pos;
 
-            mObjectsList[i] = binder_object_pos;        //record each buffer_object_pos
+            var type_pos = binder_object_pos;
+            if (type_pos.readU32() == BINDER_TYPE_PTR){
 
-            if(mObjectsSize - i == 1){
-                var binder_object_size  = mData_pos.add(mDataSize) - binder_object_pos
-//                console.log("   [[[[[[ last mObjectSize: 0x" + binder_object_size.toString(16))
-            }else{
-                var binder_object_size  = mObjects_pos.add((i + 1) * 0x8).readU64() - mObjects_pos.add(i * 0x8).readU64()
             }
+            else if (type_pos.readU32() == BINDER_TYPE_BINDER){
 
-            console.log("   [binder object] pos: " + binder_object_pos + ", size: 0x" + binder_object_size.toString(16))
-            dump(binder_object_pos, binder_object_size) // dump binder_object
-
-            /* code form linux/android/binder.h
-            #define B_PACK_CHARS(c1,c2,c3,c4) ((((c1) << 24)mObjectsSize) | (((c2) << 16)) | (((c3) << 8)) | (c4))
-            #define B_TYPE_LARGE 0x85
-            enum {
-                BINDER_TYPE_BINDER      = B_PACK_CHARS('s', 'b', '*', B_TYPE_LARGE),
-                BINDER_TYPE_WEAK_BINDER = B_PACK_CHARS('w', 'b', '*', B_TYPE_LARGE),
-                BINDER_TYPE_HANDLE      = B_PACK_CHARS('s', 'h', '*', B_TYPE_LARGE),
-                BINDER_TYPE_WEAK_HANDLE = B_PACK_CHARS('w', 'h', '*', B_TYPE_LARGE),
-                BINDER_TYPE_FD          = B_PACK_CHARS('f', 'd', '*', B_TYPE_LARGE),
-                BINDER_TYPE_FDA         = B_PACK_CHARS('f', 'd', 'a', B_TYPE_LARGE),
-                BINDER_TYPE_PTR         = B_PACK_CHARS('p', 't', '*', B_TYPE_LARGE),
-            };
-            */
-//            console.log("BINDER_TYPE: 0x" + binder_object_pos.readS32().toString(16))    // 读长度为0x4的内容
-
-            if(binder_object_pos.readS32() == BINDER_TYPE_PTR){
-                console.log("|--[Parcel] [mObject] [BINDER_TYPE_PTR] ")
-                /* the struct of binder_buffer_object
-
-                    struct binder_object_header {
-                        __u32        type;
-                    };
-                    struct binder_buffer_object {
-                        struct binder_object_header hdr;            //__u32     0x0
-                        __u32                       flags;          //__u32     0x4
-                        binder_uintptr_t            buffer;         //__u64     0x8
-                        binder_size_t               length;         //__u64     0x10
-                        binder_size_t               parent;         //__u64     0x18
-                        binder_size_t               parent_offset;  //__u64     0x20
-                    };
-                */
-                var flags_pos           = binder_object_pos.add(0x4);
-                var buffer_pos          = binder_object_pos.add(0x8);
-                var length_pos          = binder_object_pos.add(0x10);      // sizeof(buffer)
-                var parent_pos          = binder_object_pos.add(0x18);
-                var parent_offset_pos   = binder_object_pos.add(0x20);
-
-                console.log("PTR_binder flags: 0x" + flags_pos.readU32())
-                if(flags_pos.readU32() == BINDER_BUFFER_FLAG_HAS_PARENT){   //BINDER_BUFFER_FLAG_HAS_PARENT = 0x01
-                    // writeEmbeddedBuffer
-//                    console.log("PTR_binder assembled by `writeEmbeddedBuffer`");
-
-
-//                    if(i == 13){
-                        // set the 14th mObject
-//                        console.log(buffer_pos.readPointer());
-//                        Memory.writeUtf8String(buffer_pos.readPointer(), "SceneRecognition_v2_new.fy");
-//                    }
-
-                    console.log("PTR_binder binder buffer_pos: "+ buffer_pos.readPointer() +", buffer_length: 0x" + length_pos.readU64().toString(16))
-
-                    if(length_pos.readU64() != 0){
-//                        dump(buffer_pos.readPointer(), length_pos.readU64())
-//                        try{
-//                            dump(buffer_pos.readPointer().add(0 * 0x10).readPointer(), 0x20)
-//                        }catch(e){
-//                            console.log("can not read the address of buffer_pos.readPointer() "+buffer_pos.readPointer().add(0 * 0x10).readPointer())
-//                        }
-                    }
-                }
-                else{
-//                    console.log("------binder buffer has not parent");
-//                    dump(buffer_pos, length_pos.readU64())
-//                    try{
-//                        buffer_pos.readPointer()
-//                        dump(buffer_pos.readPointer(), 0x10)
-//                    }catch{
-//                        console.log("------ can not read 0x"+buffer_pos.toString(16))
-//                    }
-                }
             }
+            else if (type_pos.readU32() == BINDER_TYPE_FDA){
+                console.log("[Parcel_mData] [mObjects] [BINDER_TYPE_FDA], parse by struct `binder_fd_array_object`.");
 
-            if(binder_object_pos.readS32() == BINDER_TYPE_FDA){
-                console.log("|--[Parcel] [mObject] [BINDER_TYPE_FDA] ")
-                /*
-                    struct binder_object_header {
-                        __u32                       type;
-                    };
-                    struct binder_fd_array_object {
-                        struct binder_object_header	hdr;            //__u32      0x0
-                        __u32				        pad;            //__u32      0x4
-                        binder_size_t			    num_fds;        //__u64      0x8
-                        binder_size_t			    parent;         //__u64      0x10
-                        binder_size_t			    parent_offset;  //__u64      0x18
-                    };
-                */
+                var num_fds         = binder_object_pos.add(0x8).readU64();
+                var handle          = binder_object_pos.add(0x10).readU64();      // handle
+                var buffer_offset   = binder_object_pos.add(0x18).readU64();      // handle中的偏移
 
-                var num_fds_pos                 = binder_object_pos.add(0x8);
-                var parent_pos                  = binder_object_pos.add(0x10);      // handle
-                var parent_offset_pos           = binder_object_pos.add(0x18);      // handle中的偏移
+                console.log("[Parcel_mData] [mObjects] [BINDER_TYPE_FDA], parent(mObject_index): " + handle);
 
-                console.log("|----[i] num_fds: 0x" + num_fds_pos.readU64().toString(16));
-                /*  from source code:
-                    if (handle != nullptr) {
-                        // We use an index into mObjects as a handle
-                        *handle = mObjectsSize;
-                    }
-                */
-                console.log("|----[i] parent(mObject_index): " + parent_pos.readU64() + " --> No." + parent_pos.readU64().add(1));
-                console.log("|----[i] parent_offset: 0x" + parent_offset_pos.readU64().toString(16));
+                var parent_pos  = mObjectsList[handle];
+                var buffer_pos  = parent_pos.add(ptr_buffer).readPointer();
+                var buffer_len  = parent_pos.add(ptr_length).readU64();
+//                dump(buffer_pos, buffer_len)
 
-                var this_mmap_p = Module.getExportByName("libai_client.so", 'mmap');
-//                var this_mmap_p = Module.getExportByName("libai_hidl_request_client.so", 'mmap');
-                console.log("|------[i] mmap addr: " + this_mmap_p);
-
-                var func_mmap = new NativeFunction(this_mmap_p,
-                    'uint64',
-                    ['uint64', 'uint32', 'int32', 'int32', 'int32', 'int32']
-                );
-
-                // just copy
-                var PROT_READ         = 0x1;
-                var PROT_WRITE        = 0x2;
-                var MAP_SHARED        = 0x1;
-
-//                var this_size = buffer_pos.readPointer().add(0x18).readU32();
-//                var this_fd   = buffer_pos.readPointer().add(0x0c).readU32();
-                var real_parent_pos = mObjectsList[parent_pos.readU64()];
-//                console.log("real_parent_pos  : " + real_parent_pos);
-                var binder_buffer_pos = real_parent_pos.add(0x8).readPointer()
-//                console.log("binder_buffer_pos: " + binder_buffer_pos);
-
-                var fd = binder_buffer_pos.add(parent_offset_pos.readU64())
-//                console.log("fd_pos           : " + fd);
-
-                var this_fd         = fd.readU32();
-//                console.log("this_size_pos    : " + binder_buffer_pos.add(0x18))
-                var this_size       = binder_buffer_pos.add(0x18).readU32()
-//                var this_size       = binder_buffer_pos.readU64().toString(16)
-//                console.log("this_size        : 0x" + this_size.toString(16))
-//                console.log("this_fd          : 0x" + this_fd.toString(16));
-
-                var map_memory_addr = func_mmap(
-                    0,
-                    this_size,
-                    PROT_READ|PROT_WRITE,
-                    MAP_SHARED,
-                    this_fd,
-                    0
-                );
-
-//                console.log("map_memory_addr: " + ptr(map_memory_addr));
-//                dump(ptr(map_memory_addr), this_size);        //  some this_size is too large
-                if(this_size > 0x200){
-                    console.log("map_memory_addr: " + ptr(map_memory_addr) + ", size: 0x" + this_size.toString(16) + "(too large, dump 0x200)");
-                    dump(ptr(map_memory_addr), 0x200)
-                }else{
-                    console.log("map_memory_addr: " + ptr(map_memory_addr) + ", size: 0x" + this_size.toString(16));
-                    dump(ptr(map_memory_addr), this_size);
-                }
-
-
-                if(i != 3){
-                    // fuzz the 4th mObject
-                    continue;
-                }
-
-                console.log("ffffffffffff___index_of_Object: " + i)
-                //  fffffffffffffffff
-                var this_fd_memory = ptr(map_memory_addr);
-                var dummy_seed = genSeed(0);
-                console.log("g_obj_content_seed: " + g_obj_content_seed)
-                console.log("dummy_seed.length : " + dummy_seed.length)
-                if (g_obj_content_seed >= dummy_seed.length)
-                {
-                    g_obj_content_offset += 4;
-                    g_obj_content_seed = 0;
-        //            while(g_collected_crash.includes(g_obj_content_offset)) // skip those crash the app
-        //            {
-        //                g_obj_content_offset += 4;
-        //            }
-                }
-
-                if (g_obj_content_seed == 0)
-                {
-                    // send message to host.
-                    send("ready:" + g_obj_content_offset);
-                    // wait the host to finish it's task.
-                    var foo = recv('synchronize', function(value) {
-                        console.error("|-----[i] host ready message received, continue.");
-                    });
-                    foo.wait();
-                }
-                console.log("")
-                if (g_obj_content_offset >= this_size)
-                {
-                    console.log("|[*] fuzz_scenedection fuzz done");
-                    Interceptor.detachAll();
-                }
-
-                var org_value = this_fd_memory.add(g_obj_content_offset).readS32();
-                var new_value = genSeed(org_value);
-
-                console.log("|-----[i] g_obj_content_offset: 0x" + g_obj_content_offset.toString(16) + ", g_obj_content_seed: 0x" + g_obj_content_seed.toString(16));
-                console.log("|-----[i] fuzz memory: " + this_fd_memory.toString(16) + ", with offset: 0x" + g_obj_content_offset.toString(16) + ", with seed: 0x" + new_value[g_obj_content_seed].toString(16));
-
-                this_fd_memory.add(g_obj_content_offset).writeS32(new_value[g_obj_content_seed]);
-
-                var this_munmap_p = Module.getExportByName("libai_client.so", 'munmap');
-                console.log("|-----[i] munmap addr: " + this_munmap_p);
-
-                var func_munmap = new NativeFunction(this_munmap_p,
-                    'void',
-                    ['uint64', 'uint32']
-                    );
-                func_munmap(
-                    map_memory_addr,
-                    this_size
-                    );
-                g_obj_content_seed ++;
-
-        //        try{
-        //            console.log(hexdump(this_fd_memory, {
-        //                offset: 0,
-        //                length: 0x40,
-        //                header: true,
-        //                ansi: true
-        //            }));
-        //        }
-        //        catch(err)
-        //        {
-        //            console.log("|-----[e] can't read");
-        //            return;
-        //        }
-
+                var this_fd     = buffer_pos.add(buffer_offset).readU32();
+                var this_size   = buffer_pos.add(0x18).readU32();
+                console.log("fuzz fd", this_fd, this_size);
+                fuzz_obj(this_fd, this_size, "handle");
+            }
+            else{
+                console.log("[Parcel_mData] [mObjects] Unknown binder type.")
             }
         }
-//        console.log("The pos of each mObject:", mObjectsList);
-        console.log("<<----parseObject   end:", name);
+        console.log(mObjectsList)
+    }
+
+
+    function fuzz_obj(obj, obj_len, type){
+        console.log("in fuzz_obj");
+        if(type == "handle"){
+            var g_mmap_ptr = Module.getExportByName("libai_client.so", 'mmap');
+        //    var g_mmap_ptr = Module.getExportByName("libai_hidl_request_client.so", 'mmap');
+        //    var g_mmap_ptr = Module.getExportByName("/system/bin/app_process64", 'mmap');
+            console.log("[i] mmap addr: " + g_mmap_ptr);
+            var g_mmap_func = new NativeFunction(g_mmap_ptr, 'uint64', ['uint64', 'uint32', 'int32', 'int32', 'int32', 'int32']);
+            console.log("[i] mmap func addr: " + g_mmap_func)
+            var map_memory_addr = g_mmap_func(
+                0,
+                obj_len,
+                PROT_READ|PROT_WRITE,
+                MAP_SHARED,
+                obj,
+                0
+            );
+            fuzz_obj(map_memory_addr, obj_len, "buffer");
+        }
+        else if(type == "buffer"){
+            var map_memory_ptr = ptr(obj);
+            console.log("in fuzz_obj: "+map_memory_ptr+">>>"+obj_len);
+            if(g_gen_seed.offset == 38){
+                g_gen_seed.offset = 0
+                send("ready:" + (g_cur_progress.offset + 4) + ":" + (g_gen_seed.offset))
+            }else{
+                send("ready:" + g_cur_progress.offset + ":" + (g_gen_seed.offset + 1))
+            }
+            recv('sig_synchronize', function(value) {
+                g_cur_progress.offset   = value["payload"]["g_cur_progress"];
+                g_gen_seed.offset       = value["payload"]["g_gen_seed"];
+                console.log("|--[i] host ready message received, continue testing. " + g_cur_progress.offset+":"+g_gen_seed.offset);
+            }).wait();
+
+            var org_value = map_memory_ptr.add(g_cur_progress.offset).readS32();
+            dump(map_memory_ptr.add(g_cur_progress.offset), 0x4)
+            var new_value = genSeed(org_value)[g_gen_seed.offset];
+            console.log("map_memory_ptr : " + map_memory_ptr.add(g_cur_progress.offset))
+            console.log("org_value      0x: " + org_value.toString(16))
+            console.log("new_value      0x: " + new_value.toString(16))
+            map_memory_ptr.add(g_cur_progress.offset).writeS32(new_value);
+            dump(map_memory_ptr.add(g_cur_progress.offset), 0x4)
+        }
+    }
+
+    var SceneDectionActivity = Java.use("com.huawei.mlkit.sample.activity.scenedection.SceneDectionActivity");
+    SceneDectionActivity.stopAnalyzer.overload().implementation = function () {
+        console.log("StopAnalyzer.");
+//        this.initAnalyzer();
+//        this.detectImage();
+        this.stopAnalyzer();        //  origen invoke
+
+        // my fuzz
+//        var m = 1;
+        while(true){
+//        for(var m = 1; m <= 10; m++){
+//            console.log("fy_fuzz_No." + m);
+            this.initAnalyzer();
+            this.detectImage();
+            this.stopAnalyzer();
+        }
     }
 });
