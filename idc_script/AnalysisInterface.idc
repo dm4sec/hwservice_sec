@@ -196,6 +196,7 @@ static main()
               inst_info.Op1.type == o_imm)
             {
               msg( "T: Transaction code at 0x%X: %d\n", ea, inst_info.Op1.value );
+              msg( "\n" );
               if (ARGV.count != 1)
               {
                 fprintf(logfile, "T: Transaction code at 0x%X: %d\n", ea, inst_info.Op1.value );
