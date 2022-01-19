@@ -1,6 +1,4 @@
-# TEEServiceSideFuzzer (Deprecated)
-
-**it's a big problem that I can not modify any field of the data in parcel from the server side.**
+# TEEServiceSideFuzzer
 
 ```
 200|HWPCT:/vendor/etc/vintf $ lshal
@@ -44,4 +42,3 @@ set lock screen password or remove lock screen password will trigger the followi
 ## NOTE
 1. Downgrade both the `frida-server` and host. e.g., 14.2.17.
 2. No java environment provided.
-
