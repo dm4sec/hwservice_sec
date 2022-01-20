@@ -2,6 +2,9 @@
 // old version frida does not support the `require` feature.
 // var utils  = require("../../utils/utils.js");
 
+const BINDER_TYPE_BINDER_LEN    = 0x28;
+const BINDER_TYPE_FDA_LEN       = 0x20;
+
 /***************************************************
 ** used to search for the target function **
 ***************************************************/
@@ -132,61 +135,86 @@ function fuzz_trans_5(mData_pos, mDataSize, mObjects_pos, mObjectsSize)
     android::hardware::hidl_memory const&,
     std::__1::function<void ()(int, android::hardware::hidl_vec<unsigned char> const&, android::hardware::hidl_vec<unsigned char> const&, int)>)
     */
-    var this_int = mData_pos.add(0x34).readU32();
-    console.log("|---[i] 1st args (int): 0x" + this_int.toString(16));
+    var cur_offset = 0x34;
 
-    var this_obj_pos = 0;
-    var binder_buffer_object_buffer = mData_pos.add(mObjects_pos.add(this_obj_pos + 0x8).readU64()).add(0x8).readU64();
-    var binder_buffer_object_length = mData_pos.add(mObjects_pos.add(this_obj_pos + 0x8).readU64()).add(0x10).readU32();
-    console.log("|---[i] 2nd args (hidl_vec<unsigned char>): ");
+    var this_int = mData_pos.add(cur_offset).readU32();
+    console.log("|---[i] 1st arg (int): 0x" + this_int.toString(16));
+    cur_offset += 4;
+
+    cur_offset += BINDER_TYPE_BINDER_LEN;
+    var binder_buffer_object_buffer = mData_pos.add(cur_offset).add(0x8).readU64();
+    var binder_buffer_object_length = mData_pos.add(cur_offset).add(0x10).readU64();
+    console.log("|---[i] 2nd arg (hidl_vec<unsigned char>): ");
     console.log(hexdump(ptr(binder_buffer_object_buffer), {
         offset: 0,
         length: binder_buffer_object_length,
         header: true,
         ansi: true
     }));
+    cur_offset += BINDER_TYPE_BINDER_LEN;
 
-    this_obj_pos += 0x10;
-    var binder_buffer_object_buffer = mData_pos.add(mObjects_pos.add(this_obj_pos + 0x8).readU64()).add(0x8).readU64();
-    var binder_buffer_object_length = mData_pos.add(mObjects_pos.add(this_obj_pos + 0x8).readU64()).add(0x10).readU32();
-    console.log("|---[i] the 3rd args (hidl_vec<unsigned char>): ");
+    cur_offset += BINDER_TYPE_BINDER_LEN;
+    var binder_buffer_object_buffer = mData_pos.add(cur_offset).add(0x8).readU64();
+    var binder_buffer_object_length = mData_pos.add(cur_offset).add(0x10).readU32();
+    console.log("|---[i] the 3rd arg (hidl_vec<unsigned char>): ");
     console.log(hexdump(ptr(binder_buffer_object_buffer), {
         offset: 0,
         length: binder_buffer_object_length,
         header: true,
         ansi: true
     }));
+    cur_offset += BINDER_TYPE_BINDER_LEN;
 
-    var this_int = mData_pos.add(mObjects_pos.add(this_obj_pos + 0x8).readU64()).add(0x28).readU32();
-    console.log("|---[i] the forth args (int): 0x" + this_int.toString(16));
+    var this_int = mData_pos.add(cur_offset).readU32();
+    console.log("|---[i] the forth arg (int): 0x" + this_int.toString(16));
+    cur_offset += 4;
 
-    this_obj_pos += 0x10;
-    var binder_buffer_object_buffer = mData_pos.add(mObjects_pos.add(this_obj_pos + 0x8).readU64()).add(0x8).readU64();
-    var binder_buffer_object_length = mData_pos.add(mObjects_pos.add(this_obj_pos + 0x8).readU64()).add(0x10).readU32();
-    console.log("|---[i] the fifth args (hidl_vec<unsigned char>): ");
+    cur_offset += BINDER_TYPE_BINDER_LEN;
+    var binder_buffer_object_buffer = mData_pos.add(cur_offset).add(0x8).readU64();
+    var binder_buffer_object_length = mData_pos.add(cur_offset).add(0x10).readU32();
+    console.log("|---[i] the fifth arg (hidl_vec<unsigned char>): ");
     console.log(hexdump(ptr(binder_buffer_object_buffer), {
         offset: 0,
         length: binder_buffer_object_length,
         header: true,
         ansi: true
     }));
+    cur_offset += BINDER_TYPE_BINDER_LEN;
 
-    if (mData_pos.add(mObjects_pos.add(this_obj_pos + 0x8).readU64()).add(0x28).readU64() == 0)
+
+    // oops, the size of the ashmem is not delivered.
+    cur_offset += BINDER_TYPE_BINDER_LEN
+    if (mData_pos.add(cur_offset).readU64() == 0)
     {
-        console.log("|---[i] the fifth args (hidl_memory): empty");
+        console.log("|---[i] the fifth arg (hidl_memory): null ptr");
+        cur_offset += 0x8;
     }
     else
     {
-        this_obj_pos += 0x10;
-        var binder_buffer_object_buffer = mData_pos.add(mObjects_pos.add(this_obj_pos + 0x8).readU64()).add(0x8).readU64();
-        var binder_buffer_object_length = mData_pos.add(mObjects_pos.add(this_obj_pos + 0x8).readU64()).add(0x10).readU32();
-        console.log("|---[i] the fifth args (hidl_memory): ");
+        cur_offset += 0x8
+        var binder_buffer_object_buffer = mData_pos.add(cur_offset).add(0x8).readU64();
+        var binder_buffer_object_length = mData_pos.add(cur_offset).add(0x10).readU64();
+        console.log("|---[i] the fifth arg (hidl_memory): ");
         console.log(hexdump(ptr(binder_buffer_object_buffer), {
             offset: 0,
             length: binder_buffer_object_length,
             header: true,
             ansi: true
         }));
+        dump_ashmem(ptr(binder_buffer_object_buffer).add(0xc).readU32());
+        cur_offset += BINDER_TYPE_BINDER_LEN
+        cur_offset += BINDER_TYPE_FDA_LEN
+
+        var binder_buffer_object_buffer = mData_pos.add(cur_offset).add(0x8).readU64();
+        var binder_buffer_object_length = mData_pos.add(cur_offset).add(0x10).readU64();
+        console.log("|---[i] the fifth arg's name (hidl_memory): ");
+        console.log(hexdump(ptr(binder_buffer_object_buffer), {
+            offset: 0,
+            length: binder_buffer_object_length,
+            header: true,
+            ansi: true
+        }));
+
     }
 }
 
@@ -207,31 +235,70 @@ function fuzz_trans_3(mData_pos, mDataSize, mObjects_pos, mObjectsSize)
     std::__1::function<void ()(int, android::hardware::hidl_vec<unsigned char> const&, android::hardware::hidl_vec<unsigned char> const&, android::hardware::hidl_vec<unsigned char> const&, int)>)
     */
 
-    var this_int = mData_pos.add(0x34).readU32();
-    console.log("|---[i] 1st args (int): 0x" + this_int.toString(16));
+    var cur_offset = 0x34;
 
-    var this_obj_pos = 0;
-    var binder_buffer_object_buffer = mData_pos.add(mObjects_pos.add(this_obj_pos + 0x8).readU64()).add(0x8).readU64();
-    var binder_buffer_object_length = mData_pos.add(mObjects_pos.add(this_obj_pos + 0x8).readU64()).add(0x10).readU32();
-    console.log("|---[i] 2nd args (hidl_vec<unsigned char>): ");
+    var this_int = mData_pos.add(cur_offset).readU32();
+    console.log("|---[i] 1st arg (int): 0x" + this_int.toString(16));
+    cur_offset += 4;
+
+    // lot's of pointer
+    cur_offset += BINDER_TYPE_BINDER_LEN;
+    var binder_buffer_object_buffer = mData_pos.add(cur_offset).add(0x8).readU64();
+    var binder_buffer_object_length = mData_pos.add(cur_offset).add(0x10).readU64();
+    console.log("|---[i] 2nd arg (hidl_vec<unsigned char>): ");
     console.log(hexdump(ptr(binder_buffer_object_buffer), {
         offset: 0,
         length: binder_buffer_object_length,
         header: true,
         ansi: true
     }));
+    cur_offset += BINDER_TYPE_BINDER_LEN;
 
 
-    if (mData_pos.add(mObjects_pos.add(this_obj_pos + 0x8).readU64()).add(0x28).readU64() == 0)
+    if (mData_pos.add(cur_offset).readU64() == 0)
     {
-        console.log("|---[i] 3rd args (hidl_handle): empty");
+        console.log("|---[i] 3rd arg (hidl_handle): null pointer");
+        cur_offset += 0x8;
     }
     else
     {
-        this_obj_pos += 0x10;
-        var binder_buffer_object_buffer = mData_pos.add(mObjects_pos.add(this_obj_pos).readU64()).add(0x8).readU64();
-        var binder_buffer_object_length = mData_pos.add(mObjects_pos.add(this_obj_pos).readU64()).add(0x10).readU32();
-        console.log("|---[i] 3rd args (hidl_handle): ");
+        cur_offset += 0x8;
+        var binder_buffer_object_buffer = mData_pos.add(cur_offset).add(0x8).readU64();
+        var binder_buffer_object_length = mData_pos.add(cur_offset).add(0x10).readU64();
+        console.log("|---[i] 3rd arg (hidl_handle): ");
+        console.log(hexdump(ptr(binder_buffer_object_buffer), {
+            offset: 0,
+            length: binder_buffer_object_length,
+            header: true,
+            ansi: true
+        }));
+        cur_offset += BINDER_TYPE_BINDER_LEN;
+        cur_offset += BINDER_TYPE_FDA_LEN;
+    }
+
+    cur_offset += BINDER_TYPE_BINDER_LEN
+    var binder_buffer_object_buffer = mData_pos.add(cur_offset).add(0x8).readU64();
+    var binder_buffer_object_length = mData_pos.add(cur_offset).add(0x10).readU64();
+    console.log("|---[i] the forth arg (hidl_string): ");
+    console.log(hexdump(ptr(binder_buffer_object_buffer), {
+        offset: 0,
+        length: binder_buffer_object_length,
+        header: true,
+        ansi: true
+    }));
+    cur_offset += BINDER_TYPE_BINDER_LEN
+
+
+    cur_offset += BINDER_TYPE_BINDER_LEN
+    var binder_buffer_object_buffer = mData_pos.add(cur_offset).add(0x8).readU64();
+    var binder_buffer_object_length = mData_pos.add(cur_offset).add(0x10).readU64();
+    if (binder_buffer_object_buffer == 0)
+    {
+        console.log("|---[i] the fifth arg (hidl_vec<unsigned char>): null pointer");
+    }
+    else
+    {
+        console.log("|---[i] the fifth arg (hidl_vec<unsigned char>): ");
         console.log(hexdump(ptr(binder_buffer_object_buffer), {
             offset: 0,
             length: binder_buffer_object_length,
@@ -239,85 +306,105 @@ function fuzz_trans_3(mData_pos, mDataSize, mObjects_pos, mObjectsSize)
             ansi: true
         }));
     }
+    cur_offset += BINDER_TYPE_BINDER_LEN
 
-    this_obj_pos += 0x10;
-    var binder_buffer_object_buffer = mData_pos.add(mObjects_pos.add(this_obj_pos + 0x8).readU64()).add(0x8).readU64();
-    var binder_buffer_object_length = mData_pos.add(mObjects_pos.add(this_obj_pos + 0x8).readU64()).add(0x10).readU32();
-    console.log("|---[i] the forth args (hidl_string): ");
-    console.log(hexdump(ptr(binder_buffer_object_buffer), {
-        offset: 0,
-        length: binder_buffer_object_length,
-        header: true,
-        ansi: true
-    }));
+    var this_int = mData_pos.add(cur_offset).readU32();
+    console.log("|---[i] the sixth arg (int): 0x" + this_int.toString(16));
+    cur_offset += 4
 
-    this_obj_pos += 0x10;
-    var binder_buffer_object_buffer = mData_pos.add(mObjects_pos.add(this_obj_pos + 0x8).readU64()).add(0x8).readU64();
-    var binder_buffer_object_length = mData_pos.add(mObjects_pos.add(this_obj_pos + 0x8).readU64()).add(0x10).readU32();
-    console.log("|---[i] the fifth args (hidl_vec<unsigned char>): ");
-    console.log(hexdump(ptr(binder_buffer_object_buffer), {
-        offset: 0,
-        length: binder_buffer_object_length,
-        header: true,
-        ansi: true
-    }));
-
-    var this_int = mData_pos.add(mObjects_pos.add(this_obj_pos + 0x8).readU64()).add(0x28).readU32();
-    console.log("|---[i] the sixth args (int): 0x" + this_int.toString(16));
-
-    this_obj_pos += 0x10;
-    var binder_buffer_object_buffer = mData_pos.add(mObjects_pos.add(this_obj_pos + 0x8).readU64()).add(0x8).readU64();
-    var binder_buffer_object_length = mData_pos.add(mObjects_pos.add(this_obj_pos + 0x8).readU64()).add(0x10).readU32();
-    console.log("|---[i] the seventh args (hidl_vec<unsigned char>): ");
-    console.log(hexdump(ptr(binder_buffer_object_buffer), {
-        offset: 0,
-        length: binder_buffer_object_length,
-        header: true,
-        ansi: true
-    }));
-
-    this_obj_pos += 0x10;
-    var binder_buffer_object_buffer = mData_pos.add(mObjects_pos.add(this_obj_pos + 0x8).readU64()).add(0x8).readU64();
-    var binder_buffer_object_length = mData_pos.add(mObjects_pos.add(this_obj_pos + 0x8).readU64()).add(0x10).readU32();
-    console.log("|---[i] the eighth args (hidl_vec<unsigned char>): ");
-    console.log(hexdump(ptr(binder_buffer_object_buffer), {
-        offset: 0,
-        length: binder_buffer_object_length,
-        header: true,
-        ansi: true
-    }));
-
-    if (mData_pos.add(mObjects_pos.add(this_obj_pos + 0x8).readU64()).add(0x28).readU64() == 0)
+    // a null pointer is written, such that there is no record in the mObjects.
+    // I would like to use the tag of an obj for indexing instead of mObject.
+    cur_offset += BINDER_TYPE_BINDER_LEN
+    var binder_buffer_object_buffer = mData_pos.add(cur_offset).add(0x8).readU64();
+    var binder_buffer_object_length = mData_pos.add(cur_offset).add(0x10).readU64();
+    if (binder_buffer_object_buffer == 0)
     {
-        console.log("|---[i] the ninth args (hidl_memory): empty");
+        console.log("|---[i] the seventh arg (hidl_vec<unsigned char>): null pointer");
     }
     else
     {
-        this_obj_pos += 0x10;
-        var binder_buffer_object_buffer = mData_pos.add(mObjects_pos.add(this_obj_pos + 0x8).readU64()).add(0x8).readU64();
-        var binder_buffer_object_length = mData_pos.add(mObjects_pos.add(this_obj_pos + 0x8).readU64()).add(0x10).readU32();
-        console.log("|---[i] the ninth args (hidl_memory): ");
+        console.log("|---[i] the seventh arg (hidl_vec<unsigned char>): ");
         console.log(hexdump(ptr(binder_buffer_object_buffer), {
             offset: 0,
             length: binder_buffer_object_length,
             header: true,
             ansi: true
         }));
+    }
+    cur_offset += BINDER_TYPE_BINDER_LEN
+
+
+    cur_offset += BINDER_TYPE_BINDER_LEN
+    var binder_buffer_object_buffer = mData_pos.add(cur_offset).add(0x8).readU64();
+    var binder_buffer_object_length = mData_pos.add(cur_offset).add(0x10).readU64();
+    if (binder_buffer_object_buffer == 0)
+    {
+        console.log("|---[i] the eighth arg (hidl_vec<unsigned char>): null pointer");
+    }
+    else
+    {
+        console.log("|---[i] the eighth arg (hidl_vec<unsigned char>): ");
+        console.log(hexdump(ptr(binder_buffer_object_buffer), {
+            offset: 0,
+            length: binder_buffer_object_length,
+            header: true,
+            ansi: true
+        }));
+    }
+    cur_offset += BINDER_TYPE_BINDER_LEN
+
+    // oops, the size of the ashmem is not delivered.
+    cur_offset += BINDER_TYPE_BINDER_LEN
+    if (mData_pos.add(cur_offset).readU64() == 0)
+    {
+        console.log("|---[i] the ninth arg (hidl_memory): null ptr");
+        cur_offset += 0x8;
+    }
+    else
+    {
+        cur_offset += 0x8
+        var binder_buffer_object_buffer = mData_pos.add(cur_offset).add(0x8).readU64();
+        var binder_buffer_object_length = mData_pos.add(cur_offset).add(0x10).readU64();
+        console.log("|---[i] the ninth arg (hidl_memory): ");
+        console.log(hexdump(ptr(binder_buffer_object_buffer), {
+            offset: 0,
+            length: binder_buffer_object_length,
+            header: true,
+            ansi: true
+        }));
+        dump_ashmem(ptr(binder_buffer_object_buffer).add(0xc).readU32());
+        cur_offset += BINDER_TYPE_BINDER_LEN
+        cur_offset += BINDER_TYPE_FDA_LEN
+
+        var binder_buffer_object_buffer = mData_pos.add(cur_offset).add(0x8).readU64();
+        var binder_buffer_object_length = mData_pos.add(cur_offset).add(0x10).readU64();
+        console.log("|---[i] the ninth arg's name (hidl_memory): ");
+        console.log(hexdump(ptr(binder_buffer_object_buffer), {
+            offset: 0,
+            length: binder_buffer_object_length,
+            header: true,
+            ansi: true
+        }));
+
     }
 }
 
 function fuzz_trans_2(mData_pos, mDataSize, mObjects_pos, mObjectsSize)
 {
-    // vendor::huawei::hardware::libteec::V3_0::BpHwLibteecGlobal::_hidl_finalizeContext(android::hardware::IInterface *, android::hardware::details::HidlInstrumentor *, int, android::hardware::hidl_vec<unsigned char> const&)
-
+    /*
+    vendor::huawei::hardware::libteec::V3_0::BpHwLibteecGlobal::_hidl_finalizeContext(android::hardware::IInterface *, android::hardware::details::HidlInstrumentor *,
+    int,
+    android::hardware::hidl_vec<unsigned char> const&
+    )
+    */
     var first_int = mData_pos.add(0x34).readU32();
-    console.log("|---[i] 1st args (int): 0x" + first_int.toString(16));
+    console.log("|---[i] 1st arg (int): 0x" + first_int.toString(16));
 
     var binder_buffer_object_buffer = mData_pos.add(mObjects_pos.add(0x8).readU64()).add(0x8).readU64();
-    var binder_buffer_object_length = mData_pos.add(mObjects_pos.add(0x8).readU64()).add(0x10).readU32();
+    var binder_buffer_object_length = mData_pos.add(mObjects_pos.add(0x8).readU64()).add(0x10).readU64();
 
-    // the 1st argument, hidl_string, it's always be zero by observation.
-    console.log("|---[i] 2nd args (hidl_vec<unsigned char>): ");
+    // lots of pointer.
+    console.log("|---[i] 2nd arg (hidl_vec<unsigned char>): ");
     console.log(hexdump(ptr(binder_buffer_object_buffer), {
         offset: 0,
         length: binder_buffer_object_length,
@@ -329,12 +416,17 @@ function fuzz_trans_2(mData_pos, mDataSize, mObjects_pos, mObjectsSize)
 
 function fuzz_trans_1(mData_pos, mDataSize, mObjects_pos, mObjectsSize)
 {
-    // vendor::huawei::hardware::libteec::V3_0::BpHwLibteecGlobal::_hidl_initializeContext(android::hardware::IInterface *, android::hardware::details::HidlInstrumentor *, android::hardware::hidl_string const&, android::hardware::hidl_vec<unsigned char> const&, std::__1::function<void ()(int, android::hardware::hidl_vec<unsigned char> const&)>)
+    /*
+    vendor::huawei::hardware::libteec::V3_0::BpHwLibteecGlobal::_hidl_initializeContext(android::hardware::IInterface *, android::hardware::details::HidlInstrumentor *,
+    android::hardware::hidl_string const&,
+    android::hardware::hidl_vec<unsigned char> const&,
+    std::__1::function<void ()(int, android::hardware::hidl_vec<unsigned char> const&)>)
+    */
     var binder_buffer_object_buffer = mData_pos.add(mObjects_pos.add(0x8).readU64()).add(0x8).readU64();
     var binder_buffer_object_length = mData_pos.add(mObjects_pos.add(0x8).readU64()).add(0x10).readU32();
 
     // the 1st argument, hidl_string, it's always be zero by observation.
-    console.log("|---[i] 1st args (hidl_string): ");
+    console.log("|---[i] 1st arg (hidl_string): ");
     console.log(hexdump(ptr(binder_buffer_object_buffer), {
         offset: 0,
         length: binder_buffer_object_length,
@@ -344,10 +436,9 @@ function fuzz_trans_1(mData_pos, mDataSize, mObjects_pos, mObjectsSize)
 
     // the 2nd argument, works as hidl_string
     var binder_buffer_object_buffer = mData_pos.add(mObjects_pos.add(0x18).readU64()).add(0x8).readU64();
-    var binder_buffer_object_length = mData_pos.add(mObjects_pos.add(0x18).readU64()).add(0x10).readU32();
+    var binder_buffer_object_length = mData_pos.add(mObjects_pos.add(0x18).readU64()).add(0x10).readU64();
 
-    // always be zero
-    console.log("|---[i] 2nd args (hidl_vec<unsigned char>): ");
+    console.log("|---[i] 2nd arg (hidl_vec<unsigned char>): ");
     console.log(hexdump(ptr(binder_buffer_object_buffer), {
         offset: 0,
         length: binder_buffer_object_length,
@@ -372,7 +463,7 @@ Interceptor.attach(BnHwLibteecGlobal_onTransact_ptr, {
     onEnter: function(args) {
         console.log("[*] onEnter: BnHwLibteecGlobal")
         // transact code
-        console.log("|-[i] 2nd argument, transaction code: " + args[1].toInt32())
+        console.log("|-[i] transaction code: " + args[1].toInt32())
         parseParcel(args)
 
     },
@@ -398,7 +489,7 @@ Interceptor.attach(BnHwLibteecGlobalNotify_onTransact_ptr, {
     onEnter: function(args) {
         console.log("[*] onEnter: BnHwLibteecGlobalNotify")
         // transact code
-        console.log("|-[i] 2nd argument, transaction code: " + args[1].toInt32())
+        console.log("|-[i] transaction code: " + args[1].toInt32())
 
     },
 
@@ -407,3 +498,43 @@ Interceptor.attach(BnHwLibteecGlobalNotify_onTransact_ptr, {
         // console.log("|-[i] return value: " + retval);
     }
 });
+
+const PROT_READ             = 0x1;
+const PROT_WRITE            = 0x2;
+const MAP_SHARED            = 0x1;
+
+// funcHelper("mmap")
+function dump_ashmem(this_fd, this_size = 0x100)
+{
+    try{
+        var mmap_ptr = Module.getExportByName("/system/lib64/libc++.so", 'mmap');
+        console.log("|----[i] mmap addr: " + mmap_ptr);
+
+        var mmap_func = new NativeFunction(mmap_ptr,
+            'uint64',
+            ['uint64', 'uint32', 'int32', 'int32', 'int32', 'int32']
+            );
+
+        var map_memory_addr = mmap_func(
+            0,
+            this_size,
+            PROT_READ|PROT_WRITE,
+            MAP_SHARED,
+            this_fd,
+            0);
+
+        console.log("|----[i] mmap ret: 0x" + map_memory_addr.toString(16));
+        console.log("|----[i] dumping fd: 0x" + this_fd.toString(16) + ", size: 0x" + this_size.toString(16));
+
+        console.log(hexdump(ptr(map_memory_addr), {
+            offset: 0,
+            length: this_size,
+            header: true,
+            ansi: true
+        }));
+    }
+    catch(err)
+    {
+        console.error(err);
+    }
+}
