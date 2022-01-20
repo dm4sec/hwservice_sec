@@ -486,64 +486,163 @@ function study_trans_1(mData_pos, mDataSize, mObjects_pos, mObjectsSize)
     }));
 }
 
+function study_trans()
+{
+    // Use the mangled name
+    // vendor::huawei::hardware::libteec::V3_0::BnHwLibteecGlobal::onTransact(unsigned int, android::hardware::Parcel const&, android::hardware::Parcel*, unsigned int, std::__1::function<void ()(android::hardware::Parcel&)>)
+    // _ZN6vendor6huawei8hardware7libteec4V3_017BnHwLibteecGlobal10onTransactEjRKN7android8hardware6ParcelEPS7_jNSt3__18functionIFvRS7_EEE
 
-// Use the mangled name
-// vendor::huawei::hardware::libteec::V3_0::BnHwLibteecGlobal::onTransact(unsigned int, android::hardware::Parcel const&, android::hardware::Parcel*, unsigned int, std::__1::function<void ()(android::hardware::Parcel&)>)
-// _ZN6vendor6huawei8hardware7libteec4V3_017BnHwLibteecGlobal10onTransactEjRKN7android8hardware6ParcelEPS7_jNSt3__18functionIFvRS7_EEE
+    // funcHelper("_ZN6vendor6huawei8hardware7libteec4V3_017BnHwLibteecGlobal10onTransactEjRKN7android8hardware6ParcelEPS7_jNSt3__18functionIFvRS7_EEE")
 
-// funcHelper("_ZN6vendor6huawei8hardware7libteec4V3_017BnHwLibteecGlobal10onTransactEjRKN7android8hardware6ParcelEPS7_jNSt3__18functionIFvRS7_EEE")
+    var BnHwLibteecGlobal_onTransact_ptr = Module.getExportByName(
+        "/vendor/lib64/hw/vendor.huawei.hardware.libteec@3.0-impl.so",
+        '_ZN6vendor6huawei8hardware7libteec4V3_017BnHwLibteecGlobal10onTransactEjRKN7android8hardware6ParcelEPS7_jNSt3__18functionIFvRS7_EEE');
+    console.log("[i] BnHwLibteecGlobal::onTransact addr: " + BnHwLibteecGlobal_onTransact_ptr)
 
-var BnHwLibteecGlobal_onTransact_ptr = Module.getExportByName(
-    "/vendor/lib64/hw/vendor.huawei.hardware.libteec@3.0-impl.so",
-    '_ZN6vendor6huawei8hardware7libteec4V3_017BnHwLibteecGlobal10onTransactEjRKN7android8hardware6ParcelEPS7_jNSt3__18functionIFvRS7_EEE');
-console.log("[i] BnHwLibteecGlobal::onTransact addr: " + BnHwLibteecGlobal_onTransact_ptr)
+    Interceptor.attach(BnHwLibteecGlobal_onTransact_ptr, {
+        onEnter: function(args) {
+            console.log("[*] onEnter: BnHwLibteecGlobal")
+            // transact code
+            console.log("|-[i] transaction code: " + args[1].toInt32())
+            parseParcel(args)
 
-Interceptor.attach(BnHwLibteecGlobal_onTransact_ptr, {
-    onEnter: function(args) {
-        console.log("[*] onEnter: BnHwLibteecGlobal")
-        // transact code
-        console.log("|-[i] transaction code: " + args[1].toInt32())
-        parseParcel(args)
+        },
 
-    },
+        onLeave: function(retval) {
+            console.log("[*] onLeave: BnHwLibteecGlobal");
+            // console.log("|-[i] return value: " + retval);
+        }
+    });
 
-    onLeave: function(retval) {
-        console.log("[*] onLeave: BnHwLibteecGlobal");
-        // console.log("|-[i] return value: " + retval);
-    }
-});
+    // Use the mangled name
+    // vendor::huawei::hardware::libteec::V3_0::BnHwLibteecGlobalNotify::onTransact(unsigned int, android::hardware::Parcel const&, android::hardware::Parcel*, unsigned int, std::__1::function<void ()(android::hardware::Parcel&)>)
+    // _ZN6vendor6huawei8hardware7libteec4V3_023BnHwLibteecGlobalNotify10onTransactEjRKN7android8hardware6ParcelEPS7_jNSt3__18functionIFvRS7_EEE
 
-// Use the mangled name
-// vendor::huawei::hardware::libteec::V3_0::BnHwLibteecGlobalNotify::onTransact(unsigned int, android::hardware::Parcel const&, android::hardware::Parcel*, unsigned int, std::__1::function<void ()(android::hardware::Parcel&)>)
-// _ZN6vendor6huawei8hardware7libteec4V3_023BnHwLibteecGlobalNotify10onTransactEjRKN7android8hardware6ParcelEPS7_jNSt3__18functionIFvRS7_EEE
+    // funcHelper("_ZN6vendor6huawei8hardware7libteec4V3_023BnHwLibteecGlobalNotify10onTransactEjRKN7android8hardware6ParcelEPS7_jNSt3__18functionIFvRS7_EEE")
 
-// funcHelper("_ZN6vendor6huawei8hardware7libteec4V3_023BnHwLibteecGlobalNotify10onTransactEjRKN7android8hardware6ParcelEPS7_jNSt3__18functionIFvRS7_EEE")
+    var BnHwLibteecGlobalNotify_onTransact_ptr = Module.getExportByName(
+        "/vendor/lib64/hw/vendor.huawei.hardware.libteec@3.0-impl.so",
+        '_ZN6vendor6huawei8hardware7libteec4V3_023BnHwLibteecGlobalNotify10onTransactEjRKN7android8hardware6ParcelEPS7_jNSt3__18functionIFvRS7_EEE');
+    console.log("[i] BnHwLibteecGlobalNotify::onTransact addr: " + BnHwLibteecGlobalNotify_onTransact_ptr)
 
-var BnHwLibteecGlobalNotify_onTransact_ptr = Module.getExportByName(
-    "/vendor/lib64/hw/vendor.huawei.hardware.libteec@3.0-impl.so",
-    '_ZN6vendor6huawei8hardware7libteec4V3_023BnHwLibteecGlobalNotify10onTransactEjRKN7android8hardware6ParcelEPS7_jNSt3__18functionIFvRS7_EEE');
-console.log("[i] BnHwLibteecGlobalNotify::onTransact addr: " + BnHwLibteecGlobalNotify_onTransact_ptr)
+    Interceptor.attach(BnHwLibteecGlobalNotify_onTransact_ptr, {
+        onEnter: function(args) {
+            console.log("[*] onEnter: BnHwLibteecGlobalNotify")
+            // transact code
+            console.log("|-[i] transaction code: " + args[1].toInt32())
 
-Interceptor.attach(BnHwLibteecGlobalNotify_onTransact_ptr, {
-    onEnter: function(args) {
-        console.log("[*] onEnter: BnHwLibteecGlobalNotify")
-        // transact code
-        console.log("|-[i] transaction code: " + args[1].toInt32())
+        },
 
-    },
+        onLeave: function(retval) {
+            console.log("[*] onLeave: BnHwLibteecGlobalNotify");
+            // console.log("|-[i] return value: " + retval);
+        }
+    });
 
-    onLeave: function(retval) {
-        console.log("[*] onLeave: BnHwLibteecGlobalNotify");
-        // console.log("|-[i] return value: " + retval);
-    }
-});
+}
+
+// study_trans()
 
 
 /*
+Ghidr issues:
 vendor::huawei::hardware::libteec::V3_0::implementation::LibteecGlobal::initializeContext
           (LibteecGlobal *this,hidl_string *param_1,hidl_vec *param_2,function param_3)
+
+IDA 7.0 issues:
+void __usercall vendor::huawei::hardware::libteec::V3_0::implementation::LibteecGlobal::initializeContext(_QWORD *a1@<X0>, __int64 a2@<X1>, __int64 a3@<X2>, __int64 a4@<X3>, __int64 a5@<X8>)
+
 _ZN6vendor6huawei8hardware7libteec4V3_014implementation13LibteecGlobal17initializeContextERKN7android8hardware11hidl_stringERKNS7_8hidl_vecIhEENSt3__18functionIFviSE_EEE
 */
+function LibteecGlobal_initializeContext_fuzzer(
+    this_context,
+    param_1 /* hidl_string */,
+    param_2 /* hidl_vec<unsigned char> */,
+    param_3 /* call back */
+    )
+{
+    var CallingPid = param_2.readPointer().add(0x1008).readU32();
+    console.log(CallingPid);
+    // dataz in parcel are parsed, such I modify these `type`s directly, but not the object in `parcel`
+    console.log(hexdump(param_1, {
+        offset: 0,
+        length: 0x10,
+        header: true,
+        ansi: true
+    }));
+
+    // get Error: access violation accessing 0x708f9020f8, so I build a new hidl_string obj
+    var hidl_string_obj = Memory.alloc(0x10);
+    hidl_string_obj.writeByteArray(Array(0x10).fill(0));
+
+    const FUZZ_STR_LEN = 0x256 + 1;
+    var mBuffer = Memory.alloc(FUZZ_STR_LEN);
+    for (var i = 0; i < FUZZ_STR_LEN; i ++)
+    {
+        mBuffer.writeByteArray(Array(FUZZ_STR_LEN).fill(0));
+        mBuffer.writeByteArray(Array(i).fill(0x41));
+
+        ptr(hidl_string_obj).writePointer(mBuffer);
+        hidl_string_obj.add(0x8).writeUInt(i);
+
+        console.log(hexdump(ptr(hidl_string_obj), {
+            offset: 0,
+            length: 0x10,
+            header: true,
+            ansi: true
+        }));
+
+        console.log(hexdump(ptr(mBuffer), {
+            offset: 0,
+            length: FUZZ_STR_LEN,
+            header: true,
+            ansi: true
+        }));
+
+        try{
+            LibteecGlobal_initializeContext_func(this_context, hidl_string_obj, param_2, param_3);
+            LibteecGlobal_finalizeContext_func(this_context, CallingPid, param_2);
+            LibteecGlobal_processCaDied_func(CallingPid);
+
+        }catch(err)
+        {
+            console.error(err);
+        }
+    }
+
+    console.log(hexdump(param_2, {
+        offset: 0,
+        length: 0x10,
+        header: true,
+        ansi: true
+    }));
 
 
-Interceptor.replace(g_BpHwBinder_transact_ptr, new NativeCallback(BpHwBinder_transact_fuzzer, 'int', ['pointer', 'int', 'pointer', 'pointer', 'int', 'pointer']));
+}
+
+const LibteecGlobal_initializeContext_ptr = Module.getExportByName(
+    "/vendor/lib64/hw/vendor.huawei.hardware.libteec@3.0-impl.so",
+    '_ZN6vendor6huawei8hardware7libteec4V3_014implementation13LibteecGlobal17initializeContextERKN7android8hardware11hidl_stringERKNS7_8hidl_vecIhEENSt3__18functionIFviSE_EEE');
+console.log("[i] LibteecGlobal::initializeContext ptr addr: " + LibteecGlobal_initializeContext_ptr)
+
+const LibteecGlobal_initializeContext_func = new NativeFunction(LibteecGlobal_initializeContext_ptr, 'void', ['pointer', 'pointer', 'pointer', 'pointer']);
+console.log("[i] LibteecGlobal::initializeContext func addr: " + LibteecGlobal_initializeContext_func)
+
+const LibteecGlobal_finalizeContext_ptr = Module.getExportByName(
+    "/vendor/lib64/hw/vendor.huawei.hardware.libteec@3.0-impl.so",
+    '_ZN6vendor6huawei8hardware7libteec4V3_014implementation13LibteecGlobal15finalizeContextEiRKN7android8hardware8hidl_vecIhEE');
+console.log("[i] LibteecGlobal::finalizeContext ptr addr: " + LibteecGlobal_finalizeContext_ptr)
+
+const LibteecGlobal_finalizeContext_func = new NativeFunction(LibteecGlobal_finalizeContext_ptr, 'void', ['pointer', 'int', 'pointer']);
+console.log("[i] LibteecGlobal::finalizeContext func addr: " + LibteecGlobal_finalizeContext_func)
+
+const LibteecGlobal_processCaDied_ptr = Module.getExportByName(
+    "/vendor/lib64/hw/vendor.huawei.hardware.libteec@3.0-impl.so",
+    '_ZN6vendor6huawei8hardware7libteec4V3_014implementation13LibteecGlobal13processCaDiedEi');
+console.log("[i] LibteecGlobal::processCaDied ptr addr: " + LibteecGlobal_processCaDied_ptr)
+
+const LibteecGlobal_processCaDied_func = new NativeFunction(LibteecGlobal_processCaDied_ptr, 'void', ['int']);
+console.log("[i] LibteecGlobal::processCaDied func addr: " + LibteecGlobal_processCaDied_func)
+
+
+Interceptor.replace(LibteecGlobal_initializeContext_ptr, new NativeCallback(LibteecGlobal_initializeContext_fuzzer, 'void', ['pointer', 'pointer', 'pointer', 'pointer']));
