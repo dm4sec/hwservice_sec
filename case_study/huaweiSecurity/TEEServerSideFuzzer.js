@@ -1,6 +1,45 @@
-
 // old version frida does not support the `require` feature.
-// var utils  = require("../../utils/utils.js");
+// var utils  = require("../../../utils/utils.js");
+
+const PROT_READ             = 0x1;
+const PROT_WRITE            = 0x2;
+const MAP_SHARED            = 0x1;
+
+// funcHelper("mmap")
+function dump_ashmem(this_fd, this_size = 0x100)
+{
+    try{
+        var mmap_ptr = Module.getExportByName("/system/lib64/libc++.so", 'mmap');
+        console.log("|----[i] mmap addr: " + mmap_ptr);
+
+        var mmap_func = new NativeFunction(mmap_ptr,
+            'uint64',
+            ['uint64', 'uint32', 'int32', 'int32', 'int32', 'int32']
+            );
+
+        var map_memory_addr = mmap_func(
+            0,
+            this_size,
+            PROT_READ|PROT_WRITE,
+            MAP_SHARED,
+            this_fd,
+            0);
+
+        console.log("|----[i] mmap ret: 0x" + map_memory_addr.toString(16));
+        console.log("|----[i] dumping fd: 0x" + this_fd.toString(16) + ", size: 0x" + this_size.toString(16));
+
+        console.log(hexdump(ptr(map_memory_addr), {
+            offset: 0,
+            length: this_size,
+            header: true,
+            ansi: true
+        }));
+    }
+    catch(err)
+    {
+        console.error(err);
+    }
+}
 
 const BINDER_TYPE_BINDER_LEN    = 0x28;
 const BINDER_TYPE_FDA_LEN       = 0x20;
@@ -97,33 +136,33 @@ function parseParcel(args)
 
     switch(args[1].toInt32()) {
          case 1:
-            fuzz_trans_1(mData_pos, mDataSize, mObjects_pos, mObjectsSize);
+            study_trans_1(mData_pos, mDataSize, mObjects_pos, mObjectsSize);
             break;
          case 2:
-            fuzz_trans_2(mData_pos, mDataSize, mObjects_pos, mObjectsSize);
+            study_trans_2(mData_pos, mDataSize, mObjects_pos, mObjectsSize);
             break;
          case 3:
-            fuzz_trans_3(mData_pos, mDataSize, mObjects_pos, mObjectsSize);
+            study_trans_3(mData_pos, mDataSize, mObjects_pos, mObjectsSize);
             break;
          case 5:
-            fuzz_trans_5(mData_pos, mDataSize, mObjects_pos, mObjectsSize);
+            study_trans_5(mData_pos, mDataSize, mObjects_pos, mObjectsSize);
             break;
          case 13:
-            fuzz_trans_13(mData_pos, mDataSize, mObjects_pos, mObjectsSize);
+            study_trans_13(mData_pos, mDataSize, mObjects_pos, mObjectsSize);
             break;
          default:
             console.error("|--[i] Transaction code need to parse: " + args[1].toInt32());
     }
 }
 
-function fuzz_trans_13(mData_pos, mDataSize, mObjects_pos, mObjectsSize)
+function study_trans_13(mData_pos, mDataSize, mObjects_pos, mObjectsSize)
 {
     // vendor::huawei::hardware::libteec::V3_0::BpHwLibteecGlobal::_hidl_processCaDied(android::hardware::IInterface *, android::hardware::details::HidlInstrumentor *, int)
     var this_int = mData_pos.add(0x34).readU32();
     console.log("|---[i] 1st args (int): 0x" + this_int.toString(16));
 }
 
-function fuzz_trans_5(mData_pos, mDataSize, mObjects_pos, mObjectsSize)
+function study_trans_5(mData_pos, mDataSize, mObjects_pos, mObjectsSize)
 {
     /*
     vendor::huawei::hardware::libteec::V3_0::BpHwLibteecGlobal::_hidl_invokeCommandHidl(android::hardware::IInterface *, android::hardware::details::HidlInstrumentor *,
@@ -219,7 +258,7 @@ function fuzz_trans_5(mData_pos, mDataSize, mObjects_pos, mObjectsSize)
 }
 
 
-function fuzz_trans_3(mData_pos, mDataSize, mObjects_pos, mObjectsSize)
+function study_trans_3(mData_pos, mDataSize, mObjects_pos, mObjectsSize)
 {
     /*
     vendor::huawei::hardware::libteec::V3_0::BpHwLibteecGlobal::_hidl_openSession(android::hardware::IInterface *, android::hardware::details::HidlInstrumentor *,
@@ -389,7 +428,7 @@ function fuzz_trans_3(mData_pos, mDataSize, mObjects_pos, mObjectsSize)
     }
 }
 
-function fuzz_trans_2(mData_pos, mDataSize, mObjects_pos, mObjectsSize)
+function study_trans_2(mData_pos, mDataSize, mObjects_pos, mObjectsSize)
 {
     /*
     vendor::huawei::hardware::libteec::V3_0::BpHwLibteecGlobal::_hidl_finalizeContext(android::hardware::IInterface *, android::hardware::details::HidlInstrumentor *,
@@ -414,7 +453,7 @@ function fuzz_trans_2(mData_pos, mDataSize, mObjects_pos, mObjectsSize)
 }
 
 
-function fuzz_trans_1(mData_pos, mDataSize, mObjects_pos, mObjectsSize)
+function study_trans_1(mData_pos, mDataSize, mObjects_pos, mObjectsSize)
 {
     /*
     vendor::huawei::hardware::libteec::V3_0::BpHwLibteecGlobal::_hidl_initializeContext(android::hardware::IInterface *, android::hardware::details::HidlInstrumentor *,
@@ -499,42 +538,12 @@ Interceptor.attach(BnHwLibteecGlobalNotify_onTransact_ptr, {
     }
 });
 
-const PROT_READ             = 0x1;
-const PROT_WRITE            = 0x2;
-const MAP_SHARED            = 0x1;
 
-// funcHelper("mmap")
-function dump_ashmem(this_fd, this_size = 0x100)
-{
-    try{
-        var mmap_ptr = Module.getExportByName("/system/lib64/libc++.so", 'mmap');
-        console.log("|----[i] mmap addr: " + mmap_ptr);
+/*
+vendor::huawei::hardware::libteec::V3_0::implementation::LibteecGlobal::initializeContext
+          (LibteecGlobal *this,hidl_string *param_1,hidl_vec *param_2,function param_3)
+_ZN6vendor6huawei8hardware7libteec4V3_014implementation13LibteecGlobal17initializeContextERKN7android8hardware11hidl_stringERKNS7_8hidl_vecIhEENSt3__18functionIFviSE_EEE
+*/
 
-        var mmap_func = new NativeFunction(mmap_ptr,
-            'uint64',
-            ['uint64', 'uint32', 'int32', 'int32', 'int32', 'int32']
-            );
 
-        var map_memory_addr = mmap_func(
-            0,
-            this_size,
-            PROT_READ|PROT_WRITE,
-            MAP_SHARED,
-            this_fd,
-            0);
-
-        console.log("|----[i] mmap ret: 0x" + map_memory_addr.toString(16));
-        console.log("|----[i] dumping fd: 0x" + this_fd.toString(16) + ", size: 0x" + this_size.toString(16));
-
-        console.log(hexdump(ptr(map_memory_addr), {
-            offset: 0,
-            length: this_size,
-            header: true,
-            ansi: true
-        }));
-    }
-    catch(err)
-    {
-        console.error(err);
-    }
-}
+Interceptor.replace(g_BpHwBinder_transact_ptr, new NativeCallback(BpHwBinder_transact_fuzzer, 'int', ['pointer', 'int', 'pointer', 'pointer', 'int', 'pointer']));

@@ -9,7 +9,7 @@ import subprocess
 
 g_obj_content_offset = 0
 g_script = 0
-g_log_file = "facerecognize.log"
+g_log_file = "TEEServer.log"
 
 def on_message(message, data):
 
