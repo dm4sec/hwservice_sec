@@ -562,7 +562,7 @@ function LibteecGlobal_initializeContext_fuzzer(
     )
 {
     var CallingPid = param_2.readPointer().add(0x1008).readU32();
-    console.log(CallingPid);
+    console.log("CallingPid: " + CallingPid);
     // dataz in parcel are parsed, such I modify these `type`s directly, but not the object in `parcel`
     console.log(hexdump(param_1, {
         offset: 0,
@@ -571,7 +571,8 @@ function LibteecGlobal_initializeContext_fuzzer(
         ansi: true
     }));
 
-    // get Error: access violation accessing 0x708f9020f8, so I build a new hidl_string obj
+    // If I modify param_1 directly, I will get Error: access violation accessing 0x708f9020f8
+    // so I build a new hidl_string obj
     var hidl_string_obj = Memory.alloc(0x10);
     hidl_string_obj.writeByteArray(Array(0x10).fill(0));
 
@@ -600,11 +601,34 @@ function LibteecGlobal_initializeContext_fuzzer(
         }));
 
         try{
-            LibteecGlobal_initializeContext_func(this_context, hidl_string_obj, param_2, param_3);
-            LibteecGlobal_finalizeContext_func(this_context, CallingPid, param_2);
-            LibteecGlobal_processCaDied_func(CallingPid);
-
-        }catch(err)
+            /*
+            logcat issues:
+            01-21 04:17:36.357 27339 27339 D LibteecGlobal@3.0: invokeCommandHidl: getCallingPid=9049
+            01-21 04:17:36.358 27339 27339 E LibteecGlobal@3.0: CallGetBnProxy: invalid context!
+            01-21 04:22:36.358 27339 27339 D LibteecGlobal@3.0: invokeCommandHidl: getCallingPid=9049
+            01-21 04:22:36.358 27339 27339 E LibteecGlobal@3.0: CallGetBnProxy: invalid context!
+            01-21 04:27:36.358 27339 27339 D LibteecGlobal@3.0: invokeCommandHidl: getCallingPid=9049
+            01-21 04:27:36.358 27339 27339 E LibteecGlobal@3.0: CallGetBnProxy: invalid context!
+            01-21 04:32:36.358 27339 27339 D LibteecGlobal@3.0: invokeCommandHidl: getCallingPid=9049
+            01-21 04:32:36.359 27339 27339 E LibteecGlobal@3.0: CallGetBnProxy: invalid context!
+            01-21 04:37:36.359 27339 27339 D LibteecGlobal@3.0: invokeCommandHidl: getCallingPid=9049
+            01-21 04:37:36.359 27339 27339 E LibteecGlobal@3.0: CallGetBnProxy: invalid context!
+            01-21 04:42:36.359 27339 27339 D LibteecGlobal@3.0: invokeCommandHidl: getCallingPid=9049
+            01-21 04:42:36.360 27339 27339 E LibteecGlobal@3.0: CallGetBnProxy: invalid context!
+            01-21 04:47:36.360 27339 27339 D LibteecGlobal@3.0: invokeCommandHidl: getCallingPid=9049
+            01-21 04:47:36.360 27339 27339 E LibteecGlobal@3.0: CallGetBnProxy: invalid context!
+            01-21 04:52:36.361 27339 27339 D LibteecGlobal@3.0: invokeCommandHidl: getCallingPid=9049
+            01-21 04:52:36.361 27339 27339 E LibteecGlobal@3.0: CallGetBnProxy: invalid context!
+            01-21 04:55:06.917 27339 27339 D LibteecGlobal@3.0: invokeCommandHidl: getCallingPid=9049
+            01-21 04:55:06.917 27339 27339 E LibteecGlobal@3.0: CallGetBnProxy: invalid context!
+            01-21 04:55:06.920 27339 27339 D LibteecGlobal@3.0: invokeCommandHidl: getCallingPid=9049
+            01-21 04:55:06.920 27339 27339 E LibteecGlobal@3.0: CallGetBnProxy: invalid context!
+            */
+            g_LibteecGlobal_initializeContext_func(this_context, hidl_string_obj, param_2, param_3);
+            g_LibteecGlobal_finalizeContext_func(this_context, CallingPid, param_2);
+            g_LibteecGlobal_processCaDied_func(CallingPid);
+        }
+        catch(err)
         {
             console.error(err);
         }
@@ -616,33 +640,38 @@ function LibteecGlobal_initializeContext_fuzzer(
         header: true,
         ansi: true
     }));
-
-
 }
 
-const LibteecGlobal_initializeContext_ptr = Module.getExportByName(
-    "/vendor/lib64/hw/vendor.huawei.hardware.libteec@3.0-impl.so",
-    '_ZN6vendor6huawei8hardware7libteec4V3_014implementation13LibteecGlobal17initializeContextERKN7android8hardware11hidl_stringERKNS7_8hidl_vecIhEENSt3__18functionIFviSE_EEE');
-console.log("[i] LibteecGlobal::initializeContext ptr addr: " + LibteecGlobal_initializeContext_ptr)
+var g_LibteecGlobal_initializeContext_func;
+var g_LibteecGlobal_finalizeContext_func;
+var g_LibteecGlobal_processCaDied_func;
 
-const LibteecGlobal_initializeContext_func = new NativeFunction(LibteecGlobal_initializeContext_ptr, 'void', ['pointer', 'pointer', 'pointer', 'pointer']);
-console.log("[i] LibteecGlobal::initializeContext func addr: " + LibteecGlobal_initializeContext_func)
+function replay_and_fuzz()
+{
+    const LibteecGlobal_initializeContext_ptr = Module.getExportByName(
+        "/vendor/lib64/hw/vendor.huawei.hardware.libteec@3.0-impl.so",
+        '_ZN6vendor6huawei8hardware7libteec4V3_014implementation13LibteecGlobal17initializeContextERKN7android8hardware11hidl_stringERKNS7_8hidl_vecIhEENSt3__18functionIFviSE_EEE');
+    console.log("[i] LibteecGlobal::initializeContext ptr addr: " + LibteecGlobal_initializeContext_ptr)
 
-const LibteecGlobal_finalizeContext_ptr = Module.getExportByName(
-    "/vendor/lib64/hw/vendor.huawei.hardware.libteec@3.0-impl.so",
-    '_ZN6vendor6huawei8hardware7libteec4V3_014implementation13LibteecGlobal15finalizeContextEiRKN7android8hardware8hidl_vecIhEE');
-console.log("[i] LibteecGlobal::finalizeContext ptr addr: " + LibteecGlobal_finalizeContext_ptr)
+    g_LibteecGlobal_initializeContext_func = new NativeFunction(LibteecGlobal_initializeContext_ptr, 'void', ['pointer', 'pointer', 'pointer', 'pointer']);
+    console.log("[i] LibteecGlobal::initializeContext func addr: " + g_LibteecGlobal_initializeContext_func)
 
-const LibteecGlobal_finalizeContext_func = new NativeFunction(LibteecGlobal_finalizeContext_ptr, 'void', ['pointer', 'int', 'pointer']);
-console.log("[i] LibteecGlobal::finalizeContext func addr: " + LibteecGlobal_finalizeContext_func)
+    const LibteecGlobal_finalizeContext_ptr = Module.getExportByName(
+        "/vendor/lib64/hw/vendor.huawei.hardware.libteec@3.0-impl.so",
+        '_ZN6vendor6huawei8hardware7libteec4V3_014implementation13LibteecGlobal15finalizeContextEiRKN7android8hardware8hidl_vecIhEE');
+    console.log("[i] LibteecGlobal::finalizeContext ptr addr: " + LibteecGlobal_finalizeContext_ptr)
 
-const LibteecGlobal_processCaDied_ptr = Module.getExportByName(
-    "/vendor/lib64/hw/vendor.huawei.hardware.libteec@3.0-impl.so",
-    '_ZN6vendor6huawei8hardware7libteec4V3_014implementation13LibteecGlobal13processCaDiedEi');
-console.log("[i] LibteecGlobal::processCaDied ptr addr: " + LibteecGlobal_processCaDied_ptr)
+    g_LibteecGlobal_finalizeContext_func = new NativeFunction(LibteecGlobal_finalizeContext_ptr, 'void', ['pointer', 'int', 'pointer']);
+    console.log("[i] LibteecGlobal::finalizeContext func addr: " + g_LibteecGlobal_finalizeContext_func)
 
-const LibteecGlobal_processCaDied_func = new NativeFunction(LibteecGlobal_processCaDied_ptr, 'void', ['int']);
-console.log("[i] LibteecGlobal::processCaDied func addr: " + LibteecGlobal_processCaDied_func)
+    const LibteecGlobal_processCaDied_ptr = Module.getExportByName(
+        "/vendor/lib64/hw/vendor.huawei.hardware.libteec@3.0-impl.so",
+        '_ZN6vendor6huawei8hardware7libteec4V3_014implementation13LibteecGlobal13processCaDiedEi');
+    console.log("[i] LibteecGlobal::processCaDied ptr addr: " + LibteecGlobal_processCaDied_ptr)
+
+    g_LibteecGlobal_processCaDied_func = new NativeFunction(LibteecGlobal_processCaDied_ptr, 'void', ['int']);
+    console.log("[i] LibteecGlobal::processCaDied func addr: " + g_LibteecGlobal_processCaDied_func)
 
 
-Interceptor.replace(LibteecGlobal_initializeContext_ptr, new NativeCallback(LibteecGlobal_initializeContext_fuzzer, 'void', ['pointer', 'pointer', 'pointer', 'pointer']));
+    Interceptor.replace(LibteecGlobal_initializeContext_ptr, new NativeCallback(LibteecGlobal_initializeContext_fuzzer, 'void', ['pointer', 'pointer', 'pointer', 'pointer']));
+}
