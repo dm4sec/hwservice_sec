@@ -41,6 +41,25 @@ function dump_ashmem(this_fd, this_size = 0x100)
     }
 }
 
+function genSeed(org_value)
+{
+    return [//org_value,
+                    ~org_value,
+                    org_value & 0xffffff00, org_value & 0xffff00ff, org_value & 0xff00ffff, org_value & 0x00ffffff,
+                    org_value | 0x000000ff, org_value | 0x0000ff00, org_value | 0x00ff0000, org_value | 0xff000000,
+                    org_value & 0xffffff00 + 0x7f, org_value & 0xffff00ff + 0x7f00, org_value & 0xff00ffff + 0x7f0000, org_value & 0x00ffffff + 0x7f000000,
+                    org_value & 0xffffff00 + 0x80, org_value & 0xffff00ff + 0x8000, org_value & 0xff00ffff + 0x800000, org_value & 0x00ffffff + 0x80000000,
+                    0,
+                    0x7f, 0x7fff, 0x7fffff, 0x7fffffff,
+                    0x80, 0x8000, 0x800000, 0x80000000,
+                    0xff, 0xffff, 0xffffff,
+                    0xffffffff,
+                    org_value + 1, org_value + 0x100, org_value + 0x10000, org_value + 0x1000000,
+                    org_value - 1, org_value - 0x100, org_value - 0x10000, org_value - 0x1000000,
+                    0x41414141,
+                    ];
+}
+
 const BINDER_TYPE_BINDER_LEN    = 0x28;
 const BINDER_TYPE_FDA_LEN       = 0x20;
 
@@ -88,16 +107,26 @@ const mDataSize_LOC     = 0x30;
 const mObjects_LOC      = 0x48;
 const mObjectsSize_LOC  = 0x50;
 
+/*
+::android::status_t BnHwDemo::onTransact(
+        uint32_t _hidl_code,
+        const ::android::hardware::Parcel &_hidl_data,
+        ::android::hardware::Parcel *_hidl_reply,
+        uint32_t _hidl_flags,
+        TransactCallback _hidl_cb) {
+*/
 
-function parseParcel(args)
+function fuzz_trans(this_context, _hidl_code, _hidl_data, _hidl_reply, _hidl_flags, _hidl_cb)
 {
+    console.log("|--[i] transaction code: " + _hidl_code);
+
     // mDataSize
-    var mDataSize_pos = args[2].add(mDataSize_LOC);
+    var mDataSize_pos = _hidl_data.add(mDataSize_LOC);
     var mDataSize = mDataSize_pos.readU64();
     console.log("|--[i] mDataSize: 0x" + mDataSize.toString(16));
 
     // mData
-    var mData_offset = args[2].add(mData_LOC);
+    var mData_offset = _hidl_data.add(mData_LOC);
     var mData_pos = mData_offset.readPointer();
 
     console.log(hexdump(mData_pos, {
@@ -118,12 +147,12 @@ function parseParcel(args)
     }));
 
     // mObjectsSize
-    var mObjectsSize_pos = args[2].add(mObjectsSize_LOC);
+    var mObjectsSize_pos = _hidl_data.add(mObjectsSize_LOC);
     var mObjectsSize = mObjectsSize_pos.readU64();
     console.log("|--[i] mObjectsSize: 0x" + mObjectsSize.toString(16));
 
     // mObjects
-    var mObjects_offset = args[2].add(mObjects_LOC);
+    var mObjects_offset = _hidl_data.add(mObjects_LOC);
     var mObjects_pos = mObjects_offset.readPointer();
     // var mObjects = mObjects_pos.readByteArray(mObjectsSize * 0x8);
     console.log("|--[i] mObjects: ");
@@ -134,9 +163,9 @@ function parseParcel(args)
         ansi: true
     }));
 
-    switch(args[1].toInt32()) {
+    switch(_hidl_code) {
          case 1:
-            study_trans_1(mData_pos, mDataSize, mObjects_pos, mObjectsSize);
+            fuzz_trans_1(mData_pos, mDataSize, mObjects_pos, mObjectsSize, this_context, _hidl_code, _hidl_data, _hidl_reply, _hidl_flags, _hidl_cb);
             break;
          case 2:
             study_trans_2(mData_pos, mDataSize, mObjects_pos, mObjectsSize);
@@ -151,8 +180,9 @@ function parseParcel(args)
             study_trans_13(mData_pos, mDataSize, mObjects_pos, mObjectsSize);
             break;
          default:
-            console.error("|--[i] Transaction code need to parse: " + args[1].toInt32());
+            console.error("|--[i] Transaction code need to parse: " + _hidl_code);
     }
+    g_BnHwLibteecGlobal_onTransact_func(this_context, _hidl_code, _hidl_data, _hidl_reply, _hidl_flags, _hidl_cb);
 }
 
 function study_trans_13(mData_pos, mDataSize, mObjects_pos, mObjectsSize)
@@ -453,7 +483,8 @@ function study_trans_2(mData_pos, mDataSize, mObjects_pos, mObjectsSize)
 }
 
 
-function study_trans_1(mData_pos, mDataSize, mObjects_pos, mObjectsSize)
+function fuzz_trans_1(mData_pos, mDataSize, mObjects_pos, mObjectsSize,
+        this_context, _hidl_code, _hidl_data, _hidl_reply, _hidl_flags, _hidl_cb)
 {
     /*
     vendor::huawei::hardware::libteec::V3_0::BpHwLibteecGlobal::_hidl_initializeContext(android::hardware::IInterface *, android::hardware::details::HidlInstrumentor *,
@@ -461,6 +492,8 @@ function study_trans_1(mData_pos, mDataSize, mObjects_pos, mObjectsSize)
     android::hardware::hidl_vec<unsigned char> const&,
     std::__1::function<void ()(int, android::hardware::hidl_vec<unsigned char> const&)>)
     */
+
+    // the 1st argument, hidl_string, it's always be zero by observation.
     var binder_buffer_object_buffer = mData_pos.add(mObjects_pos.add(0x8).readU64()).add(0x8).readU64();
     var binder_buffer_object_length = mData_pos.add(mObjects_pos.add(0x8).readU64()).add(0x10).readU32();
 
@@ -472,6 +505,65 @@ function study_trans_1(mData_pos, mDataSize, mObjects_pos, mObjectsSize)
         header: true,
         ansi: true
     }));
+
+    console.log("|---[i] fuzzing the 1st arg");
+    // If I modify hidl_string directly, I will get error message: `Error: access violation accessing 0x7242dad0f8`
+    // Memory.protect does not work either.
+
+    var hidl_string_obj = Memory.alloc(0x10);
+    hidl_string_obj.writeByteArray(Array(0x10).fill(0));
+
+    const FUZZ_STR_LEN = 0x256 + 1;
+    var mBuffer = Memory.alloc(FUZZ_STR_LEN);
+    for(var i = 0; i < FUZZ_STR_LEN; i ++)
+    {
+        try{
+            mBuffer.writeByteArray(Array(FUZZ_STR_LEN).fill(0));
+            mBuffer.writeByteArray(Array(i).fill(0x41));
+
+            console.log(hexdump(mData_pos.add(mObjects_pos.readU64()).add(0x8).readPointer(), {
+                offset: 0,
+                length: 0x10,
+                header: true,
+                ansi: true
+            }));
+
+            /***********************************************************************
+            it's a big problem that I can not modify any field of the data in parcel.
+            ************************************************************************/
+            var ret = Memory.protect(mData_pos, 0x10, 'rw-');
+            console.log("Memory.protect ret: " + ret)
+
+            var ret = Memory.protect(mData_pos.add(mObjects_pos.readU64()).add(0x8).readPointer(), 0x10, 'rw-');
+            console.log("Memory.protect ret: " + ret)
+
+            console.log("writing to: " + mData_pos.add(mObjects_pos.readU64()).add(0x8).readPointer())
+            mData_pos.add(mObjects_pos.readU64()).add(0x8).readPointer().writePointer(mBuffer);
+            mData_pos.add(mObjects_pos.readU64()).add(0x8).readPointer().add(0x8).writeUInt(i);
+
+            console.log(hexdump(mData_pos.add(mObjects_pos.readU64()).add(0x8).readPointer(), {
+                offset: 0,
+                length: 0x10,
+                header: true,
+                ansi: true
+            }));
+
+            mData_pos.add(mObjects_pos.add(0x8).readU64()).add(0x8).writePointer(mBuffer);
+            mData_pos.add(mObjects_pos.add(0x8).readU64()).add(0x10).writeUInt(i + 1);
+
+            console.log(hexdump(mData_pos.add(mObjects_pos.add(0x8).readU64()), {
+                offset: 0,
+                length: 0x28,
+                header: true,
+                ansi: true
+            }));
+
+            g_BnHwLibteecGlobal_onTransact_func(this_context, _hidl_code, _hidl_data, _hidl_reply, _hidl_flags, _hidl_cb);
+        }
+        catch(err){
+            console.error(err);
+        }
+    }
 
     // the 2nd argument, works as hidl_string
     var binder_buffer_object_buffer = mData_pos.add(mObjects_pos.add(0x18).readU64()).add(0x8).readU64();
@@ -486,7 +578,9 @@ function study_trans_1(mData_pos, mDataSize, mObjects_pos, mObjectsSize)
     }));
 }
 
-function study_trans()
+var g_BnHwLibteecGlobal_onTransact_func;
+
+function trans_fuzzer()
 {
     // Use the mangled name
     // vendor::huawei::hardware::libteec::V3_0::BnHwLibteecGlobal::onTransact(unsigned int, android::hardware::Parcel const&, android::hardware::Parcel*, unsigned int, std::__1::function<void ()(android::hardware::Parcel&)>)
@@ -497,22 +591,12 @@ function study_trans()
     var BnHwLibteecGlobal_onTransact_ptr = Module.getExportByName(
         "/vendor/lib64/hw/vendor.huawei.hardware.libteec@3.0-impl.so",
         '_ZN6vendor6huawei8hardware7libteec4V3_017BnHwLibteecGlobal10onTransactEjRKN7android8hardware6ParcelEPS7_jNSt3__18functionIFvRS7_EEE');
-    console.log("[i] BnHwLibteecGlobal::onTransact addr: " + BnHwLibteecGlobal_onTransact_ptr)
+    console.log("[i] BnHwLibteecGlobal::onTransact ptr addr: " + BnHwLibteecGlobal_onTransact_ptr)
 
-    Interceptor.attach(BnHwLibteecGlobal_onTransact_ptr, {
-        onEnter: function(args) {
-            console.log("[*] onEnter: BnHwLibteecGlobal")
-            // transact code
-            console.log("|-[i] transaction code: " + args[1].toInt32())
-            parseParcel(args)
+    g_BnHwLibteecGlobal_onTransact_func = new NativeFunction(BnHwLibteecGlobal_onTransact_ptr, 'int', ['pointer', 'int', 'pointer', 'pointer', 'int', 'pointer']);
+    console.log("[i] BnHwLibteecGlobal::onTransact func addr: " + g_BnHwLibteecGlobal_onTransact_func)
 
-        },
-
-        onLeave: function(retval) {
-            console.log("[*] onLeave: BnHwLibteecGlobal");
-            // console.log("|-[i] return value: " + retval);
-        }
-    });
+    Interceptor.replace(BnHwLibteecGlobal_onTransact_ptr, new NativeCallback(fuzz_trans, 'int', ['pointer', 'int', 'pointer', 'pointer', 'int', 'pointer']));
 
     // Use the mangled name
     // vendor::huawei::hardware::libteec::V3_0::BnHwLibteecGlobalNotify::onTransact(unsigned int, android::hardware::Parcel const&, android::hardware::Parcel*, unsigned int, std::__1::function<void ()(android::hardware::Parcel&)>)
@@ -527,151 +611,21 @@ function study_trans()
 
     Interceptor.attach(BnHwLibteecGlobalNotify_onTransact_ptr, {
         onEnter: function(args) {
-            console.log("[*] onEnter: BnHwLibteecGlobalNotify")
+            console.error("[*] onEnter: BnHwLibteecGlobalNotify")
             // transact code
-            console.log("|-[i] transaction code: " + args[1].toInt32())
+            console.error("|-[i] transaction code: " + args[1].toInt32())
 
         },
 
         onLeave: function(retval) {
-            console.log("[*] onLeave: BnHwLibteecGlobalNotify");
+            console.error("[*] onLeave: BnHwLibteecGlobalNotify");
             // console.log("|-[i] return value: " + retval);
         }
     });
 
 }
 
-// study_trans()
+
+trans_fuzzer()
 
 
-/*
-Ghidr issues:
-vendor::huawei::hardware::libteec::V3_0::implementation::LibteecGlobal::initializeContext
-          (LibteecGlobal *this,hidl_string *param_1,hidl_vec *param_2,function param_3)
-
-IDA 7.0 issues:
-void __usercall vendor::huawei::hardware::libteec::V3_0::implementation::LibteecGlobal::initializeContext(_QWORD *a1@<X0>, __int64 a2@<X1>, __int64 a3@<X2>, __int64 a4@<X3>, __int64 a5@<X8>)
-
-_ZN6vendor6huawei8hardware7libteec4V3_014implementation13LibteecGlobal17initializeContextERKN7android8hardware11hidl_stringERKNS7_8hidl_vecIhEENSt3__18functionIFviSE_EEE
-*/
-function LibteecGlobal_initializeContext_fuzzer(
-    this_context,
-    param_1 /* hidl_string */,
-    param_2 /* hidl_vec<unsigned char> */,
-    param_3 /* call back */
-    )
-{
-    var CallingPid = param_2.readPointer().add(0x1008).readU32();
-    console.log("CallingPid: " + CallingPid);
-    // dataz in parcel are parsed, such I modify these `type`s directly, but not the object in `parcel`
-    console.log(hexdump(param_1, {
-        offset: 0,
-        length: 0x10,
-        header: true,
-        ansi: true
-    }));
-
-    // If I modify param_1 directly, I will get Error: access violation accessing 0x708f9020f8
-    // so I build a new hidl_string obj
-    var hidl_string_obj = Memory.alloc(0x10);
-    hidl_string_obj.writeByteArray(Array(0x10).fill(0));
-
-    const FUZZ_STR_LEN = 0x256 + 1;
-    var mBuffer = Memory.alloc(FUZZ_STR_LEN);
-    for (var i = 0; i < FUZZ_STR_LEN; i ++)
-    {
-        mBuffer.writeByteArray(Array(FUZZ_STR_LEN).fill(0));
-        mBuffer.writeByteArray(Array(i).fill(0x41));
-
-        ptr(hidl_string_obj).writePointer(mBuffer);
-        hidl_string_obj.add(0x8).writeUInt(i);
-
-        console.log(hexdump(ptr(hidl_string_obj), {
-            offset: 0,
-            length: 0x10,
-            header: true,
-            ansi: true
-        }));
-
-        console.log(hexdump(ptr(mBuffer), {
-            offset: 0,
-            length: FUZZ_STR_LEN,
-            header: true,
-            ansi: true
-        }));
-
-        try{
-            /*
-            logcat issues:
-            01-21 04:17:36.357 27339 27339 D LibteecGlobal@3.0: invokeCommandHidl: getCallingPid=9049
-            01-21 04:17:36.358 27339 27339 E LibteecGlobal@3.0: CallGetBnProxy: invalid context!
-            01-21 04:22:36.358 27339 27339 D LibteecGlobal@3.0: invokeCommandHidl: getCallingPid=9049
-            01-21 04:22:36.358 27339 27339 E LibteecGlobal@3.0: CallGetBnProxy: invalid context!
-            01-21 04:27:36.358 27339 27339 D LibteecGlobal@3.0: invokeCommandHidl: getCallingPid=9049
-            01-21 04:27:36.358 27339 27339 E LibteecGlobal@3.0: CallGetBnProxy: invalid context!
-            01-21 04:32:36.358 27339 27339 D LibteecGlobal@3.0: invokeCommandHidl: getCallingPid=9049
-            01-21 04:32:36.359 27339 27339 E LibteecGlobal@3.0: CallGetBnProxy: invalid context!
-            01-21 04:37:36.359 27339 27339 D LibteecGlobal@3.0: invokeCommandHidl: getCallingPid=9049
-            01-21 04:37:36.359 27339 27339 E LibteecGlobal@3.0: CallGetBnProxy: invalid context!
-            01-21 04:42:36.359 27339 27339 D LibteecGlobal@3.0: invokeCommandHidl: getCallingPid=9049
-            01-21 04:42:36.360 27339 27339 E LibteecGlobal@3.0: CallGetBnProxy: invalid context!
-            01-21 04:47:36.360 27339 27339 D LibteecGlobal@3.0: invokeCommandHidl: getCallingPid=9049
-            01-21 04:47:36.360 27339 27339 E LibteecGlobal@3.0: CallGetBnProxy: invalid context!
-            01-21 04:52:36.361 27339 27339 D LibteecGlobal@3.0: invokeCommandHidl: getCallingPid=9049
-            01-21 04:52:36.361 27339 27339 E LibteecGlobal@3.0: CallGetBnProxy: invalid context!
-            01-21 04:55:06.917 27339 27339 D LibteecGlobal@3.0: invokeCommandHidl: getCallingPid=9049
-            01-21 04:55:06.917 27339 27339 E LibteecGlobal@3.0: CallGetBnProxy: invalid context!
-            01-21 04:55:06.920 27339 27339 D LibteecGlobal@3.0: invokeCommandHidl: getCallingPid=9049
-            01-21 04:55:06.920 27339 27339 E LibteecGlobal@3.0: CallGetBnProxy: invalid context!
-            */
-            g_LibteecGlobal_initializeContext_func(this_context, hidl_string_obj, param_2, param_3);
-            g_LibteecGlobal_finalizeContext_func(this_context, CallingPid, param_2);
-            g_LibteecGlobal_processCaDied_func(CallingPid);
-        }
-        catch(err)
-        {
-            console.error(err);
-        }
-    }
-
-    console.log(hexdump(param_2, {
-        offset: 0,
-        length: 0x10,
-        header: true,
-        ansi: true
-    }));
-}
-
-var g_LibteecGlobal_initializeContext_func;
-var g_LibteecGlobal_finalizeContext_func;
-var g_LibteecGlobal_processCaDied_func;
-
-function replay_and_fuzz()
-{
-    const LibteecGlobal_initializeContext_ptr = Module.getExportByName(
-        "/vendor/lib64/hw/vendor.huawei.hardware.libteec@3.0-impl.so",
-        '_ZN6vendor6huawei8hardware7libteec4V3_014implementation13LibteecGlobal17initializeContextERKN7android8hardware11hidl_stringERKNS7_8hidl_vecIhEENSt3__18functionIFviSE_EEE');
-    console.log("[i] LibteecGlobal::initializeContext ptr addr: " + LibteecGlobal_initializeContext_ptr)
-
-    g_LibteecGlobal_initializeContext_func = new NativeFunction(LibteecGlobal_initializeContext_ptr, 'void', ['pointer', 'pointer', 'pointer', 'pointer']);
-    console.log("[i] LibteecGlobal::initializeContext func addr: " + g_LibteecGlobal_initializeContext_func)
-
-    const LibteecGlobal_finalizeContext_ptr = Module.getExportByName(
-        "/vendor/lib64/hw/vendor.huawei.hardware.libteec@3.0-impl.so",
-        '_ZN6vendor6huawei8hardware7libteec4V3_014implementation13LibteecGlobal15finalizeContextEiRKN7android8hardware8hidl_vecIhEE');
-    console.log("[i] LibteecGlobal::finalizeContext ptr addr: " + LibteecGlobal_finalizeContext_ptr)
-
-    g_LibteecGlobal_finalizeContext_func = new NativeFunction(LibteecGlobal_finalizeContext_ptr, 'void', ['pointer', 'int', 'pointer']);
-    console.log("[i] LibteecGlobal::finalizeContext func addr: " + g_LibteecGlobal_finalizeContext_func)
-
-    const LibteecGlobal_processCaDied_ptr = Module.getExportByName(
-        "/vendor/lib64/hw/vendor.huawei.hardware.libteec@3.0-impl.so",
-        '_ZN6vendor6huawei8hardware7libteec4V3_014implementation13LibteecGlobal13processCaDiedEi');
-    console.log("[i] LibteecGlobal::processCaDied ptr addr: " + LibteecGlobal_processCaDied_ptr)
-
-    g_LibteecGlobal_processCaDied_func = new NativeFunction(LibteecGlobal_processCaDied_ptr, 'void', ['int']);
-    console.log("[i] LibteecGlobal::processCaDied func addr: " + g_LibteecGlobal_processCaDied_func)
-
-
-    Interceptor.replace(LibteecGlobal_initializeContext_ptr, new NativeCallback(LibteecGlobal_initializeContext_fuzzer, 'void', ['pointer', 'pointer', 'pointer', 'pointer']));
-}

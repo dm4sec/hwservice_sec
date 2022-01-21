@@ -106,7 +106,7 @@ def main():
     proc_name = "vendor.huawei.hardware.libteec@3.0-service"
 
     process = frida.get_usb_device().attach(proc_name)
-    JSFile = open('TEEServerSideFuzzer.js')
+    JSFile = open('TEEServerSideFuzzer(Deprecated).js')
     JsCodeFromfile = JSFile.read()
     script = process.create_script(JsCodeFromfile.replace("AAoAA", proc_name))
 
