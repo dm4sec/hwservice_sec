@@ -14,7 +14,7 @@ X     ? vendor.huawei.hardware.jpegdec@1.0::IJpegDecode/default                 
 X     ? vendor.huawei.hardware.libteec@3.0::ILibteecGlobal/default                        N/A        555    555
 ...
 ```
-This service also can run as a passthrough (not binderized) mode, such these bugs lead to nothing.
+This service also can run as a passthrough (not binderized) mode.
 
 ## FYI
 1. use following command to kill `security2`.
