@@ -1,4 +1,4 @@
-# TEEServiceSideFuzzer (Deprecated)
+# TEEServerSideFuzzer (Deprecated)
 
 **it's a big problem that I can not modify any field of the data in parcel from the server side.**
 
