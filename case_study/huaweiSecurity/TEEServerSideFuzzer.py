@@ -7,7 +7,7 @@ import frida
 import sys
 import subprocess
 
-g_log_file = "TEEServer_crash.log"
+g_log_file = "TEEServerSideFuzzer_crash.log"
 
 def on_message(message, data):
 
@@ -20,7 +20,7 @@ def on_message(message, data):
             print("[*] logging dead_object")
             with open(g_log_file, "a+") as fwh:
                 fwh.write("************ server crashed, reason: {}. ************\n".format(
-                    msg[1]))
+                    msg[1].strip()))
 
             p = subprocess.Popen("adb logcat -b crash -d",
                                     shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
@@ -89,7 +89,7 @@ def main():
     JSFile = open('TEEServerSideFuzzer.js')
     JsCodeFromfile = JSFile.read()
     script = process.create_script(JsCodeFromfile.replace("AAoAA", proc_name))
-
+    script.on('message', on_message)
     script.load()
     sys.stdin.read()
 
