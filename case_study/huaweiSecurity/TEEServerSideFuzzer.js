@@ -5,8 +5,8 @@ const PROT_READ             = 0x1;
 const PROT_WRITE            = 0x2;
 const MAP_SHARED            = 0x1;
 
-const EPIPE		        = 32;	/* Broken pipe */
-const DEAD_OBJECT       = -EPIPE;
+const EPIPE		            = 32;	/* Broken pipe */
+const DEAD_OBJECT           = -EPIPE;
 
 // funcHelper("mmap")
 function dump_ashmem(this_fd, this_size = 0x100)
@@ -42,6 +42,7 @@ function dump_ashmem(this_fd, this_size = 0x100)
     {
         console.error(err);
     }
+    return map_memory_addr;
 }
 
 function genSeed(org_value)
@@ -169,16 +170,16 @@ function BpHwBinder_transact_fuzzer(this_context /* this */, code, data, reply, 
             fuzz_trans_1(mData_pos, mDataSize, mObjects_pos, mObjectsSize, this_context /* this */, code, data, reply, flags, TransactCallback);
             break;
          case 2:
-            study_trans_2(mData_pos, mDataSize, mObjects_pos, mObjectsSize);
+            fuzz_trans_2(mData_pos, mDataSize, mObjects_pos, mObjectsSize, this_context /* this */, code, data, reply, flags, TransactCallback);
             break;
          case 3:
-            study_trans_3(mData_pos, mDataSize, mObjects_pos, mObjectsSize);
+            fuzz_trans_3(mData_pos, mDataSize, mObjects_pos, mObjectsSize, this_context /* this */, code, data, reply, flags, TransactCallback);
             break;
          case 5:
             fuzz_trans_5(mData_pos, mDataSize, mObjects_pos, mObjectsSize, this_context /* this */, code, data, reply, flags, TransactCallback);
             break;
          case 13:
-            study_trans_13(mData_pos, mDataSize, mObjects_pos, mObjectsSize);
+            fuzz_trans_13(mData_pos, mDataSize, mObjects_pos, mObjectsSize, this_context /* this */, code, data, reply, flags, TransactCallback);
             break;
          default:
             console.error("|--[i] Transaction code need to parse: " + code);
@@ -187,6 +188,20 @@ function BpHwBinder_transact_fuzzer(this_context /* this */, code, data, reply, 
     return g_BpHwBinder_transact_func(this_context, code, data, reply, flags, TransactCallback);
 }
 
+function fuzz_trans_2(mData_pos, mDataSize, mObjects_pos, mObjectsSize,
+    this_context /* this */, code, data, reply, flags, TransactCallback)
+{
+}
+
+function fuzz_trans_3(mData_pos, mDataSize, mObjects_pos, mObjectsSize,
+    this_context /* this */, code, data, reply, flags, TransactCallback)
+{
+}
+
+function fuzz_trans_13(mData_pos, mDataSize, mObjects_pos, mObjectsSize,
+    this_context /* this */, code, data, reply, flags, TransactCallback)
+{
+}
 
 function fuzz_trans_5(mData_pos, mDataSize, mObjects_pos, mObjectsSize,
     this_context /* this */, code, data, reply, flags, TransactCallback)
@@ -241,7 +256,7 @@ function fuzz_trans_5(mData_pos, mDataSize, mObjects_pos, mObjectsSize,
                 if (ret == DEAD_OBJECT)
                 {
                     console.error("dead_object: fuzzing _hidl_invokeCommandHidl, code 5, 2nd arg, offset " + i + ", seed " + new_value[j] + ".")
-                    send("dead_object: fuzzing _hidl_invokeCommandHidl, code 5, 2nd arg, offset " + i + ", seed " + new_value[j] + ".");
+                    send("dead_object: fuzzing _hidl_invokeCommandHidl, code 5, 2nd arg, offset " + i + ", seed " + new_value[j]);
                 }
             }
             binder_buffer_object_buffer.add(i).writeU32(org_value);
@@ -277,7 +292,7 @@ function fuzz_trans_5(mData_pos, mDataSize, mObjects_pos, mObjectsSize,
                 if (ret == DEAD_OBJECT)
                 {
                     console.error("dead_object: fuzzing _hidl_invokeCommandHidl, code 5, 3rd arg, offset " + i + ", seed " + new_value[j] + ".")
-                    send("dead_object: fuzzing _hidl_invokeCommandHidl, code 5, 3rd arg, offset " + i + ", seed " + new_value[j] + ".");
+                    send("dead_object: fuzzing _hidl_invokeCommandHidl, code 5, 3rd arg, offset " + i + ", seed " + new_value[j]);
                 }
             }
             binder_buffer_object_buffer.add(i).writeInt(org_value);
@@ -316,8 +331,8 @@ function fuzz_trans_5(mData_pos, mDataSize, mObjects_pos, mObjectsSize,
                 var ret = g_BpHwBinder_transact_func(this_context /* this */, code, data, reply, flags, TransactCallback);
                 if (ret == DEAD_OBJECT)
                 {
-                    console.error("dead_object: fuzzing _hidl_invokeCommandHidl, code 5, fifth arg, offset " + i + ", seed " + new_value[j] + ".");
-                    send("dead_object: fuzzing _hidl_invokeCommandHidl, code 5, fifth arg, offset " + i + ", seed " + new_value[j] + ".");
+                    console.error("dead_object: fuzzing _hidl_invokeCommandHidl, code 5, the fifth arg, offset " + i + ", seed " + new_value[j] + ".");
+                    send("dead_object: fuzzing _hidl_invokeCommandHidl, code 5, the fifth arg, offset " + i + ", seed " + new_value[j]);
                 }
             }
             binder_buffer_object_buffer.add(i).writeInt(org_value);
@@ -327,7 +342,6 @@ function fuzz_trans_5(mData_pos, mDataSize, mObjects_pos, mObjectsSize,
         }
     }
 
-    // oops, the size of the ashmem is not delivered.
     cur_offset += BINDER_TYPE_BINDER_LEN
     if (mData_pos.add(cur_offset).readU64() == 0)
     {
@@ -336,6 +350,18 @@ function fuzz_trans_5(mData_pos, mDataSize, mObjects_pos, mObjectsSize,
     }
     else
     {
+        console.log("|---[i] hidl_memory info");
+
+        var binder_buffer_object_buffer = mData_pos.add(cur_offset - BINDER_TYPE_BINDER_LEN).add(0x8).readPointer();
+        console.log(hexdump(binder_buffer_object_buffer, {
+            offset: 0,
+            length: 0x28,
+            header: true,
+            ansi: true
+        }));
+
+        var ashmem_len = binder_buffer_object_buffer.add(0x10).readU32();
+
         cur_offset += 0x8
         var binder_buffer_object_buffer = mData_pos.add(cur_offset).add(0x8).readPointer();
         var binder_buffer_object_length = mData_pos.add(cur_offset).add(0x10).readU64();
@@ -346,7 +372,32 @@ function fuzz_trans_5(mData_pos, mDataSize, mObjects_pos, mObjectsSize,
             header: true,
             ansi: true
         }));
-        dump_ashmem(binder_buffer_object_buffer.add(0xc).readU32());
+        var ashmem = dump_ashmem(binder_buffer_object_buffer.add(0xc).readU32(), ashmem_len);
+
+        console.log("|---[i] fuzzing the sixth arg");
+        for (var i = 0; i < ashmem_len; i += 4)
+        {
+            try{
+                var org_value = ptr(ashmem).add(i).readU32()
+                var new_value = genSeed(org_value);
+
+                for (var j = 0; j < new_value.length; j ++)
+                {
+                    ptr(ashmem).add(i).writeInt(new_value[j]);
+                    var ret = g_BpHwBinder_transact_func(this_context /* this */, code, data, reply, flags, TransactCallback);
+                    if (ret == DEAD_OBJECT)
+                    {
+                        console.error("dead_object: fuzzing _hidl_invokeCommandHidl, code 5, the sixth arg, offset " + i + ", seed " + new_value[j] + ".");
+                        send("dead_object: fuzzing _hidl_invokeCommandHidl, code 5, the sixth arg, offset " + i + ", seed " + new_value[j]);
+                    }
+                }
+                ptr(ashmem).add(i).writeInt(org_value);
+            }
+            catch(err){
+                console.error(err);
+            }
+        }
+
         cur_offset += BINDER_TYPE_BINDER_LEN
         cur_offset += BINDER_TYPE_FDA_LEN
 
@@ -442,7 +493,7 @@ function fuzz_trans_1(mData_pos, mDataSize, mObjects_pos, mObjectsSize,
             if (ret == DEAD_OBJECT)
             {
                 console.error("dead_object: fuzzing _hidl_initializeContext, code 1, 1st arg, len " + i + ".");
-                send("dead_object: fuzzing _hidl_initializeContext, code 1, 1st arg, len " + i + ".");
+                send("dead_object: fuzzing _hidl_initializeContext, code 1, 1st arg, len " + i);
             }
 
         }
@@ -477,7 +528,7 @@ function fuzz_trans_1(mData_pos, mDataSize, mObjects_pos, mObjectsSize,
                 if (ret == DEAD_OBJECT)
                 {
                     console.error("dead_object: fuzzing _hidl_initializeContext, code 1, 2nd arg, offset " + i + ", seed " + new_value[j] + ".");
-                    send("dead_object: fuzzing _hidl_initializeContext, code 1, 2nd arg, offset " + i + ", seed " + new_value[j] + ".");
+                    send("dead_object: fuzzing _hidl_initializeContext, code 1, 2nd arg, offset " + i + ", seed " + new_value[j]);
                 }
             }
             binder_buffer_object_buffer.add(i).writeU32(org_value);
