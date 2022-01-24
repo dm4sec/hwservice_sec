@@ -1,4 +1,4 @@
-# TEEServiceSideFuzzer
+# TEEClientSideFuzzer
 
 NOTE that we can not modify data from the server side (`mmap` with `PROT_READ` arg).
 
@@ -53,5 +53,5 @@ set lock screen password or remove lock screen password will trigger the followi
 1. Downgrade both the `frida-server` and host. e.g., 14.2.17.
 2. No java environment provided.
 3. Disable pre-fuzzer to enable the current fuzzer, e.g., disable `_hidl_initializeContext` to enable the later on `_hidl_invokeCommandHidl`. 
-4. The [TEEServerSideFuzzer.log](https://github.com/dm4sec/hwservice_sec/blob/master/case_study/huaweiSecurity/TEEServerSideFuzzer_crash.log.log) is the crash we collected. The crash can only be gotcha on the first lunch.
+4. The [TEEClientSideFuzzer.log](https://github.com/dm4sec/hwservice_sec/blob/master/case_study/huaweiSecurity/TEEClientSideFuzzer_crash.log.log) is the crash we collected. The crash can only be gotcha on the first lunch.
 

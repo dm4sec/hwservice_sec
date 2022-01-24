@@ -7,7 +7,7 @@ import frida
 import sys
 import subprocess
 
-g_log_file = "TEEServerSideFuzzer_crash.log"
+g_log_file = "TEEClientSideFuzzer_crash.log"
 
 def on_message(message, data):
 
@@ -86,7 +86,7 @@ def main():
     proc_name = "tee_auth_daemon"
 
     process = frida.get_usb_device().attach(proc_name)
-    JSFile = open('TEEServerSideFuzzer.js')
+    JSFile = open('TEEClientSideFuzzer.js')
     JsCodeFromfile = JSFile.read()
     script = process.create_script(JsCodeFromfile.replace("AAoAA", proc_name))
     script.on('message', on_message)
