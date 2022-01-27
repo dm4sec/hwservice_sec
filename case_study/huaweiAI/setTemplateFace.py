@@ -9,6 +9,8 @@ import subprocess
 import frida
 import sys
 
+from utils.adbUtils import restart_top
+
 global g_script
 g_log_file = "setTemplateFace_crash.log"
 g_obj_content_offset = 0
@@ -60,7 +62,10 @@ def on_message(message, data):
 
 
 def de():
-    print("[Exit] The target process exits")
+    global g_obj_content_offset
+    print("[Exit] The target process exits offset:{}, Ready to restart the top app".format(g_obj_content_offset))
+    restart_top()
+    main()
 
 
 def main():
