@@ -377,7 +377,7 @@ Java.perform(function () {
     console.log('[*] Frida js is running.');
 
 
-    // may help exploring the stealthy exception.
+    // may help exploring the subtle exception.
     // in testing.
     Process.setExceptionHandler(function(error)
     {

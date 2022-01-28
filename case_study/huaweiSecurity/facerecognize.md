@@ -35,4 +35,11 @@ We profile the `mData` in the `Parcel` as:
 |       InterfaceToken      |       flat_binder_object       | N/A |  String16 |       flat_binder_object       |     
 ```
 
-`huawei.android.security.facerecognition.IFaceRecognizeServiceEx`
+
+Features of hwservice and service:
+```commandline
+demo@demo:~/Desktop/img/system_mnt$ grep -r "huawei.android.security.facerecognition.IFaceRecognizeService" 2>>/dev/null | xargs grep "registerAsServiceInternal" 2>>/dev/null
+demo@demo:~/Desktop/img/system_mnt$ grep -r "huawei.android.security.facerecognition.IFaceRecognizeService" 2>>/dev/null | xargs grep "addService" 2>>/dev/null
+Binary file system/priv-app/HwSecurityServer/HwLocalFaceIdAuth.apk matches
+```
+app -> HwLocalFaceIdAuth.apk -> 

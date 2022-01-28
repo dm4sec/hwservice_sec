@@ -494,6 +494,10 @@ Java.perform(function () {
         "android.content.pm.IPackageManager",
         "android.os.IServiceManager",
         "android.aps.IHwApsManager",
+        "android.view.accessibility.IAccessibilityManager",
+        "android.view.IWindowManager",
+        "android.ui.ISurfaceComposer",
+        "android.view.IGraphicsStats",
 
         ];
 

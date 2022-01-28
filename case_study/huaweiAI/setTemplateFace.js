@@ -1,32 +1,48 @@
 Java.perform(function () {
-    console.log('[*] Frida Gesture.js is running.');
 
-    var BpHwBinder_transact_vendor_p = Module.getExportByName("/system/lib64/vndk-sp-29/libhidlbase.so", '_ZN7android8hardware10BpHwBinder8transactEjRKNS0_6ParcelEPS2_jNSt3__18functionIFvRS2_EEE');
-    console.log("[i] Vendor BpHwBinder::transact addr    : " + BpHwBinder_transact_vendor_p)
-
-    function genSeed(org_value){     // length: 38
-//        console.log("genSeed: ", org_value)
-        var list_a = [//org_value,           // replay (test double-free?)
-            ~org_value,
-            org_value & 0xffffff00, org_value & 0xffff00ff, org_value & 0xff00ffff, org_value & 0x00ffffff,
-            org_value | 0x000000ff, org_value | 0x0000ff00, org_value | 0x00ff0000, org_value | 0xff000000,
-            org_value & 0xffffff00 + 0x7f, org_value & 0xffff00ff + 0x7f00, org_value & 0xff00ffff + 0x7f0000, org_value & 0x00ffffff + 0x7f000000,
-            org_value & 0xffffff00 + 0x80, org_value & 0xffff00ff + 0x8000, org_value & 0xff00ffff + 0x800000, org_value & 0x00ffffff + 0x80000000,
-            0,
-            0x7f, 0x7fff, 0x7fffff, 0x7fffffff,
-            0x80, 0x8000, 0x800000, 0x80000000,
-            0xff, 0xffff, 0xffffff, 0xffffffff,
-            org_value + 1, org_value + 0x100, org_value + 0x10000, org_value + 0x1000000,
-            org_value - 1, org_value - 0x100, org_value - 0x10000, org_value - 0x1000000
-        ];
-        return list_a;
+    const g_fuzz_status           = {
+        "proc_name": "proc_name_AAoAA",
+        "block": mem_block_AAoAA,
+        "offset": mem_offset_AAoAA,
+        "seed_index": 0
     }
 
-    var fuzz_eazy_list  = genSeed(0);
-    var fuzz_eazy_index = 0;
+    console.log('[*] Frida is attaching to process: ' + g_fuzz_status.proc_name);
 
-    function dump(pos, length){
-        console.log(hexdump(pos, {
+    var g_BpHwBinder_transact_vendor_ptr = Module.getExportByName("/system/lib64/vndk-sp-29/libhidlbase.so", '_ZN7android8hardware10BpHwBinder8transactEjRKNS0_6ParcelEPS2_jNSt3__18functionIFvRS2_EEE');
+    console.log("[i] Vendor BpHwBinder::transact ptr addr: " + g_BpHwBinder_transact_vendor_ptr)
+
+    var g_mmap_ptr = Module.getExportByName("libai_client.so", 'mmap');
+    console.log("[i] mmap ptr addr: " + g_mmap_ptr);
+    var g_mmap_func = new NativeFunction(g_mmap_ptr, 'uint64', ['uint64', 'uint32', 'int32', 'int32', 'int32', 'int32']);
+    console.log("[i] mmap func addr: " + g_mmap_func)
+
+    var g_munmap_ptr = Module.getExportByName("libai_client.so", 'munmap');
+    console.log("[i] munmap ptr addr: " + g_munmap_ptr);
+    var g_munmap_func = new NativeFunction(g_munmap_ptr, 'void', ['uint64', 'uint32']);
+    console.log("[i] munmap func addr: " + g_munmap_func);
+
+    function genSeed(org_value){
+//        console.log("genSeed: ", org_value)
+        return [//org_value,
+                    ~org_value,
+                    org_value & 0xffffff00, org_value & 0xffff00ff, org_value & 0xff00ffff, org_value & 0x00ffffff,
+                    org_value | 0x000000ff, org_value | 0x0000ff00, org_value | 0x00ff0000, org_value | 0xff000000,
+                    org_value & 0xffffff00 + 0x7f, org_value & 0xffff00ff + 0x7f00, org_value & 0xff00ffff + 0x7f0000, org_value & 0x00ffffff + 0x7f000000,
+                    org_value & 0xffffff00 + 0x80, org_value & 0xffff00ff + 0x8000, org_value & 0xff00ffff + 0x800000, org_value & 0x00ffffff + 0x80000000,
+                    0,
+                    0x7f, 0x7fff, 0x7fffff, 0x7fffffff,
+                    0x80, 0x8000, 0x800000, 0x80000000,
+                    0xff, 0xffff, 0xffffff,
+                    0xffffffff,
+                    org_value + 1, org_value + 0x100, org_value + 0x10000, org_value + 0x1000000,
+                    org_value - 1, org_value - 0x100, org_value - 0x10000, org_value - 0x1000000,
+                    0x41414141,
+        ];
+    }
+
+    function dump_mem(mem_ptr, length){
+        console.log(hexdump(mem_ptr, {
             offset: 0,
             length: length,
             header: true,
@@ -40,46 +56,33 @@ Java.perform(function () {
     const mObjects_LOC      = 0x48;
     const mObjectsSize_LOC  = 0x50;
 
-    // type of BINDER
-    const BINDER_TYPE_BINDER          = 0x73622a85                // .*bs
-    const BINDER_TYPE_WEAK_BINDER     = 0x77622a85                // .*bw
-    const BINDER_TYPE_HANDLE          = 0x73682a85                // .*hs
-    const BINDER_TYPE_WEAK_HANDLE     = 0x77682a85                // .*hw
-    const BINDER_TYPE_FD              = 0x66642a85                // .*df
-    const BINDER_TYPE_FDA             = 0x66646185                // .adf
-    const BINDER_TYPE_PTR             = 0x70742a85                // .*tp
-
-    const ptr_flags             = 0x4;
-    const ptr_buffer            = 0x8;
-    const ptr_length            = 0x10;      // sizeof(buffer)
-    const ptr_parent            = 0x18;
-    const ptr_parent_offset     = 0x20;
-
     const PROT_READ             = 0x1;
     const PROT_WRITE            = 0x2;
     const MAP_SHARED            = 0x1;
 
-    const g_cur_progress        = {"offset": 2660};
-//    const g_cur_progress        = {"offset": -4 + 0x4};
-    const g_gen_seed            = {"offset": 0};
+    // may help exploring the subtle exception.
+    // in testing.
+    Process.setExceptionHandler(function(error)
+    {
+        send("error (from ExceptionHandler)|" + g_fuzz_status.block + "|" + g_fuzz_status.offset + "|" + g_fuzz_status.seed_index);
+        console.warn("[!] ExceptionHandler: exception received, details: " + "ExceptionHandler|block:" + g_fuzz_status.block + "|offset:0x" + g_fuzz_status.offset.toString(16) + "|seed:" + g_fuzz_status.seed_index);
+        return false;
+    })
 
     // attach for test
-    Interceptor.attach(BpHwBinder_transact_vendor_p, {
+    Interceptor.attach(g_BpHwBinder_transact_vendor_ptr, {
         onEnter: function(args) {
-//            console.log("[*] onEnter: BpHwBinder_transact_p");
-            parseParcel(args, this);
+//            console.log("[*] onEnter: g_BpHwBinder_transact_vendor_ptr");
+            parseParcel(args);
         },
 
         onLeave: function(retval) {
-//            console.log("[*] onLeave: BpHwBinder_transact_p");
-//  print the return value
+//            console.log("[*] onLeave: g_BpHwBinder_transact_vendor_ptr");
             if (retval.toInt32() == DEAD_OBJECT){
-                g_dead_obj_lst.push(g_obj_content_offset, g_obj_content_seed);    // should tell em apart
-                send("dead_object:" + g_cur_progress.offset);
-                console.warn("[i] dead object received, stop intercepting. current offset: 0x" + g_cur_progress.offset.toString(16) + ", genseed: 0x" + g_gen_seed.offset.toString(16));
+                send("error (from onLeave)|" + g_fuzz_status.block + "|" + g_fuzz_status.offset + "|" + g_fuzz_status.seed_index);
+                console.warn("[!] onLeave: exception received, details: " + "ExceptionHandler|block:" + g_fuzz_status.block + "|offset:0x" + g_fuzz_status.offset.toString(16) + "|seed:" + g_fuzz_status.seed_index);
                 Interceptor.detachAll();
             }
-            console.log("Done");
         }
     });
 
@@ -87,7 +90,10 @@ Java.perform(function () {
         11,                             // vendor.huawei.hardware.ai@1.1::IAiModelMngr      _hidl_startModelFromMem2
     ];
     const fuzzInterface             = "vendor.huawei.hardware.ai@1.1::IAiModelMngr"
-    function parseParcel(args, that){
+
+    function parseParcel(args){
+        // console.log("[i] InterfaceToken: " + args[2].add(mData_LOC).readPointer().readUtf8String() + ", TransactionCode: " + args[1].toInt32())
+
         // remove to enable all transactions.
         if (whiteTransactionCode.includes(args[1].toInt32()) == false)
             return;
@@ -95,165 +101,102 @@ Java.perform(function () {
         if (args[2].add(mData_LOC).readPointer().readUtf8String().indexOf(fuzzInterface) == -1)
             return;
 
-        console.log("TransactionCode: " + args[1].toInt32() + ",  InterfaceToken: " + args[2].add(mData_LOC).readPointer().readUtf8String())
-
-        var transaction_code = args[1]
-        var parcel_data = args[2]
-
         // mDataSize/mDataLen
-        var mDataSize_pos = parcel_data.add(mDataSize_LOC);
-        var mDataSize = mDataSize_pos.readU64();
+        var mDataSize_offset = args[2].add(mDataSize_LOC);
+        var mDataSize = mDataSize_offset.readU64();
 
         // mData
-        var mData_offset = parcel_data.add(mData_LOC);
-        var mData_pos = mData_offset.readPointer();
-//        dump(mData_pos, mDataSize)
-        console.log("p1_int: 0x" + mData_pos.add(0x2c).readU32().toString(16) + ", p2_int: 0x" + mData_pos.add(0x30).readU32().toString(16))
-        if(mData_pos.add(0x2c).readU32() != 2)
-            return;
-//        var target_pos = [mData_pos.add(0x2c), mData_pos.add(0x30)]
-        var target_pos = mData_pos.add(0x30)
-//        fuzz_eazy(target_pos)
-//        dump(mData_pos, mDataSize)
+        var mData_offset = args[2].add(mData_LOC);
+        var mData_ptr = mData_offset.readPointer();
 
+        dump_mem(mData_ptr, mDataSize);
+
+        // console.log("p1_int: 0x" + mData_ptr.add(0x2c).readU32().toString(16) + ", p2_int: 0x" + mData_ptr.add(0x30).readU32().toString(16))
+        if(mData_ptr.add(0x2c).readU32() != g_fuzz_status.block)
+            return;
 
         // mObjectsSize
-        var mObjectsSize_pos = args[2].add(mObjectsSize_LOC);
-        var mObjectsSize = mObjectsSize_pos.readU64();
+        var mObjectsSize_ptr = args[2].add(mObjectsSize_LOC);
+        var mObjectsSize = mObjectsSize_ptr.readU64();
         console.log("[i] mObjectsSize: 0x" + mObjectsSize.toString(16));
 
         // mObjects
         var mObjects_offset = args[2].add(mObjects_LOC);
-        var mObjects_pos = mObjects_offset.readPointer();
-        parseObject(mData_pos, mDataSize, mObjects_pos, mObjectsSize)
+        var mObjects_ptr = mObjects_offset.readPointer();
+
+        fuzzObject(mData_ptr, mDataSize, mObjects_ptr, mObjectsSize)
     }
 
-    function getBinderObjectLen(BinderObjectPos){
+    function fuzzObject(mData_pos, mDataSize, mObjects_pos, mObjectsSize){
+        console.log("|-[i] start parsing object")
 
-        var type_val = BinderObjectPos.readU32();
-        if (type_val == BINDER_TYPE_BINDER ||
-            type_val == BINDER_TYPE_WEAK_BINDER ||
-            type_val == BINDER_TYPE_HANDLE ||
-            type_val == BINDER_TYPE_WEAK_HANDLE)            // flat_binder_object
-            return 0x18;
-        else if (type_val == BINDER_TYPE_FD)                // flat_binder_object
-            return 0x18;
-        else if (type_val == BINDER_TYPE_FDA)               // binder_fd_array_object
-            return 0x20;
-        else if (type_val == BINDER_TYPE_PTR)               // binder_buffer_object
-            return 0x28;
-    }
+        dump_mem(mObjects_pos, mObjectsSize * 8);
 
-    function parseObject(mData_pos, mDataSize, mObjects_pos, mObjectsSize){
-        console.log("......... Start parse object .........")
-//        dump(mObjects_pos, (mObjectsSize * 0x8));
-        var mObjectsList = [];
-        for(var i = 0; i < mObjectsSize; i++){
-//            console.log("[Parcel_mData] [mObjects] " + (i + 1) + "/" + mObjectsSize)
-            var binder_object_offset    = mObjects_pos.add(i * 0x8).readU64();
-            var binder_object_pos       = mData_pos.add(binder_object_offset);
-            var obj_len                 = getBinderObjectLen(binder_object_pos);
-            mObjectsList[i] = binder_object_pos;
+        // go to the `fd` directly.
+        var binder_object_ptr       = mData_pos.add(mObjects_pos.add((mObjectsSize - 2) * 8).readU64()).add(0x8).readPointer();
+        var binder_object_len       = mData_pos.add(mObjects_pos.add((mObjectsSize - 2) * 8).readU64()).add(0x10).readU32();
 
-            var type_pos = binder_object_pos;
+//        console.log(binder_object_ptr);
+//        console.log(binder_object_len);
 
+        dump_mem(binder_object_ptr, binder_object_len);
 
-            if (type_pos.readU32() == BINDER_TYPE_PTR){
+        var this_fd = binder_object_ptr.add(0x0c).readU32();
+        console.log("|-[i] this_fd: 0x" + this_fd.toString(16));
+        var this_size = binder_object_ptr.add(0x18).readU32();
+        console.log("|-[i] this_size: 0x" + this_size.toString(16));
 
-            }
-            else if (type_pos.readU32() == BINDER_TYPE_BINDER){
+        var map_memory_addr = g_mmap_func(
+            0,
+            this_size,
+            PROT_READ|PROT_WRITE,
+            MAP_SHARED,
+            this_fd,
+            0
+        );
 
-            }
-            else if (type_pos.readU32() == BINDER_TYPE_FDA){
-                console.log("[Parcel_mData] [mObjects] [BINDER_TYPE_FDA], parse by struct `binder_fd_array_object`.");
-
-                var num_fds         = binder_object_pos.add(0x8).readU64();
-                var handle          = binder_object_pos.add(0x10).readU64();      // handle
-                var buffer_offset   = binder_object_pos.add(0x18).readU64();      // handle中的偏移
-
-                console.log("[Parcel_mData] [mObjects] [BINDER_TYPE_FDA], parent(mObject_index): " + handle);
-
-                var parent_pos  = mObjectsList[handle];
-                var buffer_pos  = parent_pos.add(ptr_buffer).readPointer();
-                var buffer_len  = parent_pos.add(ptr_length).readU64();
-
-                var this_fd     = buffer_pos.add(buffer_offset).readU32();
-                var this_size   = buffer_pos.add(0x18).readU32();
-                console.log("fuzz fd", this_fd, this_size);
-                fuzz_obj(this_fd, this_size, "handle");
-            }
-            else{
-                console.log("[Parcel_mData] [mObjects] Unknown binder type.")
-            }
+        if (g_fuzz_status.seed_index >= genSeed(0).length)
+        {
+            g_fuzz_status.offset += 4
+            g_fuzz_status.seed_index = 0
         }
-//        console.log("xxxxxx")
-//        console.log(mObjectsList)
-
-    }
-    function fuzz_obj(obj, obj_len, type){
-        console.log("in fuzz_obj");
-        if(type == "handle"){
-            var g_mmap_ptr = Module.getExportByName("libai_client.so", 'mmap');
-        //    var g_mmap_ptr = Module.getExportByName("libai_hidl_request_client.so", 'mmap');
-        //    var g_mmap_ptr = Module.getExportByName("/system/bin/app_process64", 'mmap');
-            console.log("[i] mmap addr: " + g_mmap_ptr);
-            var g_mmap_func = new NativeFunction(g_mmap_ptr, 'uint64', ['uint64', 'uint32', 'int32', 'int32', 'int32', 'int32']);
-            console.log("[i] mmap func addr: " + g_mmap_func)
-            var map_memory_addr = g_mmap_func(
-                0,
-                obj_len,
-                PROT_READ|PROT_WRITE,
-                MAP_SHARED,
-                obj,
-                0
-            );
-            fuzz_obj(map_memory_addr, obj_len, "buffer");
+        if (g_fuzz_status.offset >= this_size)
+        {
+            g_fuzz_status.block += 1
+            g_fuzz_status.offset = 0
+            g_fuzz_status.seed_index = 0
         }
-        else if(type == "buffer"){
-            var map_memory_ptr = ptr(obj);
-//            dump(map_memory_ptr, 0xf0)
-            console.log("in fuzz_obj: " + map_memory_ptr + " >>> " + obj_len);
-            if(g_cur_progress.offset > obj_len){
-                console.log("[********] Fuzz Buffer End [********]")
-                return
-            }
-            if(g_gen_seed.offset == 38){
-                g_gen_seed.offset = 0
-                send("ready:" + (g_cur_progress.offset + 4) + ":" + (g_gen_seed.offset))
-//                send("ready:" + (g_cur_progress.offset) + ":" + (g_gen_seed.offset))    // fuzz one offset
-            }else{
-                send("ready:" + g_cur_progress.offset + ":" + (g_gen_seed.offset + 1))
-            }
-            recv('synchronize', function(value) {
-                g_cur_progress.offset   = value["payload"]["g_cur_progress"];
-                g_gen_seed.offset       = value["payload"]["g_gen_seed"];
-                console.log("|--[i] host ready message received, continue testing. " + g_cur_progress.offset+":" + g_gen_seed.offset);
-            }).wait();
-
-            var org_value = map_memory_ptr.add(g_cur_progress.offset).readS32();
-            var new_value = genSeed(org_value)[g_gen_seed.offset];
-            console.log("map_memory_ptr : " + map_memory_ptr.add(g_cur_progress.offset))
-            console.log("org_value      : 0x" + org_value.toString(16))
-            console.log("new_value      : 0x" + new_value.toString(16))
-            map_memory_ptr.add(g_cur_progress.offset).writeS32(new_value);
-//            dump(map_memory_ptr, 0xf0)
+        if (g_fuzz_status.block > 2)
+        {
+            console.warn("[i] finish fuzzing");
+            Interceptor.detachAll();
         }
-    }
 
-    function fuzz_eazy(target_pos){
-        console.log("----> fuzz_eazy  target: " + target_pos)
-        console.log("index: "+fuzz_eazy_index)
-        if (fuzz_eazy_index == 38){
-            fuzz_eazy_index = 0
-            return
+        if (g_fuzz_status.seed_index == 0)
+        {
+            send("info|" + g_fuzz_status.block + "|" + g_fuzz_status.offset + "|" + g_fuzz_status.seed_index);
+            // wait the host to finish it's task.
+            var foo = recv('synchronize', function(value) {
+                console.log("|-[i] host ready message received, continue.");
+            });
+            foo.wait();
         }
-        var new_value = fuzz_eazy_list[fuzz_eazy_index]
-        var old_value = ptr(target_pos).readU32()
-        console.log("old_value: " + old_value)
-        console.log("new_value: " + new_value)
-        fuzz_eazy_index += 1;
-        ptr(target_pos).writeS32(new_value)
-    }
 
+        var fuzzPos = ptr(map_memory_addr).add(g_fuzz_status.offset)
+        var new_value = genSeed(fuzzPos.readU32())[g_fuzz_status.seed_index];
+        fuzzPos.writeS32(new_value);
+
+        send("[i]-fuzzing block: " + g_fuzz_status.block + ", with offset: " + g_fuzz_status.offset + ", with seed: " + new_value);
+
+        // dump_mem(ptr(map_memory_addr), 0x100);
+
+        g_munmap_func(
+            map_memory_addr,
+            this_size
+        );
+
+        g_fuzz_status.seed_index ++;
+        return;
+    }
 
 });

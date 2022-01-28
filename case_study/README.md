@@ -11,3 +11,5 @@ https://gitee.com/openharmony/security_itrustee_ree_lite
 
 https://paper.seebug.org/1617/  
 https://i.blackhat.com/EU-21/Wednesday/EU-21-Feng-AIModel-Mutator-Finding-Vulnerabilities-in-TensorFlow.pdf
+
+https://support.huawei.com/enterprise/zh/doc/EDOC1100150022?section=j00y

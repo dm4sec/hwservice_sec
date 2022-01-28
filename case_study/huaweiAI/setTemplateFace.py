@@ -8,78 +8,107 @@ import subprocess
 
 import frida
 import sys
-
-from utils.adbUtils import restart_top
+import time
+# from utils.adbUtils import restart_top
 
 global g_script
-g_log_file = "setTemplateFace_crash.log"
-g_obj_content_offset = 0
 
+g_config = {
+    "g_mem_block": 0,
+    "g_mem_offset": 0,
+    "g_seed_index": 0,
+    "g_log_file": "setTemplateFace_crash.log",
+    "g_proc_name": "Gadget"
+
+}
+
+def collect_crash_log():
+    retMe = False
+
+    p = subprocess.Popen("adb logcat -b crash -d",
+                         shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                         stderr=subprocess.PIPE
+                         )
+    stdout, stderr = p.communicate()
+    if stdout.decode().find("Build fingerprint") != -1:
+        with open(g_config["g_log_file"], "a+") as fwh:
+            fwh.write(stdout.decode())
+            retMe = True
+    p = subprocess.Popen("adb logcat -c",
+                         shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                         stderr=subprocess.PIPE
+                         )
+    stdout, stderr = p.communicate()
+    return retMe
 
 def on_message(message, data):
-    global g_obj_content_offset
-    global g_log_file
+    global g_config
 
     if message["type"] == "send":
-        if message["payload"].find("dead_object") != -1:
-            msg = message["payload"].strip().split(":")
-            g_obj_content_offset = int(msg[1])
+        if message["payload"].find("info") != -1:
+            msg = message["payload"].strip().split("|")
+            g_config["g_mem_block"] = int(msg[1])
+            g_config["g_mem_offset"] = int(msg[2])
+            g_config["g_seed_index"] = int(msg[3])
+            print("[*][Host]: fuzzing block: {}, offset: {}".format(g_config["g_mem_block"], g_config["g_mem_offset"]))
+            if collect_crash_log():
+                print("TODO:")
 
-            print("[*] logging dead_object")
-            with open(g_log_file, "a+") as fwh:
-                fwh.write("************ model offset: {} crashed the server. ************\n".format(
-                    hex(g_obj_content_offset)))
-
-        if message["payload"].find("ready") != -1:
-            p = subprocess.Popen("adb logcat -b crash -d",
-                                 shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-                                 stderr=subprocess.PIPE
-                                 )
-            stdout, stderr = p.communicate()
-            info = message["payload"].strip().split(":")
-            print("get ready: " + info[1] + "/" + info[2])
-            g_obj_content_offset = int(info[1])
-            g_gen_seed_offset = int(info[2])
-            print("[*] check crash")
-            if stdout.decode().find("Build fingerprint") != -1 and g_obj_content_offset != 0:
-                print("[*] logging crash")
-                crash_seed_offset = g_gen_seed_offset - 1
-                crash_content_offset = g_obj_content_offset if (crash_seed_offset == 0) else (g_obj_content_offset - 4)
-                with open(g_log_file, "a+") as fwh:
-                    fwh.write("------------ model offset: {}/{} crashed the app. ------------\n".format(
-                        hex(crash_content_offset), crash_seed_offset))
-                    fwh.write(stdout.decode())
-                    fwh.close()
-            print("[*] clear logcat")
-            p = subprocess.Popen("adb logcat -c",
-                                 shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-                                 stderr=subprocess.PIPE
-                                 )
-            stdout, stderr = p.communicate()
-            # time.sleep(2)
             g_script.post({'type': 'synchronize',
-                           'payload': {"g_cur_progress": g_obj_content_offset, "g_gen_seed": g_gen_seed_offset}})
+                           'payload': {"g_mem_block": g_config["g_mem_block"], "g_mem_offset": g_config["g_mem_offset"]}})
+
+        if message["payload"].find("error") != -1:
+            with open(g_config["g_log_file"], "a+") as fwh:
+                fwh.write("---------- {} ----------".format(message["payload"]));
+            collect_crash_log()
+            new_round()
+
+def new_round():
 
 
-def de():
-    global g_obj_content_offset
-    print("[Exit] The target process exits offset:{}, Ready to restart the top app".format(g_obj_content_offset))
-    restart_top()
-    main()
+    # for app in frida.get_usb_device().enumerate_applications():
+    #     print("[i] {}".format(app))
 
+    # clean the env
+    p = subprocess.Popen("adb shell am force-stop {}".format("com.mlkit.sample.body"),
+                         shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                         stderr=subprocess.PIPE
+                         )
+    stdout, stderr = p.communicate()
 
-def main():
-    session = frida.get_usb_device().attach("Gadget")
-    session.on('detached', de)
+    p = subprocess.Popen("adb shell am start -n {}".format("com.mlkit.sample.body/com.huawei.mlkit.sample.activity.StartActivity"),
+                         shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                         stderr=subprocess.PIPE
+                         )
+    stdout, stderr = p.communicate()
 
+    while True:
+        try:
+            time.sleep(1)
+            frida.get_usb_device().get_process(g_config["g_proc_name"])
+            break
+        except:
+            pass
+
+    print("[*] start new testing from: {}/{}.".format(g_config["g_mem_offset"], g_config["g_mem_block"]))
+
+    session = frida.get_usb_device().attach(g_config["g_proc_name"])
+    # session.on('detached', new_round)
     JSFile = open('setTemplateFace.js')
     JsCodeFromfile = JSFile.read()
+    JsCodeFromfile = JsCodeFromfile.replace("proc_name_AAoAA", g_config["g_proc_name"])
+    JsCodeFromfile = JsCodeFromfile.replace("mem_block_AAoAA", str(g_config["g_mem_block"]))
+    JsCodeFromfile = JsCodeFromfile.replace("mem_offset_AAoAA", str(g_config["g_mem_offset"]))
+    # print(JsCodeFromfile)
     global g_script
     g_script = session.create_script(JsCodeFromfile)
     g_script.on('message', on_message)
     g_script.load()
+    # g_script.unload()
     sys.stdin.read()
 
+def main():
+    new_round()
 
 if __name__ == '__main__':
     main()
