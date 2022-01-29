@@ -164,3 +164,7 @@ Tease out as:
 | 72 | 9 | 	 	vendor.huawei.hardware.ai@1.1::IAiModelMngr| vendor::huawei::hardware::ai::V1_1::BpHwAiModelMngr::_hidl_unregisterInstance(android::hardware::IInterface *, android::hardware::details::HidlInstrumentor *, int) | 
 | 73 | 13 | 	vendor.huawei.hardware.ai@1.1::IAiModelMngr| vendor::huawei::hardware::ai::V1_1::BpHwAiModelMngr::_hidl_stopModel2(android::hardware::IInterface *, android::hardware::details::HidlInstrumentor *, int, int) | 
 | 74 | 9 | 	 	vendor.huawei.hardware.ai@1.1::IAiModelMngr| vendor::huawei::hardware::ai::V1_1::BpHwAiModelMngr::_hidl_unregisterInstance(android::hardware::IInterface *, android::hardware::details::HidlInstrumentor *, int) | 
+
+There are 4 models loaded on each lunch.
+These models are indicated by an `int` value (offset 0x2c) in the parcel, the value of the `int` is 0x0, 0x1, and 0x2 separately.
+Note, there are 2 models under the value `0x1`, I tell them apart by using the size of the model.
