@@ -14,12 +14,13 @@ import time
 global g_script
 
 g_config = {
-    "g_mem_block": 0,
-    "g_mem_offset": 0,
+    "g_mem_block": 2,
+    "g_mem_offset": 38420,
+    # "g_mem_block": 1,
+    # "g_mem_offset": 0,
     "g_seed_index": 0,
     "g_log_file": "setTemplateFace_crash.log",
     "g_proc_name": "Gadget"
-
 }
 
 def collect_crash_log():
@@ -33,6 +34,7 @@ def collect_crash_log():
     if stdout.decode().find("Build fingerprint") != -1:
         with open(g_config["g_log_file"], "a+") as fwh:
             fwh.write(stdout.decode())
+            fwh.write("\n")
             retMe = True
     p = subprocess.Popen("adb logcat -c",
                          shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
@@ -50,7 +52,7 @@ def on_message(message, data):
             g_config["g_mem_block"] = int(msg[1])
             g_config["g_mem_offset"] = int(msg[2])
             g_config["g_seed_index"] = int(msg[3])
-            print("[*][Host]: fuzzing block: {}, offset: {}".format(g_config["g_mem_block"], g_config["g_mem_offset"]))
+            print("[Host MSG]: fuzzing block: {}, offset: {}".format(g_config["g_mem_block"], g_config["g_mem_offset"]))
             if collect_crash_log():
                 print("TODO:")
 
@@ -59,12 +61,19 @@ def on_message(message, data):
 
         if message["payload"].find("error") != -1:
             with open(g_config["g_log_file"], "a+") as fwh:
-                fwh.write("---------- {} ----------".format(message["payload"]));
+                fwh.write("---------- {} ----------\n".format(message["payload"]));
             collect_crash_log()
+
+            msg = message["payload"].strip().split("|")
+            g_config["g_mem_block"] = int(msg[1])
+            g_config["g_mem_offset"] = int(msg[2])
+            g_config["g_seed_index"] = int(msg[3])
+            print("[Host MSG]: gotcha err in block: {}, offset: {}".format(g_config["g_mem_block"], g_config["g_mem_offset"]))
+
+            g_config["g_mem_offset"] += 4
             new_round()
 
 def new_round():
-
 
     # for app in frida.get_usb_device().enumerate_applications():
     #     print("[i] {}".format(app))
@@ -86,6 +95,7 @@ def new_round():
         try:
             time.sleep(1)
             frida.get_usb_device().get_process(g_config["g_proc_name"])
+            time.sleep(3)
             break
         except:
             pass
