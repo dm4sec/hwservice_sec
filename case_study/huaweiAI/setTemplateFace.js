@@ -100,11 +100,12 @@ Java.perform(function () {
 
     // may help exploring the subtle exception.
     // in testing.
+
     Process.setExceptionHandler(function(error)
     {
         send("error (" + error + ")|" + g_fuzz_status.block + "|" + g_fuzz_status.offset + "|" + g_fuzz_status.seed_index);
-        console.warn("[!] ExceptionHandler: exception received, details: " + "ExceptionHandler|block:" + g_fuzz_status.block + "|offset:0x" + g_fuzz_status.offset.toString(16) + "|seed:" + g_fuzz_status.seed_index);
-        console.warn("[!] ExceptionHandler: exception received, details: " + error);
+        console.warn("|-[!] ExceptionHandler: exception received, details: " + "ExceptionHandler|block:" + g_fuzz_status.block + "|offset:0x" + g_fuzz_status.offset.toString(16) + "|seed:" + g_fuzz_status.seed_index);
+        console.warn("|-[!] ExceptionHandler: exception received, details: " + error);
         Interceptor.detachAll();
         return false;
     })
@@ -120,7 +121,7 @@ Java.perform(function () {
 //            console.log("[*] onLeave: g_BpHwBinder_transact_vendor_ptr");
             if (retval.toInt32() == DEAD_OBJECT){
                 send("error (dead object)|" + g_fuzz_status.block + "|" + g_fuzz_status.offset + "|" + g_fuzz_status.seed_index);
-                console.error("[!] error (dead object)|" + g_fuzz_status.block + "|" + g_fuzz_status.offset + "|" + g_fuzz_status.seed_index);
+                console.error("|-[!] error (dead object)|" + g_fuzz_status.block + "|" + g_fuzz_status.offset + "|" + g_fuzz_status.seed_index);
                 Interceptor.detachAll();
             }
         }
@@ -181,27 +182,28 @@ Java.perform(function () {
     }
 
     function fuzzObject(mData_pos, mDataSize, mObjects_pos, mObjectsSize){
-        console.log("|-[i] enter fuzzObject")
+        // console.log("|-[i] enter fuzzObject")
 
         // dump_mem(mObjects_pos, mObjectsSize * 8);
 
         // go to the `fd` directly.
         var binder_object_ptr       = mData_pos.add(mObjects_pos.add((mObjectsSize - 2) * 8).readU64()).add(0x8).readPointer();
-        var binder_object_len       = mData_pos.add(mObjects_pos.add((mObjectsSize - 2) * 8).readU64()).add(0x10).readU32();
+        // var binder_object_len       = mData_pos.add(mObjects_pos.add((mObjectsSize - 2) * 8).readU64()).add(0x10).readU32();
 
-//        console.log(binder_object_ptr);
-//        console.log(binder_object_len);
+        // console.log(binder_object_ptr);
+        // console.log(binder_object_len);
 
         // dump_mem(binder_object_ptr, binder_object_len);
+        var this_fd = binder_object_ptr.add(0x0c).readU32();
+        var this_size = binder_object_ptr.add(0x18).readU32();
 
-        if (binder_object_ptr.add(0x18).readU32() != g_fuzz_status.model_size)
+        if (this_size != g_fuzz_status.model_size)
         {
+            // console.log("|-[i] NOT the expected this_size: 0x" + this_size.toString(16));
             return;
         }
-        var this_fd = binder_object_ptr.add(0x0c).readU32();
-        console.log("|-[i] this_fd: 0x" + this_fd.toString(16));
-        var this_size = binder_object_ptr.add(0x18).readU32();
-        console.log("|-[i] this_size: 0x" + this_size.toString(16));
+        // console.log("|-[i] this_fd: 0x" + this_fd.toString(16));
+        // console.log("|-[i] this_size: 0x" + this_size.toString(16));
 
         var map_memory_addr = g_mmap_func(
             0,
@@ -234,16 +236,17 @@ Java.perform(function () {
 
         if (g_fuzz_status.seed_index == 0)
         {
+            console.log("|-[d] send")
             send("info|" + g_fuzz_status.block + "|" + g_fuzz_status.offset + "|" + g_fuzz_status.seed_index);
+            console.log("|-[d] send done")
+
             // wait the host to finish it's task.
-            // TODO:: will suspend the client
-            // console.log("|-[i] waiting message from host")
+            console.log("|-[d] waiting message from host")
             var foo = recv('synchronize', function(value) {
-                // console.log("|-[i] host ready message received, continue.");
-                // console.log("|-[i] got it")
+                console.log("|-[d] host ready message received, continue.");
             });
-            // foo.wait();
-            // console.log("|-[i] got it")
+            foo.wait();
+            console.log("|-[d] host ready message received, continue.");
         }
 
         // dump_mem(ptr(map_memory_addr), 0x100);
@@ -253,7 +256,7 @@ Java.perform(function () {
         var new_value = genSeed(fuzzPos.readU32())[g_fuzz_status.seed_index];
         fuzzPos.writeS32(new_value);
 
-        console.log("|-[i] fuzzing block: " + g_fuzz_status.block + ", with offset: 0x" + g_fuzz_status.offset.toString(16) + ", with org value: 0x" + org_value.toString(16) + ", with seed: 0x" + new_value.toString(16));
+        console.log("|-[i] fuzzing block: #" + g_fuzz_status.block + ", with offset: 0x" + g_fuzz_status.offset.toString(16) + ", with org value: 0x" + org_value.toString(16) + ", with seed: 0x" + new_value.toString(16));
 
         // dump_mem(ptr(map_memory_addr).add(parseInt(g_fuzz_status.offset / 0x40) * 0x40), 0x40);
 

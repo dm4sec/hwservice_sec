@@ -6,10 +6,14 @@ By observing, I find it's a case to case fuzzing for a specific service.
 2. `huaweiSurity` is used to fuzz [huawei security service](https://developer.huawei.com/consumer/cn/doc/development/Security-Guides/introduction-0000001051069988).
 
 # Reference
+
 https://gitee.com/openharmony/ai_engine  
-https://gitee.com/openharmony/security_itrustee_ree_lite
+https://support.huawei.com/enterprise/zh/doc/EDOC1100150022?section=j00y  
+
+https://android.googlesource.com/platform/external/tensorflow/+/refs/heads/master/tensorflow/security/README.md  
+https://android.googlesource.com/platform/external/tensorflow/+/refs/heads/master/tensorflow/security/fuzzing/  
+https://i.blackhat.com/EU-21/Wednesday/EU-21-Feng-AIModel-Mutator-Finding-Vulnerabilities-in-TensorFlow.pdf  
 
 https://paper.seebug.org/1617/  
-https://i.blackhat.com/EU-21/Wednesday/EU-21-Feng-AIModel-Mutator-Finding-Vulnerabilities-in-TensorFlow.pdf
 
-https://support.huawei.com/enterprise/zh/doc/EDOC1100150022?section=j00y
+https://gitee.com/openharmony/security_itrustee_ree_lite
