@@ -171,12 +171,13 @@ Note, there are 2 models under the value `0x1`, I tell them apart by using the s
 
 Considering that the long-time fuzzing will drain the battery, we opt to use over-network fuzzing.
 ```commandline
-1. config the `libgadget.config.so` file
+1. config the `libgadget.config.so` file ?
 2. config adbd via usb connection:
 2.1. to enable adb over network: 
 adb kill-server
 adb tcpip 5555
-adb connect 192.168.5.149:5555
+adb connect 192.168.2.205:5555
+adb connect 192.168.2.197:5555
 adb devices
 2.2 to disable adb over network:
 adb kill-server

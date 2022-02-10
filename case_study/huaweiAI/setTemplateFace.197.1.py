@@ -29,7 +29,7 @@ g_fuzz_config = {
     # "g_model_size": 0x1d5b50,
 
     "g_mem_block": 1,
-    "g_mem_offset": 568752,
+    "g_mem_offset": 794376,
     "g_log_file": "setTemplateFace_1_0x102536_crash.log",
     "g_model_size": 0x102536,
 
