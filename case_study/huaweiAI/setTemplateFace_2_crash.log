@@ -5735,3 +5735,84 @@
 ---------- error (Error: access violation accessing 0x0)|2|859228|2 ----------
 ---------- error (Error: access violation accessing 0x0)|2|863792|4 ----------
 ---------- error (Error: access violation accessing 0x0)|2|863792|4 ----------
+---------- error (Error: access violation accessing 0x0)|2|869072|1 ----------
+---------- error (Error: access violation accessing 0x0)|2|869072|1 ----------
+---------- error (Error: access violation accessing 0x0)|2|873600|1 ----------
+---------- error (Error: access violation accessing 0x0)|2|873600|1 ----------
+---------- error (Error: access violation accessing 0x0)|2|878080|4 ----------
+---------- error (Error: access violation accessing 0x0)|2|883020|1 ----------
+---------- error (Error: access violation accessing 0x0)|2|883020|1 ----------
+---------- error (Error: access violation accessing 0x0)|2|887968|2 ----------
+---------- error (Error: access violation accessing 0x0)|2|887968|2 ----------
+---------- error (Error: access violation accessing 0x0)|2|892452|1 ----------
+---------- error (Error: access violation accessing 0x0)|2|896940|3 ----------
+---------- error (Error: access violation accessing 0x0)|2|901448|4 ----------
+---------- error (Error: access violation accessing 0x0)|2|906156|4 ----------
+---------- error (Error: access violation accessing 0x0)|2|906156|4 ----------
+---------- error (Error: access violation accessing 0x0)|2|910872|2 ----------
+---------- error (Error: access violation accessing 0x0)|2|910872|2 ----------
+---------- error (Error: access violation accessing 0x0)|2|915384|3 ----------
+---------- error (Error: access violation accessing 0x0)|2|920344|1 ----------
+---------- error (Error: access violation accessing 0x0)|2|925096|1 ----------
+---------- error (Error: access violation accessing 0x0)|2|925096|1 ----------
+---------- error (Error: access violation accessing 0x0)|2|929584|4 ----------
+---------- error (Error: access violation accessing 0x0)|2|934072|3 ----------
+02-10 15:47:41.199 30335 30615 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x10 in tid 30615 (HeapTaskDaemon), pid 30335 (huawei.hiaidemo)
+02-10 15:47:41.306 10992 10992 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+02-10 15:47:41.306 10992 10992 F DEBUG   : Build fingerprint: 'HUAWEI/MRX-AN19/HWMRX:10/HUAWEIMRX-AN19/102.0.0.221C00:user/release-keys'
+02-10 15:47:41.306 10992 10992 F DEBUG   : Revision: '0'
+02-10 15:47:41.306 10992 10992 F DEBUG   : ABI: 'arm64'
+02-10 15:47:41.306 10992 10992 F DEBUG   : Timestamp: 2022-02-10 15:47:41+0800
+02-10 15:47:41.306 10992 10992 F DEBUG   : pid: 30335, tid: 30615, name: HeapTaskDaemon  >>> com.huawei.hiaidemo <<<
+02-10 15:47:41.306 10992 10992 F DEBUG   : uid: 10188
+02-10 15:47:41.306 10992 10992 F DEBUG   : signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x10
+02-10 15:47:41.306 10992 10992 F DEBUG   : Cause: null pointer dereference
+02-10 15:47:41.306 10992 10992 F DEBUG   :     x0  00000077e14ba800  x1  00000077d564da98  x2  0000000000000008  x3  0000000071335030
+02-10 15:47:41.306 10992 10992 F DEBUG   :     x4  00000000000004e4  x5  00000000132c3f24  x6  12c84f2012c85860  x7  000000007135e548
+02-10 15:47:41.307 10992 10992 F DEBUG   :     x8  0000000000000000  x9  e812c84c0daaaa6b  x10 0000000042c00000  x11 0000000000000008
+02-10 15:47:41.307 10992 10992 F DEBUG   :     x12 000000000000000b  x13 000009de00000077  x14 0002ec3710b31406  x15 000004aa412aa79c
+02-10 15:47:41.307 10992 10992 F DEBUG   :     x16 00000077e13c7bb8  x17 0000007862373c00  x18 000000777ad72000  x19 00000077d564da98
+02-10 15:47:41.307 10992 10992 F DEBUG   :     x20 0000000071335030  x21 0000000000000008  x22 0000000071aa2310  x23 0000000071aa0858
+02-10 15:47:41.307 10992 10992 F DEBUG   :     x24 0000000000000028  x25 0000000000002df0  x26 00000077d564f020  x27 0000000000001ab8
+02-10 15:47:41.307 10992 10992 F DEBUG   :     x28 0000000071aa0870  x29 00000077d564da80
+02-10 15:47:41.307 10992 10992 F DEBUG   :     sp  00000077d564da10  lr  00000077e0ff98e4  pc  00000077e0ff98c0
+02-10 15:47:41.449 10992 10992 F DEBUG   : 
+02-10 15:47:41.449 10992 10992 F DEBUG   : backtrace:
+02-10 15:47:41.450 10992 10992 F DEBUG   :       #00 pc 00000000002358c0  /apex/com.android.runtime/lib64/libart.so (_ZN3art6mirror6Object15VisitReferencesILb1ELNS_17VerifyObjectFlagsE0ELNS_17ReadBarrierOptionE1ENS_2gc9collector17ConcurrentCopying16RefFieldsVisitorILb1EEES9_EEvRKT2_RKT3_+2828) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
+02-10 15:47:41.450 10992 10992 F DEBUG   :       #01 pc 0000000000226a1c  /apex/com.android.runtime/lib64/libart.so (art::gc::collector::ConcurrentCopying::ImmuneSpaceScanObjVisitor::Callback(art::mirror::Object*, void*)+84) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
+02-10 15:47:41.450 10992 10992 F DEBUG   :       #02 pc 0000000000214d34  /apex/com.android.runtime/lib64/libart.so (art::gc::accounting::ModUnionTableReferenceCache::VisitObjects(void (*)(art::mirror::Object*, void*), void*)+228) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
+02-10 15:47:41.450 10992 10992 F DEBUG   :       #03 pc 0000000000221638  /apex/com.android.runtime/lib64/libart.so (art::gc::collector::ConcurrentCopying::CopyingPhase()+1236) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
+02-10 15:47:41.450 10992 10992 F DEBUG   :       #04 pc 000000000021f4e0  /apex/com.android.runtime/lib64/libart.so (art::gc::collector::ConcurrentCopying::RunPhases()+1148) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
+02-10 15:47:41.450 10992 10992 F DEBUG   :       #05 pc 000000000023deb4  /apex/com.android.runtime/lib64/libart.so (art::gc::collector::GarbageCollector::Run(art::gc::GcCause, bool)+288) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
+02-10 15:47:41.450 10992 10992 F DEBUG   :       #06 pc 000000000025d37c  /apex/com.android.runtime/lib64/libart.so (art::gc::Heap::CollectGarbageInternal(art::gc::collector::GcType, art::gc::GcCause, bool)+2740) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
+02-10 15:47:41.450 10992 10992 F DEBUG   :       #07 pc 000000000026fb5c  /apex/com.android.runtime/lib64/libart.so (art::gc::Heap::ConcurrentGC(art::Thread*, art::gc::GcCause, bool)+124) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
+02-10 15:47:41.450 10992 10992 F DEBUG   :       #08 pc 0000000000275858  /apex/com.android.runtime/lib64/libart.so (art::gc::Heap::ConcurrentGCTask::Run(art::Thread*)+36) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
+02-10 15:47:41.450 10992 10992 F DEBUG   :       #09 pc 00000000002a8230  /apex/com.android.runtime/lib64/libart.so (art::gc::TaskProcessor::RunAllTasks(art::Thread*)+64) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
+02-10 15:47:41.450 10992 10992 F DEBUG   :       #10 pc 0000000000067aec  /system/framework/arm64/boot-core-libart.oat (art_jni_trampoline+124) (BuildId: bfa9fb1ec77ae31598a40f6366394d30a82bd5be)
+02-10 15:47:41.450 10992 10992 F DEBUG   :       #11 pc 0000000000147334  /apex/com.android.runtime/lib64/libart.so (art_quick_invoke_stub+548) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
+02-10 15:47:41.450 10992 10992 F DEBUG   :       #12 pc 00000000001561b4  /apex/com.android.runtime/lib64/libart.so (art::ArtMethod::Invoke(art::Thread*, unsigned int*, unsigned int, art::JValue*, char const*)+252) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
+02-10 15:47:41.450 10992 10992 F DEBUG   :       #13 pc 00000000002fd900  /apex/com.android.runtime/lib64/libart.so (art::interpreter::ArtInterpreterToCompiledCodeBridge(art::Thread*, art::ArtMethod*, art::ShadowFrame*, unsigned short, art::JValue*)+384) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
+02-10 15:47:41.450 10992 10992 F DEBUG   :       #14 pc 00000000002f8bd0  /apex/com.android.runtime/lib64/libart.so (bool art::interpreter::DoCall<false, false>(art::ArtMethod*, art::Thread*, art::ShadowFrame&, art::Instruction const*, unsigned short, art::JValue*)+912) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
+02-10 15:47:41.450 10992 10992 F DEBUG   :       #15 pc 00000000005cb550  /apex/com.android.runtime/lib64/libart.so (MterpInvokeVirtual+648) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
+02-10 15:47:41.450 10992 10992 F DEBUG   :       #16 pc 0000000000141814  /apex/com.android.runtime/lib64/libart.so (mterp_op_invoke_virtual+20) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
+02-10 15:47:41.450 10992 10992 F DEBUG   :       #17 pc 00000000001b4bba  /apex/com.android.runtime/javalib/core-libart.jar (java.lang.Daemons$HeapTaskDaemon.runInternal+38)
+02-10 15:47:41.450 10992 10992 F DEBUG   :       #18 pc 00000000005cb860  /apex/com.android.runtime/lib64/libart.so (MterpInvokeVirtual+1432) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
+02-10 15:47:41.450 10992 10992 F DEBUG   :       #19 pc 0000000000141814  /apex/com.android.runtime/lib64/libart.so (mterp_op_invoke_virtual+20) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
+02-10 15:47:41.450 10992 10992 F DEBUG   :       #20 pc 00000000001b439e  /apex/com.android.runtime/javalib/core-libart.jar (java.lang.Daemons$Daemon.run+50)
+02-10 15:47:41.451 10992 10992 F DEBUG   :       #21 pc 00000000005cd060  /apex/com.android.runtime/lib64/libart.so (MterpInvokeInterface+1752) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
+02-10 15:47:41.451 10992 10992 F DEBUG   :       #22 pc 0000000000141a14  /apex/com.android.runtime/lib64/libart.so (mterp_op_invoke_interface+20) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
+02-10 15:47:41.451 10992 10992 F DEBUG   :       #23 pc 00000000000eabdc  /apex/com.android.runtime/javalib/core-oj.jar (java.lang.Thread.run+8)
+02-10 15:47:41.451 10992 10992 F DEBUG   :       #24 pc 00000000002ce22c  /apex/com.android.runtime/lib64/libart.so (_ZN3art11interpreterL7ExecuteEPNS_6ThreadERKNS_20CodeItemDataAccessorERNS_11ShadowFrameENS_6JValueEbb.llvm.10887373532384510885+320) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
+02-10 15:47:41.451 10992 10992 F DEBUG   :       #25 pc 00000000005bc090  /apex/com.android.runtime/lib64/libart.so (artQuickToInterpreterBridge+1012) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
+02-10 15:47:41.451 10992 10992 F DEBUG   :       #26 pc 0000000000150468  /apex/com.android.runtime/lib64/libart.so (art_quick_to_interpreter_bridge+88) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
+02-10 15:47:41.451 10992 10992 F DEBUG   :       #27 pc 0000000000147334  /apex/com.android.runtime/lib64/libart.so (art_quick_invoke_stub+548) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
+02-10 15:47:41.451 10992 10992 F DEBUG   :       #28 pc 00000000001561b4  /apex/com.android.runtime/lib64/libart.so (art::ArtMethod::Invoke(art::Thread*, unsigned int*, unsigned int, art::JValue*, char const*)+252) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
+02-10 15:47:41.451 10992 10992 F DEBUG   :       #29 pc 00000000004d8820  /apex/com.android.runtime/lib64/libart.so (art::(anonymous namespace)::InvokeWithArgArray(art::ScopedObjectAccessAlreadyRunnable const&, art::ArtMethod*, art::(anonymous namespace)::ArgArray*, art::JValue*, char const*)+104) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
+02-10 15:47:41.451 10992 10992 F DEBUG   :       #30 pc 00000000004d98b4  /apex/com.android.runtime/lib64/libart.so (art::InvokeVirtualOrInterfaceWithJValues(art::ScopedObjectAccessAlreadyRunnable const&, _jobject*, _jmethodID*, jvalue const*)+416) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
+02-10 15:47:41.451 10992 10992 F DEBUG   :       #31 pc 000000000051ca8c  /apex/com.android.runtime/lib64/libart.so (art::Thread::CreateCallback(void*)+1232) (BuildId: 691979e9d66dfedf3fd32d27da323a02)
+02-10 15:47:41.451 10992 10992 F DEBUG   :       #32 pc 00000000000cf7c0  /apex/com.android.runtime/lib64/bionic/libc.so (__pthread_start(void*)+36) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+02-10 15:47:41.451 10992 10992 F DEBUG   :       #33 pc 00000000000721a8  /apex/com.android.runtime/lib64/bionic/libc.so (__start_thread+64) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+
+---------- error (Error: access violation accessing 0x0)|2|940260|2 ----------
+---------- error (Error: access violation accessing 0x0)|2|944456|4 ----------
+---------- error (Error: access violation accessing 0x0)|2|944456|4 ----------

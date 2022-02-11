@@ -24,7 +24,7 @@ g_dev_serial = "192.168.2.205:5555" if g_isNetwork else "JAM6R20406000098"
 
 g_fuzz_config = {
     "g_mem_block": 2,
-    "g_mem_offset": 563896,
+    "g_mem_offset": 945148,
     "g_log_file": "setTemplateFace_2_crash.log",
     "g_model_size": 0x1d5b50,
 
