@@ -4,6 +4,8 @@ Java.perform(function () {
         "proc_name": "proc_name_AAoAA",
         "offset": mem_offset_AAoAA,
         "seed_index": 0,
+        "original_value": 0,
+        "new_value": 0
     }
 
     // funcHelper("mmap")
@@ -101,9 +103,9 @@ Java.perform(function () {
 
     Process.setExceptionHandler(function(error)
     {
-        send("error (" + error + ")|" + g_fuzz_status.offset + "|" + g_fuzz_status.seed_index);
-        console.warn("|-[!] ExceptionHandler: exception received, details: " + "ExceptionHandler|offset:0x" + g_fuzz_status.offset.toString(16) + "|seed:" + g_fuzz_status.seed_index);
+        console.warn("|-[!] ExceptionHandler: exception received, details: offset: 0x" + g_fuzz_status.offset.toString(16) + ", original value: 0x" + g_fuzz_status.original_value.toString(16) + ", new value: 0x" + g_fuzz_status.new_value.toString(16));
         console.warn("|-[!] ExceptionHandler: exception received, details: " + error);
+        send("error|" + error + "|" + g_fuzz_status.offset + "|" + g_fuzz_status.original_value + "|" + g_fuzz_status.new_value);
         Interceptor.detachAll();
         return false;
     })
@@ -118,8 +120,8 @@ Java.perform(function () {
         onLeave: function(retval) {
 //            console.log("[*] onLeave: g_BpHwBinder_transact_vendor_ptr");
             if (retval.toInt32() == DEAD_OBJECT){
-                send("error (dead object)|" + g_fuzz_status.offset + "|" + g_fuzz_status.seed_index);
-                console.error("|-[!] error (dead object)|" + g_fuzz_status.offset + "|" + g_fuzz_status.seed_index);
+                console.error("|-[!] error (dead object), offset: 0x" + g_fuzz_status.offset.toString(16) + ", original value: 0x" + g_fuzz_status.original_value.toString(16) + ", new value: 0x" + g_fuzz_status.new_value.toString(16));
+                send("error|dead object|" + g_fuzz_status.offset + "|" + g_fuzz_status.original_value + "|" + g_fuzz_status.new_value);
                 Interceptor.detachAll();
             }
         }
@@ -207,13 +209,14 @@ Java.perform(function () {
         if (g_fuzz_status.offset + 4 >= this_size)
         {
             console.warn("[i] finish fuzzing");
+            send("done");
             Interceptor.detachAll();
         }
 
         if (g_fuzz_status.seed_index == 0)
         {
             // console.log("|-[d] send")
-            send("info|" + g_fuzz_status.offset + "|" + g_fuzz_status.seed_index + "|" + this_size);
+            send("info|" + g_fuzz_status.offset + "|" + this_size);
             // console.log("|-[d] send done")
 
             // wait the host to finish it's task.
@@ -228,11 +231,11 @@ Java.perform(function () {
         // dump_mem(ptr(map_memory_addr), 0x100);
 
         var fuzzPos = ptr(map_memory_addr).add(g_fuzz_status.offset);
-        var org_value = fuzzPos.readU32();
-        var new_value = genSeed(fuzzPos.readU32())[g_fuzz_status.seed_index];
-        fuzzPos.writeS32(new_value);
+        g_fuzz_status.original_value = fuzzPos.readU32();
+        g_fuzz_status.new_value = genSeed(fuzzPos.readU32())[g_fuzz_status.seed_index];
+        fuzzPos.writeS32(g_fuzz_status.new_value);
 
-        console.log("|-[i] fuzzing offset: 0x" + g_fuzz_status.offset.toString(16) + ", with org value: 0x" + org_value.toString(16) + ", with seed: 0x" + new_value.toString(16));
+        // console.log("|-[i] fuzzing offset: 0x" + g_fuzz_status.offset.toString(16) + ", with org value: 0x" + g_fuzz_status.original_value.toString(16) + ", with seed: 0x" + g_fuzz_status.new_value.toString(16));
 
         // dump_mem(ptr(map_memory_addr).add(parseInt(g_fuzz_status.offset / 0x40) * 0x40), 0x40);
 
