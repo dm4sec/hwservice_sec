@@ -1,0 +1,14 @@
+Finished:
+detection.om
+ml_textsuperresolution_1.om
+
+
+
+
+
+In process:
+python3 startModelFromMem2.py --model-file="/sdcard/models/FaceDetectionExtddk.om" --task-name="FaceDetectionExtddk" --dev-serial="JAM6R20406000226" --model-offset=87896
+python3 startModelFromMem2.py --model-file="/sdcard/models/offline_squeezenet" --task-name="offline_squeezenet" --dev-serial="JAM6R20406000226" --model-offset=53564
+python3 startModelFromMem2.py --model-file="/sdcard/models/FaceDetectionInddk.om" --task-name="FaceDetectionInddk" --dev-serial="JAM6R20406000226" --model-offset=83916
+
+
