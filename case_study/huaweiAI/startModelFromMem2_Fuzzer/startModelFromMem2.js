@@ -128,7 +128,6 @@ Java.perform(function () {
         return false;
     })
 
-    // attach for test
     Interceptor.attach(g_BpHwBinder_transact_vendor_ptr, {
         onEnter: function(args) {
 //            console.log("[*] onEnter: g_BpHwBinder_transact_vendor_ptr");
