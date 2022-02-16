@@ -1,0 +1,668 @@
+---------- crash reason: dead object, offset: 51948 (0xcaec), original value: 0x3a336366, new value: 0x0 ----------
+02-15 18:59:30.871 23366 21296 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x38 in tid 21296 (HwBinder:23366_), pid 23366 (hiaiserver)
+02-15 18:59:30.922 32710 32710 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+02-15 18:59:30.922 32710 32710 F DEBUG   : Build fingerprint: 'HUAWEI/MRX-AN19/HWMRX:10/HUAWEIMRX-AN19/102.0.0.221C00:user/release-keys'
+02-15 18:59:30.922 32710 32710 F DEBUG   : Revision: '0'
+02-15 18:59:30.922 32710 32710 F DEBUG   : ABI: 'arm64'
+02-15 18:59:30.922 32710 32710 F DEBUG   : Timestamp: 2022-02-15 18:59:30+0800
+02-15 18:59:30.922 32710 32710 F DEBUG   : pid: 23366, tid: 21296, name: HwBinder:23366_  >>> /vendor/bin/hiaiserver <<<
+02-15 18:59:30.922 32710 32710 F DEBUG   : uid: 1000
+02-15 18:59:30.922 32710 32710 F DEBUG   : signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x38
+02-15 18:59:30.922 32710 32710 F DEBUG   : Cause: null pointer dereference
+02-15 18:59:30.922 32710 32710 F DEBUG   :     x0  0000000000000000  x1  0000007128e701e8  x2  0000000000000000  x3  0000000000000030
+02-15 18:59:30.922 32710 32710 F DEBUG   :     x4  00000000000000a7  x5  0000000000000030  x6  5d726f68636e4161  x7  543a3a726f68636e
+02-15 18:59:30.922 32710 32710 F DEBUG   :     x8  0000007120cfcb00  x9  0000000000000010  x10 0000000000000000  x11 0000000000000000
+02-15 18:59:30.922 32710 32710 F DEBUG   :     x12 00000070d82a76d0  x13 0000000000000028  x14 0000000000000000  x15 aaaaaaaaaaaaaaab
+02-15 18:59:30.922 32710 32710 F DEBUG   :     x16 0000007114179e98  x17 000000712a4b7364  x18 00000071202a0000  x19 0000007120cfcc14
+02-15 18:59:30.922 32710 32710 F DEBUG   :     x20 0000000000000000  x21 0000000000000001  x22 0000000000000001  x23 0000000000000000
+02-15 18:59:30.922 32710 32710 F DEBUG   :     x24 0000007120cff020  x25 0000000000000001  x26 000000710fa6b328  x27 000000712442ee00
+02-15 18:59:30.922 32710 32710 F DEBUG   :     x28 0000007124424f20  x29 0000007120cfcaf0
+02-15 18:59:30.922 32710 32710 F DEBUG   :     sp  0000007120cfcae0  lr  0000007113cd7740  pc  000000712a4b7378
+02-15 18:59:30.940 32710 32710 F DEBUG   : 
+02-15 18:59:30.940 32710 32710 F DEBUG   : backtrace:
+02-15 18:59:30.940 32710 32710 F DEBUG   :       #00 pc 0000000000036378  /vendor/lib64/libgraph.so (ge::Anchor::GetOwnerNode() const+20) (BuildId: d2a9b3d0cdbbae81ebf61f41d7db8a9d)
+02-15 18:59:30.940 32710 32710 F DEBUG   :       #01 pc 00000000004bc73c  /vendor/lib64/libai_npucore_elementary.so (BuildId: 812988222c5c65a9143faedfecbe2bec)
+02-15 18:59:30.940 32710 32710 F DEBUG   :       #02 pc 00000000004bc9f0  /vendor/lib64/libai_npucore_elementary.so (BuildId: 812988222c5c65a9143faedfecbe2bec)
+02-15 18:59:30.940 32710 32710 F DEBUG   :       #03 pc 00000000004bcd1c  /vendor/lib64/libai_npucore_elementary.so (BuildId: 812988222c5c65a9143faedfecbe2bec)
+02-15 18:59:30.940 32710 32710 F DEBUG   :       #04 pc 0000000000164b60  /vendor/lib64/libfusionengine.so (fe::GraphOptRuleStore::Run(std::__1::shared_ptr<ge::ComputeGraph>, std::__1::shared_ptr<npucl::WeightParams>, std::__1::shared_ptr<npucl::ScopeAllocator>)+472) (BuildId: dbc9423f66df615145e6e5fd568e4469)
+02-15 18:59:30.940 32710 32710 F DEBUG   :       #05 pc 0000000000162fec  /vendor/lib64/libfusionengine.so (fe::OptRuleManager::Run(fe::OptimizeStage, std::__1::shared_ptr<ge::ComputeGraph>, std::__1::shared_ptr<npucl::WeightParams>, std::__1::shared_ptr<npucl::ScopeAllocator>)+320) (BuildId: dbc9423f66df615145e6e5fd568e4469)
+02-15 18:59:30.940 32710 32710 F DEBUG   :       #06 pc 00000000000a1bdc  /vendor/lib64/libfusionengine.so (fusion::FusionManager::BufferFusion(std::__1::shared_ptr<ge::ComputeGraph>, std::__1::shared_ptr<ge::ComputeGraph>)+1472) (BuildId: dbc9423f66df615145e6e5fd568e4469)
+02-15 18:59:30.940 32710 32710 F DEBUG   :       #07 pc 000000000009fec0  /vendor/lib64/libfusionengine.so (fusion::BufferFusion(std::__1::shared_ptr<ge::ComputeGraph>, std::__1::shared_ptr<ge::ComputeGraph>)+140) (BuildId: dbc9423f66df615145e6e5fd568e4469)
+02-15 18:59:30.940 32710 32710 F DEBUG   :       #08 pc 00000000000a9224  /vendor/lib64/libfusionengine.so (BuildId: dbc9423f66df615145e6e5fd568e4469)
+02-15 18:59:30.940 32710 32710 F DEBUG   :       #09 pc 00000000000a8d84  /vendor/lib64/libfusionengine.so (fe::GraphPreCompileOptimizer::Optimize(ge::GraphOptimizerOptions const&, std::__1::shared_ptr<ge::ComputeGraph>&)+48) (BuildId: dbc9423f66df615145e6e5fd568e4469)
+02-15 18:59:30.940 32710 32710 F DEBUG   :       #10 pc 00000000000af86c  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 18:59:30.940 32710 32710 F DEBUG   :       #11 pc 00000000000abb6c  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 18:59:30.940 32710 32710 F DEBUG   :       #12 pc 00000000000aab08  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 18:59:30.940 32710 32710 F DEBUG   :       #13 pc 00000000000aa57c  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 18:59:30.940 32710 32710 F DEBUG   :       #14 pc 00000000000b5760  /vendor/lib64/libhiai_executor.so (ge::OMModelGenerator::GenerateFromBuffer(ge::GenerateOptions const&, ge::BaseBuffer const&, std::__1::shared_ptr<ge::CompiledModel>&)+1052) (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 18:59:30.940 32710 32710 F DEBUG   :       #15 pc 0000000000032b4c  /vendor/lib64/libhiai_server.so (ge::ExecutorManager::LoadModel(ge::LoadModelOptions const&, ge::BaseBuffer const&, unsigned int&)+1380) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+02-15 18:59:30.940 32710 32710 F DEBUG   :       #16 pc 000000000001a890  /vendor/lib64/libhiai_server.so (hiai::AIModelManagerImpl::LoadModelFromMem(hiai::AIModelDescription const&, unsigned int&)+1132) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+02-15 18:59:30.940 32710 32710 F DEBUG   :       #17 pc 0000000000018fb4  /vendor/lib64/libhiai_server.so (hiai::AIModelManagerImpl::LoadModels(std::__1::vector<hiai::AIModelDescription, std::__1::allocator<hiai::AIModelDescription>> const&)+196) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+02-15 18:59:30.940 32710 32710 F DEBUG   :       #18 pc 0000000000018794  /vendor/lib64/libhiai_server.so (hiai::AIModelManagerImpl::Init(hiai::AIConfig const&, std::__1::vector<hiai::AIModelDescription, std::__1::allocator<hiai::AIModelDescription>> const&)+76) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+02-15 18:59:30.940 32710 32710 F DEBUG   :       #19 pc 0000000000052b30  /vendor/bin/hiaiserver (ai::AiModelMngrService::LoadModel(int, int, hiai::AIConfig const&, std::__1::vector<hiai::AIModelDescription, std::__1::allocator<hiai::AIModelDescription>> const&, bool, bool)+1452) (BuildId: 480c54fdb0df11b667956c294e2d001a)
+02-15 18:59:30.940 32710 32710 F DEBUG   :       #20 pc 00000000000594e8  /vendor/bin/hiaiserver (ai::AiModelMngrService::startModelFromMem2(int, int, android::hardware::hidl_vec<vendor::huawei::hardware::ai::V1_0::ModelBuffer> const&)+1616) (BuildId: 480c54fdb0df11b667956c294e2d001a)
+02-15 18:59:30.940 32710 32710 F DEBUG   :       #21 pc 000000000006c97c  /vendor/lib64/vendor.huawei.hardware.ai@1.1.so (vendor::huawei::hardware::ai::V1_1::BnHwAiModelMngr::_hidl_startModelFromMem2(android::hidl::base::V1_0::BnHwBase*, android::hardware::Parcel const&, android::hardware::Parcel*, std::__1::function<void (android::hardware::Parcel&)>)+352) (BuildId: 401d2d5fe2bf2a86050ef8f4ab4ffb3f)
+02-15 18:59:30.940 32710 32710 F DEBUG   :       #22 pc 0000000000016094  /vendor/lib64/vendor.huawei.hardware.ai@3.2.so (vendor::huawei::hardware::ai::V3_2::BnHwAiModelMngr::onTransact(unsigned int, android::hardware::Parcel const&, android::hardware::Parcel*, unsigned int, std::__1::function<void (android::hardware::Parcel&)>)+2724) (BuildId: 8d0033ecc5612c03f0f58d8e15dfa964)
+02-15 18:59:30.940 32710 32710 F DEBUG   :       #23 pc 00000000000825f4  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::BHwBinder::transact(unsigned int, android::hardware::Parcel const&, android::hardware::Parcel*, unsigned int, std::__1::function<void (android::hardware::Parcel&)>)+68) (BuildId: e118fa494ca0871fdbd553b0452e17cb)
+02-15 18:59:30.940 32710 32710 F DEBUG   :       #24 pc 0000000000085e88  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::IPCThreadState::getAndExecuteCommand()+1036) (BuildId: e118fa494ca0871fdbd553b0452e17cb)
+02-15 18:59:30.940 32710 32710 F DEBUG   :       #25 pc 0000000000087518  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::IPCThreadState::joinThreadPool(bool)+152) (BuildId: e118fa494ca0871fdbd553b0452e17cb)
+02-15 18:59:30.940 32710 32710 F DEBUG   :       #26 pc 0000000000096654  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::PoolThread::threadLoop()+24) (BuildId: e118fa494ca0871fdbd553b0452e17cb)
+02-15 18:59:30.940 32710 32710 F DEBUG   :       #27 pc 00000000000136d4  /system/lib64/vndk-sp-29/libutils.so (android::Thread::_threadLoop(void*)+288) (BuildId: 38bfce7f86e6c4ef3ceb997e88df0926)
+02-15 18:59:30.940 32710 32710 F DEBUG   :       #28 pc 00000000000cf7c0  /apex/com.android.runtime/lib64/bionic/libc.so (__pthread_start(void*)+36) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+02-15 18:59:30.940 32710 32710 F DEBUG   :       #29 pc 00000000000721a8  /apex/com.android.runtime/lib64/bionic/libc.so (__start_thread+64) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+
+---------- crash reason: dead object, offset: 51956 (0xcaf4), original value: 0x303a3363, new value: 0x0 ----------
+02-15 18:59:33.459 32718   498 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x38 in tid 498 (HwBinder:32718_), pid 32718 (hiaiserver)
+02-15 18:59:33.475  1055  1055 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+02-15 18:59:33.475  1055  1055 F DEBUG   : Build fingerprint: 'HUAWEI/MRX-AN19/HWMRX:10/HUAWEIMRX-AN19/102.0.0.221C00:user/release-keys'
+02-15 18:59:33.475  1055  1055 F DEBUG   : Revision: '0'
+02-15 18:59:33.475  1055  1055 F DEBUG   : ABI: 'arm64'
+02-15 18:59:33.475  1055  1055 F DEBUG   : Timestamp: 2022-02-15 18:59:33+0800
+02-15 18:59:33.475  1055  1055 F DEBUG   : pid: 32718, tid: 498, name: HwBinder:32718_  >>> /vendor/bin/hiaiserver <<<
+02-15 18:59:33.475  1055  1055 F DEBUG   : uid: 1000
+02-15 18:59:33.475  1055  1055 F DEBUG   : signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x38
+02-15 18:59:33.475  1055  1055 F DEBUG   : Cause: null pointer dereference
+02-15 18:59:33.475  1055  1055 F DEBUG   :     x0  0000000000000000  x1  00000070ee6701e8  x2  0000000000000000  x3  0000000000000030
+02-15 18:59:33.475  1055  1055 F DEBUG   :     x4  0000000000000074  x5  0000000000000030  x6  5d726f68636e4161  x7  543a3a726f68636e
+02-15 18:59:33.475  1055  1055 F DEBUG   :     x8  00000070e88fcb00  x9  0000000000000020  x10 0000000000000000  x11 0000000000000000
+02-15 18:59:33.475  1055  1055 F DEBUG   :     x12 00000070e9e74aa0  x13 0000000000000028  x14 0000000000000000  x15 aaaaaaaaaaaaaaab
+02-15 18:59:33.475  1055  1055 F DEBUG   :     x16 00000070dc478e98  x17 00000070f083c364  x18 00000070e7c1a000  x19 00000070e88fcc14
+02-15 18:59:33.475  1055  1055 F DEBUG   :     x20 0000000000000000  x21 0000000000000002  x22 0000000000000001  x23 0000000000000001
+02-15 18:59:33.475  1055  1055 F DEBUG   :     x24 00000070e88ff020  x25 0000000000000002  x26 00000070e9ebf280  x27 00000070e9ebf280
+02-15 18:59:33.475  1055  1055 F DEBUG   :     x28 00000070e9bd6e90  x29 00000070e88fcaf0
+02-15 18:59:33.475  1055  1055 F DEBUG   :     sp  00000070e88fcae0  lr  00000070dbfd6740  pc  00000070f083c378
+02-15 18:59:33.485  1055  1055 F DEBUG   : 
+02-15 18:59:33.485  1055  1055 F DEBUG   : backtrace:
+02-15 18:59:33.485  1055  1055 F DEBUG   :       #00 pc 0000000000036378  /vendor/lib64/libgraph.so (ge::Anchor::GetOwnerNode() const+20) (BuildId: d2a9b3d0cdbbae81ebf61f41d7db8a9d)
+02-15 18:59:33.485  1055  1055 F DEBUG   :       #01 pc 00000000004bc73c  /vendor/lib64/libai_npucore_elementary.so (BuildId: 812988222c5c65a9143faedfecbe2bec)
+02-15 18:59:33.485  1055  1055 F DEBUG   :       #02 pc 00000000004bc9f0  /vendor/lib64/libai_npucore_elementary.so (BuildId: 812988222c5c65a9143faedfecbe2bec)
+02-15 18:59:33.485  1055  1055 F DEBUG   :       #03 pc 00000000004bcd1c  /vendor/lib64/libai_npucore_elementary.so (BuildId: 812988222c5c65a9143faedfecbe2bec)
+02-15 18:59:33.485  1055  1055 F DEBUG   :       #04 pc 0000000000164b60  /vendor/lib64/libfusionengine.so (fe::GraphOptRuleStore::Run(std::__1::shared_ptr<ge::ComputeGraph>, std::__1::shared_ptr<npucl::WeightParams>, std::__1::shared_ptr<npucl::ScopeAllocator>)+472) (BuildId: dbc9423f66df615145e6e5fd568e4469)
+02-15 18:59:33.485  1055  1055 F DEBUG   :       #05 pc 0000000000162fec  /vendor/lib64/libfusionengine.so (fe::OptRuleManager::Run(fe::OptimizeStage, std::__1::shared_ptr<ge::ComputeGraph>, std::__1::shared_ptr<npucl::WeightParams>, std::__1::shared_ptr<npucl::ScopeAllocator>)+320) (BuildId: dbc9423f66df615145e6e5fd568e4469)
+02-15 18:59:33.485  1055  1055 F DEBUG   :       #06 pc 00000000000a1bdc  /vendor/lib64/libfusionengine.so (fusion::FusionManager::BufferFusion(std::__1::shared_ptr<ge::ComputeGraph>, std::__1::shared_ptr<ge::ComputeGraph>)+1472) (BuildId: dbc9423f66df615145e6e5fd568e4469)
+02-15 18:59:33.485  1055  1055 F DEBUG   :       #07 pc 000000000009fec0  /vendor/lib64/libfusionengine.so (fusion::BufferFusion(std::__1::shared_ptr<ge::ComputeGraph>, std::__1::shared_ptr<ge::ComputeGraph>)+140) (BuildId: dbc9423f66df615145e6e5fd568e4469)
+02-15 18:59:33.485  1055  1055 F DEBUG   :       #08 pc 00000000000a9224  /vendor/lib64/libfusionengine.so (BuildId: dbc9423f66df615145e6e5fd568e4469)
+02-15 18:59:33.485  1055  1055 F DEBUG   :       #09 pc 00000000000a8d84  /vendor/lib64/libfusionengine.so (fe::GraphPreCompileOptimizer::Optimize(ge::GraphOptimizerOptions const&, std::__1::shared_ptr<ge::ComputeGraph>&)+48) (BuildId: dbc9423f66df615145e6e5fd568e4469)
+02-15 18:59:33.485  1055  1055 F DEBUG   :       #10 pc 00000000000af86c  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 18:59:33.485  1055  1055 F DEBUG   :       #11 pc 00000000000abb6c  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 18:59:33.485  1055  1055 F DEBUG   :       #12 pc 00000000000aab08  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 18:59:33.485  1055  1055 F DEBUG   :       #13 pc 00000000000aa57c  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 18:59:33.485  1055  1055 F DEBUG   :       #14 pc 00000000000b5760  /vendor/lib64/libhiai_executor.so (ge::OMModelGenerator::GenerateFromBuffer(ge::GenerateOptions const&, ge::BaseBuffer const&, std::__1::shared_ptr<ge::CompiledModel>&)+1052) (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 18:59:33.485  1055  1055 F DEBUG   :       #15 pc 0000000000032b4c  /vendor/lib64/libhiai_server.so (ge::ExecutorManager::LoadModel(ge::LoadModelOptions const&, ge::BaseBuffer const&, unsigned int&)+1380) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+02-15 18:59:33.485  1055  1055 F DEBUG   :       #16 pc 000000000001a890  /vendor/lib64/libhiai_server.so (hiai::AIModelManagerImpl::LoadModelFromMem(hiai::AIModelDescription const&, unsigned int&)+1132) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+02-15 18:59:33.485  1055  1055 F DEBUG   :       #17 pc 0000000000018fb4  /vendor/lib64/libhiai_server.so (hiai::AIModelManagerImpl::LoadModels(std::__1::vector<hiai::AIModelDescription, std::__1::allocator<hiai::AIModelDescription>> const&)+196) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+02-15 18:59:33.485  1055  1055 F DEBUG   :       #18 pc 0000000000018794  /vendor/lib64/libhiai_server.so (hiai::AIModelManagerImpl::Init(hiai::AIConfig const&, std::__1::vector<hiai::AIModelDescription, std::__1::allocator<hiai::AIModelDescription>> const&)+76) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+02-15 18:59:33.485  1055  1055 F DEBUG   :       #19 pc 0000000000052b30  /vendor/bin/hiaiserver (ai::AiModelMngrService::LoadModel(int, int, hiai::AIConfig const&, std::__1::vector<hiai::AIModelDescription, std::__1::allocator<hiai::AIModelDescription>> const&, bool, bool)+1452) (BuildId: 480c54fdb0df11b667956c294e2d001a)
+02-15 18:59:33.485  1055  1055 F DEBUG   :       #20 pc 00000000000594e8  /vendor/bin/hiaiserver (ai::AiModelMngrService::startModelFromMem2(int, int, android::hardware::hidl_vec<vendor::huawei::hardware::ai::V1_0::ModelBuffer> const&)+1616) (BuildId: 480c54fdb0df11b667956c294e2d001a)
+02-15 18:59:33.485  1055  1055 F DEBUG   :       #21 pc 000000000006c97c  /vendor/lib64/vendor.huawei.hardware.ai@1.1.so (vendor::huawei::hardware::ai::V1_1::BnHwAiModelMngr::_hidl_startModelFromMem2(android::hidl::base::V1_0::BnHwBase*, android::hardware::Parcel const&, android::hardware::Parcel*, std::__1::function<void (android::hardware::Parcel&)>)+352) (BuildId: 401d2d5fe2bf2a86050ef8f4ab4ffb3f)
+02-15 18:59:33.485  1055  1055 F DEBUG   :       #22 pc 0000000000016094  /vendor/lib64/vendor.huawei.hardware.ai@3.2.so (vendor::huawei::hardware::ai::V3_2::BnHwAiModelMngr::onTransact(unsigned int, android::hardware::Parcel const&, android::hardware::Parcel*, unsigned int, std::__1::function<void (android::hardware::Parcel&)>)+2724) (BuildId: 8d0033ecc5612c03f0f58d8e15dfa964)
+02-15 18:59:33.485  1055  1055 F DEBUG   :       #23 pc 00000000000825f4  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::BHwBinder::transact(unsigned int, android::hardware::Parcel const&, android::hardware::Parcel*, unsigned int, std::__1::function<void (android::hardware::Parcel&)>)+68) (BuildId: e118fa494ca0871fdbd553b0452e17cb)
+02-15 18:59:33.485  1055  1055 F DEBUG   :       #24 pc 0000000000085e88  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::IPCThreadState::getAndExecuteCommand()+1036) (BuildId: e118fa494ca0871fdbd553b0452e17cb)
+02-15 18:59:33.485  1055  1055 F DEBUG   :       #25 pc 0000000000087518  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::IPCThreadState::joinThreadPool(bool)+152) (BuildId: e118fa494ca0871fdbd553b0452e17cb)
+02-15 18:59:33.485  1055  1055 F DEBUG   :       #26 pc 0000000000096654  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::PoolThread::threadLoop()+24) (BuildId: e118fa494ca0871fdbd553b0452e17cb)
+02-15 18:59:33.485  1055  1055 F DEBUG   :       #27 pc 00000000000136d4  /system/lib64/vndk-sp-29/libutils.so (android::Thread::_threadLoop(void*)+288) (BuildId: 38bfce7f86e6c4ef3ceb997e88df0926)
+02-15 18:59:33.485  1055  1055 F DEBUG   :       #28 pc 00000000000cf7c0  /apex/com.android.runtime/lib64/bionic/libc.so (__pthread_start(void*)+36) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+02-15 18:59:33.485  1055  1055 F DEBUG   :       #29 pc 00000000000721a8  /apex/com.android.runtime/lib64/bionic/libc.so (__start_thread+64) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+
+---------- crash reason: dead object, offset: 62008 (0xf238), original value: 0x7221010, new value: 0x41414141 ----------
+02-15 19:05:09.172  1320  1320 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0 in tid 1320 (hiaiserver), pid 1320 (hiaiserver)
+02-15 19:05:09.189  2255  2255 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+02-15 19:05:09.190  2255  2255 F DEBUG   : Build fingerprint: 'HUAWEI/MRX-AN19/HWMRX:10/HUAWEIMRX-AN19/102.0.0.221C00:user/release-keys'
+02-15 19:05:09.190  2255  2255 F DEBUG   : Revision: '0'
+02-15 19:05:09.190  2255  2255 F DEBUG   : ABI: 'arm64'
+02-15 19:05:09.190  2255  2255 F DEBUG   : Timestamp: 2022-02-15 19:05:09+0800
+02-15 19:05:09.190  2255  2255 F DEBUG   : pid: 1320, tid: 1320, name: hiaiserver  >>> /vendor/bin/hiaiserver <<<
+02-15 19:05:09.190  2255  2255 F DEBUG   : uid: 1000
+02-15 19:05:09.190  2255  2255 F DEBUG   : signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0
+02-15 19:05:09.190  2255  2255 F DEBUG   : Cause: null pointer dereference
+02-15 19:05:09.190  2255  2255 F DEBUG   :     x0  0000007fd0147610  x1  0000007733981e30  x2  0000007733800000  x3  0000000000000001
+02-15 19:05:09.190  2255  2255 F DEBUG   :     x4  0000000000000181  x5  61416e63686f725d  x6  5d726f68636e4161  x7  543a3a726f68636e
+02-15 19:05:09.190  2255  2255 F DEBUG   :     x8  0000000000000000  x9  387a79bfe3469534  x10 0000000000000003  x11 0000000000000000
+02-15 19:05:09.190  2255  2255 F DEBUG   :     x12 00000077382fa8b0  x13 0000000000000028  x14 0000000000000000  x15 aaaaaaaaaaaaaaab
+02-15 19:05:09.190  2255  2255 F DEBUG   :     x16 000000773a771a30  x17 000000773a765f80  x18 000000773bd68000  x19 00000077339917a0
+02-15 19:05:09.190  2255  2255 F DEBUG   :     x20 0000000000000001  x21 00000077339d5e00  x22 0000007724b6e318  x23 0000007733946860
+02-15 19:05:09.190  2255  2255 F DEBUG   :     x24 0000007733991680  x25 0000000000000000  x26 0000007733654d30  x27 000000773390dd00
+02-15 19:05:09.190  2255  2255 F DEBUG   :     x28 00000077339db100  x29 0000007fd0147840
+02-15 19:05:09.190  2255  2255 F DEBUG   :     sp  0000007fd0147670  lr  00000077247c9ea0  pc  00000077247c9ea4
+02-15 19:05:09.197  2255  2255 F DEBUG   : 
+02-15 19:05:09.197  2255  2255 F DEBUG   : backtrace:
+02-15 19:05:09.197  2255  2255 F DEBUG   :       #00 pc 000000000057fea4  /vendor/lib64/libai_npucore_elementary.so (BuildId: 812988222c5c65a9143faedfecbe2bec)
+02-15 19:05:09.197  2255  2255 F DEBUG   :       #01 pc 0000000000164b60  /vendor/lib64/libfusionengine.so (fe::GraphOptRuleStore::Run(std::__1::shared_ptr<ge::ComputeGraph>, std::__1::shared_ptr<npucl::WeightParams>, std::__1::shared_ptr<npucl::ScopeAllocator>)+472) (BuildId: dbc9423f66df615145e6e5fd568e4469)
+02-15 19:05:09.197  2255  2255 F DEBUG   :       #02 pc 0000000000162fec  /vendor/lib64/libfusionengine.so (fe::OptRuleManager::Run(fe::OptimizeStage, std::__1::shared_ptr<ge::ComputeGraph>, std::__1::shared_ptr<npucl::WeightParams>, std::__1::shared_ptr<npucl::ScopeAllocator>)+320) (BuildId: dbc9423f66df615145e6e5fd568e4469)
+02-15 19:05:09.197  2255  2255 F DEBUG   :       #03 pc 00000000000a1968  /vendor/lib64/libfusionengine.so (fusion::FusionManager::BufferFusion(std::__1::shared_ptr<ge::ComputeGraph>, std::__1::shared_ptr<ge::ComputeGraph>)+844) (BuildId: dbc9423f66df615145e6e5fd568e4469)
+02-15 19:05:09.197  2255  2255 F DEBUG   :       #04 pc 000000000009fec0  /vendor/lib64/libfusionengine.so (fusion::BufferFusion(std::__1::shared_ptr<ge::ComputeGraph>, std::__1::shared_ptr<ge::ComputeGraph>)+140) (BuildId: dbc9423f66df615145e6e5fd568e4469)
+02-15 19:05:09.197  2255  2255 F DEBUG   :       #05 pc 00000000000a9224  /vendor/lib64/libfusionengine.so (BuildId: dbc9423f66df615145e6e5fd568e4469)
+02-15 19:05:09.197  2255  2255 F DEBUG   :       #06 pc 00000000000a8d84  /vendor/lib64/libfusionengine.so (fe::GraphPreCompileOptimizer::Optimize(ge::GraphOptimizerOptions const&, std::__1::shared_ptr<ge::ComputeGraph>&)+48) (BuildId: dbc9423f66df615145e6e5fd568e4469)
+02-15 19:05:09.197  2255  2255 F DEBUG   :       #07 pc 00000000000af86c  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:05:09.197  2255  2255 F DEBUG   :       #08 pc 00000000000abb6c  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:05:09.197  2255  2255 F DEBUG   :       #09 pc 00000000000aab08  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:05:09.197  2255  2255 F DEBUG   :       #10 pc 00000000000aa57c  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:05:09.197  2255  2255 F DEBUG   :       #11 pc 00000000000b5760  /vendor/lib64/libhiai_executor.so (ge::OMModelGenerator::GenerateFromBuffer(ge::GenerateOptions const&, ge::BaseBuffer const&, std::__1::shared_ptr<ge::CompiledModel>&)+1052) (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:05:09.197  2255  2255 F DEBUG   :       #12 pc 0000000000032b4c  /vendor/lib64/libhiai_server.so (ge::ExecutorManager::LoadModel(ge::LoadModelOptions const&, ge::BaseBuffer const&, unsigned int&)+1380) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+02-15 19:05:09.197  2255  2255 F DEBUG   :       #13 pc 000000000001a890  /vendor/lib64/libhiai_server.so (hiai::AIModelManagerImpl::LoadModelFromMem(hiai::AIModelDescription const&, unsigned int&)+1132) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+02-15 19:05:09.197  2255  2255 F DEBUG   :       #14 pc 0000000000018fb4  /vendor/lib64/libhiai_server.so (hiai::AIModelManagerImpl::LoadModels(std::__1::vector<hiai::AIModelDescription, std::__1::allocator<hiai::AIModelDescription>> const&)+196) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+02-15 19:05:09.197  2255  2255 F DEBUG   :       #15 pc 0000000000018794  /vendor/lib64/libhiai_server.so (hiai::AIModelManagerImpl::Init(hiai::AIConfig const&, std::__1::vector<hiai::AIModelDescription, std::__1::allocator<hiai::AIModelDescription>> const&)+76) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+02-15 19:05:09.197  2255  2255 F DEBUG   :       #16 pc 0000000000052b30  /vendor/bin/hiaiserver (ai::AiModelMngrService::LoadModel(int, int, hiai::AIConfig const&, std::__1::vector<hiai::AIModelDescription, std::__1::allocator<hiai::AIModelDescription>> const&, bool, bool)+1452) (BuildId: 480c54fdb0df11b667956c294e2d001a)
+02-15 19:05:09.197  2255  2255 F DEBUG   :       #17 pc 00000000000594e8  /vendor/bin/hiaiserver (ai::AiModelMngrService::startModelFromMem2(int, int, android::hardware::hidl_vec<vendor::huawei::hardware::ai::V1_0::ModelBuffer> const&)+1616) (BuildId: 480c54fdb0df11b667956c294e2d001a)
+02-15 19:05:09.197  2255  2255 F DEBUG   :       #18 pc 000000000006c97c  /vendor/lib64/vendor.huawei.hardware.ai@1.1.so (vendor::huawei::hardware::ai::V1_1::BnHwAiModelMngr::_hidl_startModelFromMem2(android::hidl::base::V1_0::BnHwBase*, android::hardware::Parcel const&, android::hardware::Parcel*, std::__1::function<void (android::hardware::Parcel&)>)+352) (BuildId: 401d2d5fe2bf2a86050ef8f4ab4ffb3f)
+02-15 19:05:09.197  2255  2255 F DEBUG   :       #19 pc 0000000000016094  /vendor/lib64/vendor.huawei.hardware.ai@3.2.so (vendor::huawei::hardware::ai::V3_2::BnHwAiModelMngr::onTransact(unsigned int, android::hardware::Parcel const&, android::hardware::Parcel*, unsigned int, std::__1::function<void (android::hardware::Parcel&)>)+2724) (BuildId: 8d0033ecc5612c03f0f58d8e15dfa964)
+02-15 19:05:09.197  2255  2255 F DEBUG   :       #20 pc 00000000000825f4  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::BHwBinder::transact(unsigned int, android::hardware::Parcel const&, android::hardware::Parcel*, unsigned int, std::__1::function<void (android::hardware::Parcel&)>)+68) (BuildId: e118fa494ca0871fdbd553b0452e17cb)
+02-15 19:05:09.197  2255  2255 F DEBUG   :       #21 pc 0000000000085e88  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::IPCThreadState::getAndExecuteCommand()+1036) (BuildId: e118fa494ca0871fdbd553b0452e17cb)
+02-15 19:05:09.197  2255  2255 F DEBUG   :       #22 pc 0000000000087518  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::IPCThreadState::joinThreadPool(bool)+152) (BuildId: e118fa494ca0871fdbd553b0452e17cb)
+02-15 19:05:09.197  2255  2255 F DEBUG   :       #23 pc 00000000000b48e8  /vendor/bin/hiaiserver (main+920) (BuildId: 480c54fdb0df11b667956c294e2d001a)
+02-15 19:05:09.197  2255  2255 F DEBUG   :       #24 pc 000000000006b108  /apex/com.android.runtime/lib64/bionic/libc.so (__libc_init+108) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+
+---------- crash reason: dead object, offset: 62012 (0xf23c), original value: 0x4831434e, new value: 0x0 ----------
+02-15 19:05:11.376  2265  2297 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0 in tid 2297 (HwBinder:2265_2), pid 2265 (hiaiserver)
+02-15 19:05:11.388  2421  2421 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+02-15 19:05:11.388  2421  2421 F DEBUG   : Build fingerprint: 'HUAWEI/MRX-AN19/HWMRX:10/HUAWEIMRX-AN19/102.0.0.221C00:user/release-keys'
+02-15 19:05:11.388  2421  2421 F DEBUG   : Revision: '0'
+02-15 19:05:11.388  2421  2421 F DEBUG   : ABI: 'arm64'
+02-15 19:05:11.388  2421  2421 F DEBUG   : Timestamp: 2022-02-15 19:05:11+0800
+02-15 19:05:11.388  2421  2421 F DEBUG   : pid: 2265, tid: 2297, name: HwBinder:2265_2  >>> /vendor/bin/hiaiserver <<<
+02-15 19:05:11.388  2421  2421 F DEBUG   : uid: 1000
+02-15 19:05:11.388  2421  2421 F DEBUG   : signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0
+02-15 19:05:11.389  2421  2421 F DEBUG   : Cause: null pointer dereference
+02-15 19:05:11.389  2421  2421 F DEBUG   :     x0  000000751f8fcb50  x1  00000075184d5260  x2  0000007518400000  x3  0000000000000001
+02-15 19:05:11.389  2421  2421 F DEBUG   :     x4  00000000000000d5  x5  61416e63686f725d  x6  5d726f68636e4161  x7  543a3a726f68636e
+02-15 19:05:11.389  2421  2421 F DEBUG   :     x8  0000000000000000  x9  c53e05b3c65d33e9  x10 0000000000000003  x11 0000000000000000
+02-15 19:05:11.389  2421  2421 F DEBUG   :     x12 0000007520bd7d20  x13 0000000000000028  x14 0000000000000000  x15 aaaaaaaaaaaaaaab
+02-15 19:05:11.389  2421  2421 F DEBUG   :     x16 000000752729ea30  x17 0000007527292f80  x18 000000751e846000  x19 0000007520b547a0
+02-15 19:05:11.389  2421  2421 F DEBUG   :     x20 0000000000000001  x21 00000075184bb120  x22 00000075146f5318  x23 00000075184198e0
+02-15 19:05:11.389  2421  2421 F DEBUG   :     x24 0000007520b54680  x25 0000000000000000  x26 0000007520a7f7e0  x27 00000075184bc200
+02-15 19:05:11.389  2421  2421 F DEBUG   :     x28 00000075184bb3a0  x29 000000751f8fcd80
+02-15 19:05:11.389  2421  2421 F DEBUG   :     sp  000000751f8fcbb0  lr  0000007514350ea0  pc  0000007514350ea4
+02-15 19:05:11.396  2421  2421 F DEBUG   : 
+02-15 19:05:11.396  2421  2421 F DEBUG   : backtrace:
+02-15 19:05:11.396  2421  2421 F DEBUG   :       #00 pc 000000000057fea4  /vendor/lib64/libai_npucore_elementary.so (BuildId: 812988222c5c65a9143faedfecbe2bec)
+02-15 19:05:11.396  2421  2421 F DEBUG   :       #01 pc 0000000000164b60  /vendor/lib64/libfusionengine.so (fe::GraphOptRuleStore::Run(std::__1::shared_ptr<ge::ComputeGraph>, std::__1::shared_ptr<npucl::WeightParams>, std::__1::shared_ptr<npucl::ScopeAllocator>)+472) (BuildId: dbc9423f66df615145e6e5fd568e4469)
+02-15 19:05:11.396  2421  2421 F DEBUG   :       #02 pc 0000000000162fec  /vendor/lib64/libfusionengine.so (fe::OptRuleManager::Run(fe::OptimizeStage, std::__1::shared_ptr<ge::ComputeGraph>, std::__1::shared_ptr<npucl::WeightParams>, std::__1::shared_ptr<npucl::ScopeAllocator>)+320) (BuildId: dbc9423f66df615145e6e5fd568e4469)
+02-15 19:05:11.396  2421  2421 F DEBUG   :       #03 pc 00000000000a1968  /vendor/lib64/libfusionengine.so (fusion::FusionManager::BufferFusion(std::__1::shared_ptr<ge::ComputeGraph>, std::__1::shared_ptr<ge::ComputeGraph>)+844) (BuildId: dbc9423f66df615145e6e5fd568e4469)
+02-15 19:05:11.396  2421  2421 F DEBUG   :       #04 pc 000000000009fec0  /vendor/lib64/libfusionengine.so (fusion::BufferFusion(std::__1::shared_ptr<ge::ComputeGraph>, std::__1::shared_ptr<ge::ComputeGraph>)+140) (BuildId: dbc9423f66df615145e6e5fd568e4469)
+02-15 19:05:11.396  2421  2421 F DEBUG   :       #05 pc 00000000000a9224  /vendor/lib64/libfusionengine.so (BuildId: dbc9423f66df615145e6e5fd568e4469)
+02-15 19:05:11.396  2421  2421 F DEBUG   :       #06 pc 00000000000a8d84  /vendor/lib64/libfusionengine.so (fe::GraphPreCompileOptimizer::Optimize(ge::GraphOptimizerOptions const&, std::__1::shared_ptr<ge::ComputeGraph>&)+48) (BuildId: dbc9423f66df615145e6e5fd568e4469)
+02-15 19:05:11.396  2421  2421 F DEBUG   :       #07 pc 00000000000af86c  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:05:11.396  2421  2421 F DEBUG   :       #08 pc 00000000000abb6c  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:05:11.396  2421  2421 F DEBUG   :       #09 pc 00000000000aab08  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:05:11.396  2421  2421 F DEBUG   :       #10 pc 00000000000aa57c  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:05:11.396  2421  2421 F DEBUG   :       #11 pc 00000000000b5760  /vendor/lib64/libhiai_executor.so (ge::OMModelGenerator::GenerateFromBuffer(ge::GenerateOptions const&, ge::BaseBuffer const&, std::__1::shared_ptr<ge::CompiledModel>&)+1052) (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:05:11.396  2421  2421 F DEBUG   :       #12 pc 0000000000032b4c  /vendor/lib64/libhiai_server.so (ge::ExecutorManager::LoadModel(ge::LoadModelOptions const&, ge::BaseBuffer const&, unsigned int&)+1380) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+02-15 19:05:11.396  2421  2421 F DEBUG   :       #13 pc 000000000001a890  /vendor/lib64/libhiai_server.so (hiai::AIModelManagerImpl::LoadModelFromMem(hiai::AIModelDescription const&, unsigned int&)+1132) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+02-15 19:05:11.396  2421  2421 F DEBUG   :       #14 pc 0000000000018fb4  /vendor/lib64/libhiai_server.so (hiai::AIModelManagerImpl::LoadModels(std::__1::vector<hiai::AIModelDescription, std::__1::allocator<hiai::AIModelDescription>> const&)+196) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+02-15 19:05:11.396  2421  2421 F DEBUG   :       #15 pc 0000000000018794  /vendor/lib64/libhiai_server.so (hiai::AIModelManagerImpl::Init(hiai::AIConfig const&, std::__1::vector<hiai::AIModelDescription, std::__1::allocator<hiai::AIModelDescription>> const&)+76) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+02-15 19:05:11.396  2421  2421 F DEBUG   :       #16 pc 0000000000052b30  /vendor/bin/hiaiserver (ai::AiModelMngrService::LoadModel(int, int, hiai::AIConfig const&, std::__1::vector<hiai::AIModelDescription, std::__1::allocator<hiai::AIModelDescription>> const&, bool, bool)+1452) (BuildId: 480c54fdb0df11b667956c294e2d001a)
+02-15 19:05:11.396  2421  2421 F DEBUG   :       #17 pc 00000000000594e8  /vendor/bin/hiaiserver (ai::AiModelMngrService::startModelFromMem2(int, int, android::hardware::hidl_vec<vendor::huawei::hardware::ai::V1_0::ModelBuffer> const&)+1616) (BuildId: 480c54fdb0df11b667956c294e2d001a)
+02-15 19:05:11.396  2421  2421 F DEBUG   :       #18 pc 000000000006c97c  /vendor/lib64/vendor.huawei.hardware.ai@1.1.so (vendor::huawei::hardware::ai::V1_1::BnHwAiModelMngr::_hidl_startModelFromMem2(android::hidl::base::V1_0::BnHwBase*, android::hardware::Parcel const&, android::hardware::Parcel*, std::__1::function<void (android::hardware::Parcel&)>)+352) (BuildId: 401d2d5fe2bf2a86050ef8f4ab4ffb3f)
+02-15 19:05:11.396  2421  2421 F DEBUG   :       #19 pc 0000000000016094  /vendor/lib64/vendor.huawei.hardware.ai@3.2.so (vendor::huawei::hardware::ai::V3_2::BnHwAiModelMngr::onTransact(unsigned int, android::hardware::Parcel const&, android::hardware::Parcel*, unsigned int, std::__1::function<void (android::hardware::Parcel&)>)+2724) (BuildId: 8d0033ecc5612c03f0f58d8e15dfa964)
+02-15 19:05:11.396  2421  2421 F DEBUG   :       #20 pc 00000000000825f4  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::BHwBinder::transact(unsigned int, android::hardware::Parcel const&, android::hardware::Parcel*, unsigned int, std::__1::function<void (android::hardware::Parcel&)>)+68) (BuildId: e118fa494ca0871fdbd553b0452e17cb)
+02-15 19:05:11.396  2421  2421 F DEBUG   :       #21 pc 0000000000085e88  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::IPCThreadState::getAndExecuteCommand()+1036) (BuildId: e118fa494ca0871fdbd553b0452e17cb)
+02-15 19:05:11.396  2421  2421 F DEBUG   :       #22 pc 0000000000087518  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::IPCThreadState::joinThreadPool(bool)+152) (BuildId: e118fa494ca0871fdbd553b0452e17cb)
+02-15 19:05:11.396  2421  2421 F DEBUG   :       #23 pc 0000000000096654  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::PoolThread::threadLoop()+24) (BuildId: e118fa494ca0871fdbd553b0452e17cb)
+02-15 19:05:11.396  2421  2421 F DEBUG   :       #24 pc 00000000000136d4  /system/lib64/vndk-sp-29/libutils.so (android::Thread::_threadLoop(void*)+288) (BuildId: 38bfce7f86e6c4ef3ceb997e88df0926)
+02-15 19:05:11.396  2421  2421 F DEBUG   :       #25 pc 00000000000cf7c0  /apex/com.android.runtime/lib64/bionic/libc.so (__pthread_start(void*)+36) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+02-15 19:05:11.396  2421  2421 F DEBUG   :       #26 pc 00000000000721a8  /apex/com.android.runtime/lib64/bionic/libc.so (__start_thread+64) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+
+---------- crash reason: dead object, offset: 62244 (0xf324), original value: 0x7220101, new value: 0x41414141 ----------
+02-15 19:05:22.208  2547  2558 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0 in tid 2558 (HwBinder:2547_1), pid 2547 (hiaiserver)
+02-15 19:05:22.223  4429  4429 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+02-15 19:05:22.223  4429  4429 F DEBUG   : Build fingerprint: 'HUAWEI/MRX-AN19/HWMRX:10/HUAWEIMRX-AN19/102.0.0.221C00:user/release-keys'
+02-15 19:05:22.223  4429  4429 F DEBUG   : Revision: '0'
+02-15 19:05:22.223  4429  4429 F DEBUG   : ABI: 'arm64'
+02-15 19:05:22.223  4429  4429 F DEBUG   : Timestamp: 2022-02-15 19:05:22+0800
+02-15 19:05:22.223  4429  4429 F DEBUG   : pid: 2547, tid: 2558, name: HwBinder:2547_1  >>> /vendor/bin/hiaiserver <<<
+02-15 19:05:22.223  4429  4429 F DEBUG   : uid: 1000
+02-15 19:05:22.223  4429  4429 F DEBUG   : signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0
+02-15 19:05:22.223  4429  4429 F DEBUG   : Cause: null pointer dereference
+02-15 19:05:22.223  4429  4429 F DEBUG   :     x0  0000007d0a0fcb50  x1  0000007d0b4ed560  x2  0000007d0b400000  x3  0000000000000001
+02-15 19:05:22.223  4429  4429 F DEBUG   :     x4  00000000000000ed  x5  61416e63686f725d  x6  5d726f68636e4161  x7  543a3a726f68636e
+02-15 19:05:22.223  4429  4429 F DEBUG   :     x8  0000000000000000  x9  069a52e83fd58981  x10 0000000000000003  x11 0000000000000000
+02-15 19:05:22.223  4429  4429 F DEBUG   :     x12 0000007d0b367ca0  x13 0000000000000028  x14 0000000000000000  x15 aaaaaaaaaaaaaaab
+02-15 19:05:22.223  4429  4429 F DEBUG   :     x16 0000007d1085fa30  x17 0000007d10853f80  x18 0000007d08f82000  x19 0000007d0b3b4ba0
+02-15 19:05:22.223  4429  4429 F DEBUG   :     x20 0000000000000001  x21 0000007d0b357360  x22 0000007cfc3a8318  x23 0000007d0b3d64e0
+02-15 19:05:22.223  4429  4429 F DEBUG   :     x24 0000007d0b3b4a80  x25 0000000000000000  x26 0000007d0fc3b900  x27 0000007d0b356e00
+02-15 19:05:22.223  4429  4429 F DEBUG   :     x28 0000007d0b3575c0  x29 0000007d0a0fcd80
+02-15 19:05:22.223  4429  4429 F DEBUG   :     sp  0000007d0a0fcbb0  lr  0000007cfc003ea0  pc  0000007cfc003ea4
+02-15 19:05:22.231  4429  4429 F DEBUG   : 
+02-15 19:05:22.231  4429  4429 F DEBUG   : backtrace:
+02-15 19:05:22.231  4429  4429 F DEBUG   :       #00 pc 000000000057fea4  /vendor/lib64/libai_npucore_elementary.so (BuildId: 812988222c5c65a9143faedfecbe2bec)
+02-15 19:05:22.231  4429  4429 F DEBUG   :       #01 pc 0000000000164b60  /vendor/lib64/libfusionengine.so (fe::GraphOptRuleStore::Run(std::__1::shared_ptr<ge::ComputeGraph>, std::__1::shared_ptr<npucl::WeightParams>, std::__1::shared_ptr<npucl::ScopeAllocator>)+472) (BuildId: dbc9423f66df615145e6e5fd568e4469)
+02-15 19:05:22.231  4429  4429 F DEBUG   :       #02 pc 0000000000162fec  /vendor/lib64/libfusionengine.so (fe::OptRuleManager::Run(fe::OptimizeStage, std::__1::shared_ptr<ge::ComputeGraph>, std::__1::shared_ptr<npucl::WeightParams>, std::__1::shared_ptr<npucl::ScopeAllocator>)+320) (BuildId: dbc9423f66df615145e6e5fd568e4469)
+02-15 19:05:22.231  4429  4429 F DEBUG   :       #03 pc 00000000000a1968  /vendor/lib64/libfusionengine.so (fusion::FusionManager::BufferFusion(std::__1::shared_ptr<ge::ComputeGraph>, std::__1::shared_ptr<ge::ComputeGraph>)+844) (BuildId: dbc9423f66df615145e6e5fd568e4469)
+02-15 19:05:22.231  4429  4429 F DEBUG   :       #04 pc 000000000009fec0  /vendor/lib64/libfusionengine.so (fusion::BufferFusion(std::__1::shared_ptr<ge::ComputeGraph>, std::__1::shared_ptr<ge::ComputeGraph>)+140) (BuildId: dbc9423f66df615145e6e5fd568e4469)
+02-15 19:05:22.231  4429  4429 F DEBUG   :       #05 pc 00000000000a9224  /vendor/lib64/libfusionengine.so (BuildId: dbc9423f66df615145e6e5fd568e4469)
+02-15 19:05:22.231  4429  4429 F DEBUG   :       #06 pc 00000000000a8d84  /vendor/lib64/libfusionengine.so (fe::GraphPreCompileOptimizer::Optimize(ge::GraphOptimizerOptions const&, std::__1::shared_ptr<ge::ComputeGraph>&)+48) (BuildId: dbc9423f66df615145e6e5fd568e4469)
+02-15 19:05:22.231  4429  4429 F DEBUG   :       #07 pc 00000000000af86c  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:05:22.231  4429  4429 F DEBUG   :       #08 pc 00000000000abb6c  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:05:22.231  4429  4429 F DEBUG   :       #09 pc 00000000000aab08  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:05:22.231  4429  4429 F DEBUG   :       #10 pc 00000000000aa57c  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:05:22.231  4429  4429 F DEBUG   :       #11 pc 00000000000b5760  /vendor/lib64/libhiai_executor.so (ge::OMModelGenerator::GenerateFromBuffer(ge::GenerateOptions const&, ge::BaseBuffer const&, std::__1::shared_ptr<ge::CompiledModel>&)+1052) (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:05:22.231  4429  4429 F DEBUG   :       #12 pc 0000000000032b4c  /vendor/lib64/libhiai_server.so (ge::ExecutorManager::LoadModel(ge::LoadModelOptions const&, ge::BaseBuffer const&, unsigned int&)+1380) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+02-15 19:05:22.231  4429  4429 F DEBUG   :       #13 pc 000000000001a890  /vendor/lib64/libhiai_server.so (hiai::AIModelManagerImpl::LoadModelFromMem(hiai::AIModelDescription const&, unsigned int&)+1132) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+02-15 19:05:22.231  4429  4429 F DEBUG   :       #14 pc 0000000000018fb4  /vendor/lib64/libhiai_server.so (hiai::AIModelManagerImpl::LoadModels(std::__1::vector<hiai::AIModelDescription, std::__1::allocator<hiai::AIModelDescription>> const&)+196) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+02-15 19:05:22.231  4429  4429 F DEBUG   :       #15 pc 0000000000018794  /vendor/lib64/libhiai_server.so (hiai::AIModelManagerImpl::Init(hiai::AIConfig const&, std::__1::vector<hiai::AIModelDescription, std::__1::allocator<hiai::AIModelDescription>> const&)+76) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+02-15 19:05:22.231  4429  4429 F DEBUG   :       #16 pc 0000000000052b30  /vendor/bin/hiaiserver (ai::AiModelMngrService::LoadModel(int, int, hiai::AIConfig const&, std::__1::vector<hiai::AIModelDescription, std::__1::allocator<hiai::AIModelDescription>> const&, bool, bool)+1452) (BuildId: 480c54fdb0df11b667956c294e2d001a)
+02-15 19:05:22.231  4429  4429 F DEBUG   :       #17 pc 00000000000594e8  /vendor/bin/hiaiserver (ai::AiModelMngrService::startModelFromMem2(int, int, android::hardware::hidl_vec<vendor::huawei::hardware::ai::V1_0::ModelBuffer> const&)+1616) (BuildId: 480c54fdb0df11b667956c294e2d001a)
+02-15 19:05:22.231  4429  4429 F DEBUG   :       #18 pc 000000000006c97c  /vendor/lib64/vendor.huawei.hardware.ai@1.1.so (vendor::huawei::hardware::ai::V1_1::BnHwAiModelMngr::_hidl_startModelFromMem2(android::hidl::base::V1_0::BnHwBase*, android::hardware::Parcel const&, android::hardware::Parcel*, std::__1::function<void (android::hardware::Parcel&)>)+352) (BuildId: 401d2d5fe2bf2a86050ef8f4ab4ffb3f)
+02-15 19:05:22.231  4429  4429 F DEBUG   :       #19 pc 0000000000016094  /vendor/lib64/vendor.huawei.hardware.ai@3.2.so (vendor::huawei::hardware::ai::V3_2::BnHwAiModelMngr::onTransact(unsigned int, android::hardware::Parcel const&, android::hardware::Parcel*, unsigned int, std::__1::function<void (android::hardware::Parcel&)>)+2724) (BuildId: 8d0033ecc5612c03f0f58d8e15dfa964)
+02-15 19:05:22.231  4429  4429 F DEBUG   :       #20 pc 00000000000825f4  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::BHwBinder::transact(unsigned int, android::hardware::Parcel const&, android::hardware::Parcel*, unsigned int, std::__1::function<void (android::hardware::Parcel&)>)+68) (BuildId: e118fa494ca0871fdbd553b0452e17cb)
+02-15 19:05:22.231  4429  4429 F DEBUG   :       #21 pc 0000000000085e88  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::IPCThreadState::getAndExecuteCommand()+1036) (BuildId: e118fa494ca0871fdbd553b0452e17cb)
+02-15 19:05:22.231  4429  4429 F DEBUG   :       #22 pc 0000000000087518  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::IPCThreadState::joinThreadPool(bool)+152) (BuildId: e118fa494ca0871fdbd553b0452e17cb)
+02-15 19:05:22.231  4429  4429 F DEBUG   :       #23 pc 0000000000096654  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::PoolThread::threadLoop()+24) (BuildId: e118fa494ca0871fdbd553b0452e17cb)
+02-15 19:05:22.231  4429  4429 F DEBUG   :       #24 pc 00000000000136d4  /system/lib64/vndk-sp-29/libutils.so (android::Thread::_threadLoop(void*)+288) (BuildId: 38bfce7f86e6c4ef3ceb997e88df0926)
+02-15 19:05:22.231  4429  4429 F DEBUG   :       #25 pc 00000000000cf7c0  /apex/com.android.runtime/lib64/bionic/libc.so (__pthread_start(void*)+36) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+02-15 19:05:22.231  4429  4429 F DEBUG   :       #26 pc 00000000000721a8  /apex/com.android.runtime/lib64/bionic/libc.so (__start_thread+64) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+
+---------- crash reason: dead object, offset: 62248 (0xf328), original value: 0x4831434e, new value: 0x0 ----------
+02-15 19:05:24.419  4437  4527 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0 in tid 4527 (HwBinder:4437_2), pid 4437 (hiaiserver)
+02-15 19:05:24.432  4627  4627 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+02-15 19:05:24.432  4627  4627 F DEBUG   : Build fingerprint: 'HUAWEI/MRX-AN19/HWMRX:10/HUAWEIMRX-AN19/102.0.0.221C00:user/release-keys'
+02-15 19:05:24.432  4627  4627 F DEBUG   : Revision: '0'
+02-15 19:05:24.432  4627  4627 F DEBUG   : ABI: 'arm64'
+02-15 19:05:24.433  4627  4627 F DEBUG   : Timestamp: 2022-02-15 19:05:24+0800
+02-15 19:05:24.433  4627  4627 F DEBUG   : pid: 4437, tid: 4527, name: HwBinder:4437_2  >>> /vendor/bin/hiaiserver <<<
+02-15 19:05:24.433  4627  4627 F DEBUG   : uid: 1000
+02-15 19:05:24.433  4627  4627 F DEBUG   : signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0
+02-15 19:05:24.433  4627  4627 F DEBUG   : Cause: null pointer dereference
+02-15 19:05:24.433  4627  4627 F DEBUG   :     x0  0000007762afcb50  x1  000000775b6d5260  x2  000000775b600000  x3  0000000000000001
+02-15 19:05:24.433  4627  4627 F DEBUG   :     x4  00000000000000d5  x5  61416e63686f725d  x6  5d726f68636e4161  x7  543a3a726f68636e
+02-15 19:05:24.433  4627  4627 F DEBUG   :     x8  0000000000000000  x9  4b8d996fef11bdbb  x10 0000000000000003  x11 0000000000000000
+02-15 19:05:24.433  4627  4627 F DEBUG   :     x12 0000007763dd7d20  x13 0000000000000028  x14 0000000000000000  x15 aaaaaaaaaaaaaaab
+02-15 19:05:24.433  4627  4627 F DEBUG   :     x16 000000776bb63a30  x17 000000776bb57f80  x18 0000007762556000  x19 0000007763d547a0
+02-15 19:05:24.433  4627  4627 F DEBUG   :     x20 0000000000000001  x21 000000775b6bb120  x22 0000007757070318  x23 000000775b6198e0
+02-15 19:05:24.433  4627  4627 F DEBUG   :     x24 0000007763d54680  x25 0000000000000000  x26 0000007763c7f7e0  x27 000000775b6bc200
+02-15 19:05:24.433  4627  4627 F DEBUG   :     x28 000000775b6bb3a0  x29 0000007762afcd80
+02-15 19:05:24.433  4627  4627 F DEBUG   :     sp  0000007762afcbb0  lr  0000007756ccbea0  pc  0000007756ccbea4
+02-15 19:05:24.440  4627  4627 F DEBUG   : 
+02-15 19:05:24.440  4627  4627 F DEBUG   : backtrace:
+02-15 19:05:24.440  4627  4627 F DEBUG   :       #00 pc 000000000057fea4  /vendor/lib64/libai_npucore_elementary.so (BuildId: 812988222c5c65a9143faedfecbe2bec)
+02-15 19:05:24.440  4627  4627 F DEBUG   :       #01 pc 0000000000164b60  /vendor/lib64/libfusionengine.so (fe::GraphOptRuleStore::Run(std::__1::shared_ptr<ge::ComputeGraph>, std::__1::shared_ptr<npucl::WeightParams>, std::__1::shared_ptr<npucl::ScopeAllocator>)+472) (BuildId: dbc9423f66df615145e6e5fd568e4469)
+02-15 19:05:24.440  4627  4627 F DEBUG   :       #02 pc 0000000000162fec  /vendor/lib64/libfusionengine.so (fe::OptRuleManager::Run(fe::OptimizeStage, std::__1::shared_ptr<ge::ComputeGraph>, std::__1::shared_ptr<npucl::WeightParams>, std::__1::shared_ptr<npucl::ScopeAllocator>)+320) (BuildId: dbc9423f66df615145e6e5fd568e4469)
+02-15 19:05:24.440  4627  4627 F DEBUG   :       #03 pc 00000000000a1968  /vendor/lib64/libfusionengine.so (fusion::FusionManager::BufferFusion(std::__1::shared_ptr<ge::ComputeGraph>, std::__1::shared_ptr<ge::ComputeGraph>)+844) (BuildId: dbc9423f66df615145e6e5fd568e4469)
+02-15 19:05:24.440  4627  4627 F DEBUG   :       #04 pc 000000000009fec0  /vendor/lib64/libfusionengine.so (fusion::BufferFusion(std::__1::shared_ptr<ge::ComputeGraph>, std::__1::shared_ptr<ge::ComputeGraph>)+140) (BuildId: dbc9423f66df615145e6e5fd568e4469)
+02-15 19:05:24.440  4627  4627 F DEBUG   :       #05 pc 00000000000a9224  /vendor/lib64/libfusionengine.so (BuildId: dbc9423f66df615145e6e5fd568e4469)
+02-15 19:05:24.440  4627  4627 F DEBUG   :       #06 pc 00000000000a8d84  /vendor/lib64/libfusionengine.so (fe::GraphPreCompileOptimizer::Optimize(ge::GraphOptimizerOptions const&, std::__1::shared_ptr<ge::ComputeGraph>&)+48) (BuildId: dbc9423f66df615145e6e5fd568e4469)
+02-15 19:05:24.440  4627  4627 F DEBUG   :       #07 pc 00000000000af86c  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:05:24.440  4627  4627 F DEBUG   :       #08 pc 00000000000abb6c  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:05:24.440  4627  4627 F DEBUG   :       #09 pc 00000000000aab08  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:05:24.440  4627  4627 F DEBUG   :       #10 pc 00000000000aa57c  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:05:24.440  4627  4627 F DEBUG   :       #11 pc 00000000000b5760  /vendor/lib64/libhiai_executor.so (ge::OMModelGenerator::GenerateFromBuffer(ge::GenerateOptions const&, ge::BaseBuffer const&, std::__1::shared_ptr<ge::CompiledModel>&)+1052) (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:05:24.440  4627  4627 F DEBUG   :       #12 pc 0000000000032b4c  /vendor/lib64/libhiai_server.so (ge::ExecutorManager::LoadModel(ge::LoadModelOptions const&, ge::BaseBuffer const&, unsigned int&)+1380) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+02-15 19:05:24.440  4627  4627 F DEBUG   :       #13 pc 000000000001a890  /vendor/lib64/libhiai_server.so (hiai::AIModelManagerImpl::LoadModelFromMem(hiai::AIModelDescription const&, unsigned int&)+1132) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+02-15 19:05:24.441  4627  4627 F DEBUG   :       #14 pc 0000000000018fb4  /vendor/lib64/libhiai_server.so (hiai::AIModelManagerImpl::LoadModels(std::__1::vector<hiai::AIModelDescription, std::__1::allocator<hiai::AIModelDescription>> const&)+196) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+02-15 19:05:24.441  4627  4627 F DEBUG   :       #15 pc 0000000000018794  /vendor/lib64/libhiai_server.so (hiai::AIModelManagerImpl::Init(hiai::AIConfig const&, std::__1::vector<hiai::AIModelDescription, std::__1::allocator<hiai::AIModelDescription>> const&)+76) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+02-15 19:05:24.441  4627  4627 F DEBUG   :       #16 pc 0000000000052b30  /vendor/bin/hiaiserver (ai::AiModelMngrService::LoadModel(int, int, hiai::AIConfig const&, std::__1::vector<hiai::AIModelDescription, std::__1::allocator<hiai::AIModelDescription>> const&, bool, bool)+1452) (BuildId: 480c54fdb0df11b667956c294e2d001a)
+02-15 19:05:24.441  4627  4627 F DEBUG   :       #17 pc 00000000000594e8  /vendor/bin/hiaiserver (ai::AiModelMngrService::startModelFromMem2(int, int, android::hardware::hidl_vec<vendor::huawei::hardware::ai::V1_0::ModelBuffer> const&)+1616) (BuildId: 480c54fdb0df11b667956c294e2d001a)
+02-15 19:05:24.441  4627  4627 F DEBUG   :       #18 pc 000000000006c97c  /vendor/lib64/vendor.huawei.hardware.ai@1.1.so (vendor::huawei::hardware::ai::V1_1::BnHwAiModelMngr::_hidl_startModelFromMem2(android::hidl::base::V1_0::BnHwBase*, android::hardware::Parcel const&, android::hardware::Parcel*, std::__1::function<void (android::hardware::Parcel&)>)+352) (BuildId: 401d2d5fe2bf2a86050ef8f4ab4ffb3f)
+02-15 19:05:24.441  4627  4627 F DEBUG   :       #19 pc 0000000000016094  /vendor/lib64/vendor.huawei.hardware.ai@3.2.so (vendor::huawei::hardware::ai::V3_2::BnHwAiModelMngr::onTransact(unsigned int, android::hardware::Parcel const&, android::hardware::Parcel*, unsigned int, std::__1::function<void (android::hardware::Parcel&)>)+2724) (BuildId: 8d0033ecc5612c03f0f58d8e15dfa964)
+02-15 19:05:24.441  4627  4627 F DEBUG   :       #20 pc 00000000000825f4  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::BHwBinder::transact(unsigned int, android::hardware::Parcel const&, android::hardware::Parcel*, unsigned int, std::__1::function<void (android::hardware::Parcel&)>)+68) (BuildId: e118fa494ca0871fdbd553b0452e17cb)
+02-15 19:05:24.441  4627  4627 F DEBUG   :       #21 pc 0000000000085e88  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::IPCThreadState::getAndExecuteCommand()+1036) (BuildId: e118fa494ca0871fdbd553b0452e17cb)
+02-15 19:05:24.441  4627  4627 F DEBUG   :       #22 pc 0000000000087518  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::IPCThreadState::joinThreadPool(bool)+152) (BuildId: e118fa494ca0871fdbd553b0452e17cb)
+02-15 19:05:24.441  4627  4627 F DEBUG   :       #23 pc 0000000000096654  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::PoolThread::threadLoop()+24) (BuildId: e118fa494ca0871fdbd553b0452e17cb)
+02-15 19:05:24.441  4627  4627 F DEBUG   :       #24 pc 00000000000136d4  /system/lib64/vndk-sp-29/libutils.so (android::Thread::_threadLoop(void*)+288) (BuildId: 38bfce7f86e6c4ef3ceb997e88df0926)
+02-15 19:05:24.441  4627  4627 F DEBUG   :       #25 pc 00000000000cf7c0  /apex/com.android.runtime/lib64/bionic/libc.so (__pthread_start(void*)+36) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+02-15 19:05:24.441  4627  4627 F DEBUG   :       #26 pc 00000000000721a8  /apex/com.android.runtime/lib64/bionic/libc.so (__start_thread+64) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+
+---------- crash reason: dead object, offset: 66516 (0x103d4), original value: 0x74757074, new value: 0x0 ----------
+02-15 19:07:46.435  4709  5782 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x20 in tid 5782 (HwBinder:4709_4), pid 4709 (hiaiserver)
+02-15 19:07:46.454 30872 30872 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+02-15 19:07:46.454 30872 30872 F DEBUG   : Build fingerprint: 'HUAWEI/MRX-AN19/HWMRX:10/HUAWEIMRX-AN19/102.0.0.221C00:user/release-keys'
+02-15 19:07:46.454 30872 30872 F DEBUG   : Revision: '0'
+02-15 19:07:46.454 30872 30872 F DEBUG   : ABI: 'arm64'
+02-15 19:07:46.454 30872 30872 F DEBUG   : Timestamp: 2022-02-15 19:07:46+0800
+02-15 19:07:46.454 30872 30872 F DEBUG   : pid: 4709, tid: 5782, name: HwBinder:4709_4  >>> /vendor/bin/hiaiserver <<<
+02-15 19:07:46.454 30872 30872 F DEBUG   : uid: 1000
+02-15 19:07:46.454 30872 30872 F DEBUG   : signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x20
+02-15 19:07:46.454 30872 30872 F DEBUG   : Cause: null pointer dereference
+02-15 19:07:46.454 30872 30872 F DEBUG   :     x0  0000007c42a165e0  x1  0000007c6075ce38  x2  0000007c6c87ec68  x3  0000000000000002
+02-15 19:07:46.454 30872 30872 F DEBUG   :     x4  0000000000000000  x5  0000007c6075cd48  x6  726f736e65745f5f  x7  61645f637365645f
+02-15 19:07:46.454 30872 30872 F DEBUG   :     x8  0000007c42e4e7c0  x9  0000000000000001  x10 00000000ffffffff  x11 0000000000000000
+02-15 19:07:46.454 30872 30872 F DEBUG   :     x12 00000000012826c9  x13 0000000000000240  x14 0000000000000020  x15 aaaaaaaaaaaaaaab
+02-15 19:07:46.454 30872 30872 F DEBUG   :     x16 0000007c6cd73290  x17 0000007c6d0df0a8  x18 0000007c554d2000  x19 0000007c6075ced8
+02-15 19:07:46.454 30872 30872 F DEBUG   :     x20 0000000000000000  x21 0000007c6075f020  x22 0000007c6cd72610  x23 ffffffffffffffff
+02-15 19:07:46.454 30872 30872 F DEBUG   :     x24 0000007c669dd2e0  x25 0000007c669dd2d0  x26 0000007c42a14460  x27 0000007c6dcb12b0
+02-15 19:07:46.454 30872 30872 F DEBUG   :     x28 0000007c6dcb12b0  x29 0000007c6075ceb0
+02-15 19:07:46.454 30872 30872 F DEBUG   :     sp  0000007c6075cea0  lr  0000007c6cd52f6c  pc  0000007c6cd52f6c
+02-15 19:07:46.461 30872 30872 F DEBUG   : 
+02-15 19:07:46.461 30872 30872 F DEBUG   : backtrace:
+02-15 19:07:46.461 30872 30872 F DEBUG   :       #00 pc 00000000000c8f6c  /vendor/lib64/libgraph.so (ge::TensorDesc::TensorDesc(ge::TensorDesc const&)+24) (BuildId: d2a9b3d0cdbbae81ebf61f41d7db8a9d)
+02-15 19:07:46.461 30872 30872 F DEBUG   :       #01 pc 00000000000aee88  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:07:46.461 30872 30872 F DEBUG   :       #02 pc 00000000000aeb40  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:07:46.461 30872 30872 F DEBUG   :       #03 pc 00000000000ad56c  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:07:46.461 30872 30872 F DEBUG   :       #04 pc 00000000000ab7b4  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:07:46.461 30872 30872 F DEBUG   :       #05 pc 00000000000aab08  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:07:46.461 30872 30872 F DEBUG   :       #06 pc 00000000000aa57c  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:07:46.461 30872 30872 F DEBUG   :       #07 pc 00000000000b5760  /vendor/lib64/libhiai_executor.so (ge::OMModelGenerator::GenerateFromBuffer(ge::GenerateOptions const&, ge::BaseBuffer const&, std::__1::shared_ptr<ge::CompiledModel>&)+1052) (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:07:46.461 30872 30872 F DEBUG   :       #08 pc 0000000000032b4c  /vendor/lib64/libhiai_server.so (ge::ExecutorManager::LoadModel(ge::LoadModelOptions const&, ge::BaseBuffer const&, unsigned int&)+1380) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+02-15 19:07:46.461 30872 30872 F DEBUG   :       #09 pc 000000000001a890  /vendor/lib64/libhiai_server.so (hiai::AIModelManagerImpl::LoadModelFromMem(hiai::AIModelDescription const&, unsigned int&)+1132) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+02-15 19:07:46.461 30872 30872 F DEBUG   :       #10 pc 0000000000018fb4  /vendor/lib64/libhiai_server.so (hiai::AIModelManagerImpl::LoadModels(std::__1::vector<hiai::AIModelDescription, std::__1::allocator<hiai::AIModelDescription>> const&)+196) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+02-15 19:07:46.461 30872 30872 F DEBUG   :       #11 pc 0000000000018794  /vendor/lib64/libhiai_server.so (hiai::AIModelManagerImpl::Init(hiai::AIConfig const&, std::__1::vector<hiai::AIModelDescription, std::__1::allocator<hiai::AIModelDescription>> const&)+76) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+02-15 19:07:46.461 30872 30872 F DEBUG   :       #12 pc 0000000000052b30  /vendor/bin/hiaiserver (ai::AiModelMngrService::LoadModel(int, int, hiai::AIConfig const&, std::__1::vector<hiai::AIModelDescription, std::__1::allocator<hiai::AIModelDescription>> const&, bool, bool)+1452) (BuildId: 480c54fdb0df11b667956c294e2d001a)
+02-15 19:07:46.461 30872 30872 F DEBUG   :       #13 pc 00000000000594e8  /vendor/bin/hiaiserver (ai::AiModelMngrService::startModelFromMem2(int, int, android::hardware::hidl_vec<vendor::huawei::hardware::ai::V1_0::ModelBuffer> const&)+1616) (BuildId: 480c54fdb0df11b667956c294e2d001a)
+02-15 19:07:46.461 30872 30872 F DEBUG   :       #14 pc 000000000006c97c  /vendor/lib64/vendor.huawei.hardware.ai@1.1.so (vendor::huawei::hardware::ai::V1_1::BnHwAiModelMngr::_hidl_startModelFromMem2(android::hidl::base::V1_0::BnHwBase*, android::hardware::Parcel const&, android::hardware::Parcel*, std::__1::function<void (android::hardware::Parcel&)>)+352) (BuildId: 401d2d5fe2bf2a86050ef8f4ab4ffb3f)
+02-15 19:07:46.461 30872 30872 F DEBUG   :       #15 pc 0000000000016094  /vendor/lib64/vendor.huawei.hardware.ai@3.2.so (vendor::huawei::hardware::ai::V3_2::BnHwAiModelMngr::onTransact(unsigned int, android::hardware::Parcel const&, android::hardware::Parcel*, unsigned int, std::__1::function<void (android::hardware::Parcel&)>)+2724) (BuildId: 8d0033ecc5612c03f0f58d8e15dfa964)
+02-15 19:07:46.461 30872 30872 F DEBUG   :       #16 pc 00000000000825f4  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::BHwBinder::transact(unsigned int, android::hardware::Parcel const&, android::hardware::Parcel*, unsigned int, std::__1::function<void (android::hardware::Parcel&)>)+68) (BuildId: e118fa494ca0871fdbd553b0452e17cb)
+02-15 19:07:46.461 30872 30872 F DEBUG   :       #17 pc 0000000000085e88  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::IPCThreadState::getAndExecuteCommand()+1036) (BuildId: e118fa494ca0871fdbd553b0452e17cb)
+02-15 19:07:46.461 30872 30872 F DEBUG   :       #18 pc 0000000000087518  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::IPCThreadState::joinThreadPool(bool)+152) (BuildId: e118fa494ca0871fdbd553b0452e17cb)
+02-15 19:07:46.461 30872 30872 F DEBUG   :       #19 pc 0000000000096654  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::PoolThread::threadLoop()+24) (BuildId: e118fa494ca0871fdbd553b0452e17cb)
+02-15 19:07:46.461 30872 30872 F DEBUG   :       #20 pc 00000000000136d4  /system/lib64/vndk-sp-29/libutils.so (android::Thread::_threadLoop(void*)+288) (BuildId: 38bfce7f86e6c4ef3ceb997e88df0926)
+02-15 19:07:46.461 30872 30872 F DEBUG   :       #21 pc 00000000000cf7c0  /apex/com.android.runtime/lib64/bionic/libc.so (__pthread_start(void*)+36) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+02-15 19:07:46.461 30872 30872 F DEBUG   :       #22 pc 00000000000721a8  /apex/com.android.runtime/lib64/bionic/libc.so (__start_thread+64) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+
+---------- crash reason: dead object, offset: 66520 (0x103d8), original value: 0x7365645f, new value: 0x0 ----------
+02-15 19:07:48.670 30879 30950 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x20 in tid 30950 (HwBinder:30879_), pid 30879 (hiaiserver)
+02-15 19:07:48.683 31031 31031 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+02-15 19:07:48.683 31031 31031 F DEBUG   : Build fingerprint: 'HUAWEI/MRX-AN19/HWMRX:10/HUAWEIMRX-AN19/102.0.0.221C00:user/release-keys'
+02-15 19:07:48.683 31031 31031 F DEBUG   : Revision: '0'
+02-15 19:07:48.683 31031 31031 F DEBUG   : ABI: 'arm64'
+02-15 19:07:48.683 31031 31031 F DEBUG   : Timestamp: 2022-02-15 19:07:48+0800
+02-15 19:07:48.683 31031 31031 F DEBUG   : pid: 30879, tid: 30950, name: HwBinder:30879_  >>> /vendor/bin/hiaiserver <<<
+02-15 19:07:48.683 31031 31031 F DEBUG   : uid: 1000
+02-15 19:07:48.683 31031 31031 F DEBUG   : signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x20
+02-15 19:07:48.683 31031 31031 F DEBUG   : Cause: null pointer dereference
+02-15 19:07:48.683 31031 31031 F DEBUG   :     x0  0000007b8e7d4cc0  x1  0000007b8d5f9e38  x2  0000007b946ecc68  x3  0000000000000002
+02-15 19:07:48.683 31031 31031 F DEBUG   :     x4  0000000000000000  x5  0000007b8d5f9d48  x6  726f736e65745f5f  x7  61645f637365645f
+02-15 19:07:48.683 31031 31031 F DEBUG   :     x8  0000007b8e7931e0  x9  0000000000000001  x10 0000000000000008  x11 0000000000000000
+02-15 19:07:48.683 31031 31031 F DEBUG   :     x12 0000000000001bcc  x13 00000000000071c0  x14 0000000000000020  x15 aaaaaaaaaaaaaaab
+02-15 19:07:48.683 31031 31031 F DEBUG   :     x16 0000007b963ef290  x17 0000007b950c90a8  x18 0000007b8cf56000  x19 0000007b8d5f9ed8
+02-15 19:07:48.683 31031 31031 F DEBUG   :     x20 0000000000000000  x21 0000007b8d5fc020  x22 0000007b963ee610  x23 ffffffffffffffff
+02-15 19:07:48.683 31031 31031 F DEBUG   :     x24 0000007b8e7cc1a0  x25 0000007b8e7cc190  x26 0000007b8e7c4cc0  x27 0000007b965b02b0
+02-15 19:07:48.683 31031 31031 F DEBUG   :     x28 0000007b965b02b0  x29 0000007b8d5f9eb0
+02-15 19:07:48.683 31031 31031 F DEBUG   :     sp  0000007b8d5f9ea0  lr  0000007b963cef6c  pc  0000007b963cef6c
+02-15 19:07:48.689 31031 31031 F DEBUG   : 
+02-15 19:07:48.689 31031 31031 F DEBUG   : backtrace:
+02-15 19:07:48.689 31031 31031 F DEBUG   :       #00 pc 00000000000c8f6c  /vendor/lib64/libgraph.so (ge::TensorDesc::TensorDesc(ge::TensorDesc const&)+24) (BuildId: d2a9b3d0cdbbae81ebf61f41d7db8a9d)
+02-15 19:07:48.689 31031 31031 F DEBUG   :       #01 pc 00000000000aee88  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:07:48.689 31031 31031 F DEBUG   :       #02 pc 00000000000aeb40  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:07:48.689 31031 31031 F DEBUG   :       #03 pc 00000000000ad56c  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:07:48.689 31031 31031 F DEBUG   :       #04 pc 00000000000ab7b4  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:07:48.689 31031 31031 F DEBUG   :       #05 pc 00000000000aab08  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:07:48.689 31031 31031 F DEBUG   :       #06 pc 00000000000aa57c  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:07:48.689 31031 31031 F DEBUG   :       #07 pc 00000000000b5760  /vendor/lib64/libhiai_executor.so (ge::OMModelGenerator::GenerateFromBuffer(ge::GenerateOptions const&, ge::BaseBuffer const&, std::__1::shared_ptr<ge::CompiledModel>&)+1052) (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:07:48.689 31031 31031 F DEBUG   :       #08 pc 0000000000032b4c  /vendor/lib64/libhiai_server.so (ge::ExecutorManager::LoadModel(ge::LoadModelOptions const&, ge::BaseBuffer const&, unsigned int&)+1380) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+02-15 19:07:48.689 31031 31031 F DEBUG   :       #09 pc 000000000001a890  /vendor/lib64/libhiai_server.so (hiai::AIModelManagerImpl::LoadModelFromMem(hiai::AIModelDescription const&, unsigned int&)+1132) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+02-15 19:07:48.689 31031 31031 F DEBUG   :       #10 pc 0000000000018fb4  /vendor/lib64/libhiai_server.so (hiai::AIModelManagerImpl::LoadModels(std::__1::vector<hiai::AIModelDescription, std::__1::allocator<hiai::AIModelDescription>> const&)+196) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+02-15 19:07:48.689 31031 31031 F DEBUG   :       #11 pc 0000000000018794  /vendor/lib64/libhiai_server.so (hiai::AIModelManagerImpl::Init(hiai::AIConfig const&, std::__1::vector<hiai::AIModelDescription, std::__1::allocator<hiai::AIModelDescription>> const&)+76) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+02-15 19:07:48.689 31031 31031 F DEBUG   :       #12 pc 0000000000052b30  /vendor/bin/hiaiserver (ai::AiModelMngrService::LoadModel(int, int, hiai::AIConfig const&, std::__1::vector<hiai::AIModelDescription, std::__1::allocator<hiai::AIModelDescription>> const&, bool, bool)+1452) (BuildId: 480c54fdb0df11b667956c294e2d001a)
+02-15 19:07:48.689 31031 31031 F DEBUG   :       #13 pc 00000000000594e8  /vendor/bin/hiaiserver (ai::AiModelMngrService::startModelFromMem2(int, int, android::hardware::hidl_vec<vendor::huawei::hardware::ai::V1_0::ModelBuffer> const&)+1616) (BuildId: 480c54fdb0df11b667956c294e2d001a)
+02-15 19:07:48.689 31031 31031 F DEBUG   :       #14 pc 000000000006c97c  /vendor/lib64/vendor.huawei.hardware.ai@1.1.so (vendor::huawei::hardware::ai::V1_1::BnHwAiModelMngr::_hidl_startModelFromMem2(android::hidl::base::V1_0::BnHwBase*, android::hardware::Parcel const&, android::hardware::Parcel*, std::__1::function<void (android::hardware::Parcel&)>)+352) (BuildId: 401d2d5fe2bf2a86050ef8f4ab4ffb3f)
+02-15 19:07:48.689 31031 31031 F DEBUG   :       #15 pc 0000000000016094  /vendor/lib64/vendor.huawei.hardware.ai@3.2.so (vendor::huawei::hardware::ai::V3_2::BnHwAiModelMngr::onTransact(unsigned int, android::hardware::Parcel const&, android::hardware::Parcel*, unsigned int, std::__1::function<void (android::hardware::Parcel&)>)+2724) (BuildId: 8d0033ecc5612c03f0f58d8e15dfa964)
+02-15 19:07:48.689 31031 31031 F DEBUG   :       #16 pc 00000000000825f4  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::BHwBinder::transact(unsigned int, android::hardware::Parcel const&, android::hardware::Parcel*, unsigned int, std::__1::function<void (android::hardware::Parcel&)>)+68) (BuildId: e118fa494ca0871fdbd553b0452e17cb)
+02-15 19:07:48.689 31031 31031 F DEBUG   :       #17 pc 0000000000085e88  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::IPCThreadState::getAndExecuteCommand()+1036) (BuildId: e118fa494ca0871fdbd553b0452e17cb)
+02-15 19:07:48.689 31031 31031 F DEBUG   :       #18 pc 0000000000087518  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::IPCThreadState::joinThreadPool(bool)+152) (BuildId: e118fa494ca0871fdbd553b0452e17cb)
+02-15 19:07:48.689 31031 31031 F DEBUG   :       #19 pc 0000000000096654  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::PoolThread::threadLoop()+24) (BuildId: e118fa494ca0871fdbd553b0452e17cb)
+02-15 19:07:48.689 31031 31031 F DEBUG   :       #20 pc 00000000000136d4  /system/lib64/vndk-sp-29/libutils.so (android::Thread::_threadLoop(void*)+288) (BuildId: 38bfce7f86e6c4ef3ceb997e88df0926)
+02-15 19:07:48.689 31031 31031 F DEBUG   :       #21 pc 00000000000cf7c0  /apex/com.android.runtime/lib64/bionic/libc.so (__pthread_start(void*)+36) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+02-15 19:07:48.689 31031 31031 F DEBUG   :       #22 pc 00000000000721a8  /apex/com.android.runtime/lib64/bionic/libc.so (__start_thread+64) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+
+---------- crash reason: dead object, offset: 66524 (0x103dc), original value: 0x1f11263, new value: 0x41414141 ----------
+02-15 19:07:52.070 31111 31136 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x20 in tid 31136 (HwBinder:31111_), pid 31111 (hiaiserver)
+02-15 19:07:52.084 31155 31155 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+02-15 19:07:52.084 31155 31155 F DEBUG   : Build fingerprint: 'HUAWEI/MRX-AN19/HWMRX:10/HUAWEIMRX-AN19/102.0.0.221C00:user/release-keys'
+02-15 19:07:52.084 31155 31155 F DEBUG   : Revision: '0'
+02-15 19:07:52.084 31155 31155 F DEBUG   : ABI: 'arm64'
+02-15 19:07:52.084 31155 31155 F DEBUG   : Timestamp: 2022-02-15 19:07:52+0800
+02-15 19:07:52.084 31155 31155 F DEBUG   : pid: 31111, tid: 31136, name: HwBinder:31111_  >>> /vendor/bin/hiaiserver <<<
+02-15 19:07:52.084 31155 31155 F DEBUG   : uid: 1000
+02-15 19:07:52.084 31155 31155 F DEBUG   : signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x20
+02-15 19:07:52.084 31155 31155 F DEBUG   : Cause: null pointer dereference
+02-15 19:07:52.084 31155 31155 F DEBUG   :     x0  00000075d7877720  x1  00000075ec4fce38  x2  00000075f6930ff8  x3  00000075ec4fce38
+02-15 19:07:52.084 31155 31155 F DEBUG   :     x4  00000075ec4fce50  x5  00000075d7877719  x6  726f736e65745f5f  x7  61645f637365645f
+02-15 19:07:52.084 31155 31155 F DEBUG   :     x8  00000075d7810d40  x9  0000000000000001  x10 00000075f4511670  x11 0000000000000002
+02-15 19:07:52.084 31155 31155 F DEBUG   :     x12 00000075f4511688  x13 5f5f657079745f61  x14 0000000000000020  x15 aaaaaaaaaaaaaaab
+02-15 19:07:52.084 31155 31155 F DEBUG   :     x16 00000075f69f4290  x17 00000075f68c80a8  x18 00000075eb524000  x19 00000075ec4fced8
+02-15 19:07:52.084 31155 31155 F DEBUG   :     x20 0000000000000000  x21 00000075ec4ff020  x22 00000075f69f3610  x23 ffffffffffffffff
+02-15 19:07:52.084 31155 31155 F DEBUG   :     x24 00000075d78633e0  x25 00000075d78633d0  x26 00000075d7862780  x27 00000075f55eb2b0
+02-15 19:07:52.084 31155 31155 F DEBUG   :     x28 00000075f55eb2b0  x29 00000075ec4fceb0
+02-15 19:07:52.084 31155 31155 F DEBUG   :     sp  00000075ec4fcea0  lr  00000075f69d3f6c  pc  00000075f69d3f6c
+02-15 19:07:52.091 31155 31155 F DEBUG   : 
+02-15 19:07:52.091 31155 31155 F DEBUG   : backtrace:
+02-15 19:07:52.091 31155 31155 F DEBUG   :       #00 pc 00000000000c8f6c  /vendor/lib64/libgraph.so (ge::TensorDesc::TensorDesc(ge::TensorDesc const&)+24) (BuildId: d2a9b3d0cdbbae81ebf61f41d7db8a9d)
+02-15 19:07:52.091 31155 31155 F DEBUG   :       #01 pc 00000000000aee88  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:07:52.091 31155 31155 F DEBUG   :       #02 pc 00000000000aeb40  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:07:52.091 31155 31155 F DEBUG   :       #03 pc 00000000000ad56c  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:07:52.091 31155 31155 F DEBUG   :       #04 pc 00000000000ab7b4  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:07:52.091 31155 31155 F DEBUG   :       #05 pc 00000000000aab08  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:07:52.091 31155 31155 F DEBUG   :       #06 pc 00000000000aa57c  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:07:52.091 31155 31155 F DEBUG   :       #07 pc 00000000000b5760  /vendor/lib64/libhiai_executor.so (ge::OMModelGenerator::GenerateFromBuffer(ge::GenerateOptions const&, ge::BaseBuffer const&, std::__1::shared_ptr<ge::CompiledModel>&)+1052) (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:07:52.091 31155 31155 F DEBUG   :       #08 pc 0000000000032b4c  /vendor/lib64/libhiai_server.so (ge::ExecutorManager::LoadModel(ge::LoadModelOptions const&, ge::BaseBuffer const&, unsigned int&)+1380) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+02-15 19:07:52.091 31155 31155 F DEBUG   :       #09 pc 000000000001a890  /vendor/lib64/libhiai_server.so (hiai::AIModelManagerImpl::LoadModelFromMem(hiai::AIModelDescription const&, unsigned int&)+1132) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+02-15 19:07:52.091 31155 31155 F DEBUG   :       #10 pc 0000000000018fb4  /vendor/lib64/libhiai_server.so (hiai::AIModelManagerImpl::LoadModels(std::__1::vector<hiai::AIModelDescription, std::__1::allocator<hiai::AIModelDescription>> const&)+196) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+02-15 19:07:52.091 31155 31155 F DEBUG   :       #11 pc 0000000000018794  /vendor/lib64/libhiai_server.so (hiai::AIModelManagerImpl::Init(hiai::AIConfig const&, std::__1::vector<hiai::AIModelDescription, std::__1::allocator<hiai::AIModelDescription>> const&)+76) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+02-15 19:07:52.091 31155 31155 F DEBUG   :       #12 pc 0000000000052b30  /vendor/bin/hiaiserver (ai::AiModelMngrService::LoadModel(int, int, hiai::AIConfig const&, std::__1::vector<hiai::AIModelDescription, std::__1::allocator<hiai::AIModelDescription>> const&, bool, bool)+1452) (BuildId: 480c54fdb0df11b667956c294e2d001a)
+02-15 19:07:52.091 31155 31155 F DEBUG   :       #13 pc 00000000000594e8  /vendor/bin/hiaiserver (ai::AiModelMngrService::startModelFromMem2(int, int, android::hardware::hidl_vec<vendor::huawei::hardware::ai::V1_0::ModelBuffer> const&)+1616) (BuildId: 480c54fdb0df11b667956c294e2d001a)
+02-15 19:07:52.092 31155 31155 F DEBUG   :       #14 pc 000000000006c97c  /vendor/lib64/vendor.huawei.hardware.ai@1.1.so (vendor::huawei::hardware::ai::V1_1::BnHwAiModelMngr::_hidl_startModelFromMem2(android::hidl::base::V1_0::BnHwBase*, android::hardware::Parcel const&, android::hardware::Parcel*, std::__1::function<void (android::hardware::Parcel&)>)+352) (BuildId: 401d2d5fe2bf2a86050ef8f4ab4ffb3f)
+02-15 19:07:52.092 31155 31155 F DEBUG   :       #15 pc 0000000000016094  /vendor/lib64/vendor.huawei.hardware.ai@3.2.so (vendor::huawei::hardware::ai::V3_2::BnHwAiModelMngr::onTransact(unsigned int, android::hardware::Parcel const&, android::hardware::Parcel*, unsigned int, std::__1::function<void (android::hardware::Parcel&)>)+2724) (BuildId: 8d0033ecc5612c03f0f58d8e15dfa964)
+02-15 19:07:52.092 31155 31155 F DEBUG   :       #16 pc 00000000000825f4  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::BHwBinder::transact(unsigned int, android::hardware::Parcel const&, android::hardware::Parcel*, unsigned int, std::__1::function<void (android::hardware::Parcel&)>)+68) (BuildId: e118fa494ca0871fdbd553b0452e17cb)
+02-15 19:07:52.092 31155 31155 F DEBUG   :       #17 pc 0000000000085e88  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::IPCThreadState::getAndExecuteCommand()+1036) (BuildId: e118fa494ca0871fdbd553b0452e17cb)
+02-15 19:07:52.092 31155 31155 F DEBUG   :       #18 pc 0000000000087518  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::IPCThreadState::joinThreadPool(bool)+152) (BuildId: e118fa494ca0871fdbd553b0452e17cb)
+02-15 19:07:52.092 31155 31155 F DEBUG   :       #19 pc 0000000000096654  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::PoolThread::threadLoop()+24) (BuildId: e118fa494ca0871fdbd553b0452e17cb)
+02-15 19:07:52.092 31155 31155 F DEBUG   :       #20 pc 00000000000136d4  /system/lib64/vndk-sp-29/libutils.so (android::Thread::_threadLoop(void*)+288) (BuildId: 38bfce7f86e6c4ef3ceb997e88df0926)
+02-15 19:07:52.092 31155 31155 F DEBUG   :       #21 pc 00000000000cf7c0  /apex/com.android.runtime/lib64/bionic/libc.so (__pthread_start(void*)+36) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+02-15 19:07:52.092 31155 31155 F DEBUG   :       #22 pc 00000000000721a8  /apex/com.android.runtime/lib64/bionic/libc.so (__start_thread+64) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+
+---------- crash reason: dead object, offset: 66528 (0x103e0), original value: 0x4201ee0a, new value: -0x4201ee0b ----------
+02-15 19:07:57.067 31238 31238 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x20 in tid 31238 (hiaiserver), pid 31238 (hiaiserver)
+02-15 19:07:57.083 31266 31266 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+02-15 19:07:57.083 31266 31266 F DEBUG   : Build fingerprint: 'HUAWEI/MRX-AN19/HWMRX:10/HUAWEIMRX-AN19/102.0.0.221C00:user/release-keys'
+02-15 19:07:57.083 31266 31266 F DEBUG   : Revision: '0'
+02-15 19:07:57.083 31266 31266 F DEBUG   : ABI: 'arm64'
+02-15 19:07:57.083 31266 31266 F DEBUG   : Timestamp: 2022-02-15 19:07:57+0800
+02-15 19:07:57.083 31266 31266 F DEBUG   : pid: 31238, tid: 31238, name: hiaiserver  >>> /vendor/bin/hiaiserver <<<
+02-15 19:07:57.083 31266 31266 F DEBUG   : uid: 1000
+02-15 19:07:57.083 31266 31266 F DEBUG   : signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x20
+02-15 19:07:57.083 31266 31266 F DEBUG   : Cause: null pointer dereference
+02-15 19:07:57.083 31266 31266 F DEBUG   :     x0  0000007e13a89060  x1  0000007fe1182688  x2  0000007e1840d068  x3  0000000000000002
+02-15 19:07:57.083 31266 31266 F DEBUG   :     x4  0000000000000000  x5  0000007fe1182598  x6  726f736e65745f5f  x7  61645f637365645f
+02-15 19:07:57.083 31266 31266 F DEBUG   :     x8  0000007e13a20fe0  x9  0000000000000001  x10 00000000ffffffff  x11 0000000000000000
+02-15 19:07:57.083 31266 31266 F DEBUG   :     x12 0000000000006151  x13 0000000000001f00  x14 0000000000000020  x15 aaaaaaaaaaaaaaab
+02-15 19:07:57.083 31266 31266 F DEBUG   :     x16 0000007e18ce9290  x17 0000007e193f20a8  x18 0000007e1c1d2000  x19 0000007fe1182728
+02-15 19:07:57.083 31266 31266 F DEBUG   :     x20 0000000000000000  x21 0000007e1b2bd020  x22 0000007e18ce8610  x23 ffffffffffffffff
+02-15 19:07:57.083 31266 31266 F DEBUG   :     x24 0000007e138527b0  x25 0000007e138527a0  x26 0000007e13a80100  x27 0000007e1ac712b0
+02-15 19:07:57.083 31266 31266 F DEBUG   :     x28 0000007e1ac712b0  x29 0000007fe1182700
+02-15 19:07:57.083 31266 31266 F DEBUG   :     sp  0000007fe11826f0  lr  0000007e18cc8f6c  pc  0000007e18cc8f6c
+02-15 19:07:57.090 31266 31266 F DEBUG   : 
+02-15 19:07:57.090 31266 31266 F DEBUG   : backtrace:
+02-15 19:07:57.090 31266 31266 F DEBUG   :       #00 pc 00000000000c8f6c  /vendor/lib64/libgraph.so (ge::TensorDesc::TensorDesc(ge::TensorDesc const&)+24) (BuildId: d2a9b3d0cdbbae81ebf61f41d7db8a9d)
+02-15 19:07:57.090 31266 31266 F DEBUG   :       #01 pc 00000000000aee88  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:07:57.090 31266 31266 F DEBUG   :       #02 pc 00000000000aeb40  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:07:57.090 31266 31266 F DEBUG   :       #03 pc 00000000000ad56c  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:07:57.090 31266 31266 F DEBUG   :       #04 pc 00000000000ab7b4  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:07:57.090 31266 31266 F DEBUG   :       #05 pc 00000000000aab08  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:07:57.090 31266 31266 F DEBUG   :       #06 pc 00000000000aa57c  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:07:57.090 31266 31266 F DEBUG   :       #07 pc 00000000000b5760  /vendor/lib64/libhiai_executor.so (ge::OMModelGenerator::GenerateFromBuffer(ge::GenerateOptions const&, ge::BaseBuffer const&, std::__1::shared_ptr<ge::CompiledModel>&)+1052) (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:07:57.090 31266 31266 F DEBUG   :       #08 pc 0000000000032b4c  /vendor/lib64/libhiai_server.so (ge::ExecutorManager::LoadModel(ge::LoadModelOptions const&, ge::BaseBuffer const&, unsigned int&)+1380) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+02-15 19:07:57.090 31266 31266 F DEBUG   :       #09 pc 000000000001a890  /vendor/lib64/libhiai_server.so (hiai::AIModelManagerImpl::LoadModelFromMem(hiai::AIModelDescription const&, unsigned int&)+1132) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+02-15 19:07:57.090 31266 31266 F DEBUG   :       #10 pc 0000000000018fb4  /vendor/lib64/libhiai_server.so (hiai::AIModelManagerImpl::LoadModels(std::__1::vector<hiai::AIModelDescription, std::__1::allocator<hiai::AIModelDescription>> const&)+196) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+02-15 19:07:57.090 31266 31266 F DEBUG   :       #11 pc 0000000000018794  /vendor/lib64/libhiai_server.so (hiai::AIModelManagerImpl::Init(hiai::AIConfig const&, std::__1::vector<hiai::AIModelDescription, std::__1::allocator<hiai::AIModelDescription>> const&)+76) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+02-15 19:07:57.090 31266 31266 F DEBUG   :       #12 pc 0000000000052b30  /vendor/bin/hiaiserver (ai::AiModelMngrService::LoadModel(int, int, hiai::AIConfig const&, std::__1::vector<hiai::AIModelDescription, std::__1::allocator<hiai::AIModelDescription>> const&, bool, bool)+1452) (BuildId: 480c54fdb0df11b667956c294e2d001a)
+02-15 19:07:57.090 31266 31266 F DEBUG   :       #13 pc 00000000000594e8  /vendor/bin/hiaiserver (ai::AiModelMngrService::startModelFromMem2(int, int, android::hardware::hidl_vec<vendor::huawei::hardware::ai::V1_0::ModelBuffer> const&)+1616) (BuildId: 480c54fdb0df11b667956c294e2d001a)
+02-15 19:07:57.090 31266 31266 F DEBUG   :       #14 pc 000000000006c97c  /vendor/lib64/vendor.huawei.hardware.ai@1.1.so (vendor::huawei::hardware::ai::V1_1::BnHwAiModelMngr::_hidl_startModelFromMem2(android::hidl::base::V1_0::BnHwBase*, android::hardware::Parcel const&, android::hardware::Parcel*, std::__1::function<void (android::hardware::Parcel&)>)+352) (BuildId: 401d2d5fe2bf2a86050ef8f4ab4ffb3f)
+02-15 19:07:57.090 31266 31266 F DEBUG   :       #15 pc 0000000000016094  /vendor/lib64/vendor.huawei.hardware.ai@3.2.so (vendor::huawei::hardware::ai::V3_2::BnHwAiModelMngr::onTransact(unsigned int, android::hardware::Parcel const&, android::hardware::Parcel*, unsigned int, std::__1::function<void (android::hardware::Parcel&)>)+2724) (BuildId: 8d0033ecc5612c03f0f58d8e15dfa964)
+02-15 19:07:57.090 31266 31266 F DEBUG   :       #16 pc 00000000000825f4  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::BHwBinder::transact(unsigned int, android::hardware::Parcel const&, android::hardware::Parcel*, unsigned int, std::__1::function<void (android::hardware::Parcel&)>)+68) (BuildId: e118fa494ca0871fdbd553b0452e17cb)
+02-15 19:07:57.090 31266 31266 F DEBUG   :       #17 pc 0000000000085e88  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::IPCThreadState::getAndExecuteCommand()+1036) (BuildId: e118fa494ca0871fdbd553b0452e17cb)
+02-15 19:07:57.090 31266 31266 F DEBUG   :       #18 pc 0000000000087518  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::IPCThreadState::joinThreadPool(bool)+152) (BuildId: e118fa494ca0871fdbd553b0452e17cb)
+02-15 19:07:57.090 31266 31266 F DEBUG   :       #19 pc 00000000000b48e8  /vendor/bin/hiaiserver (main+920) (BuildId: 480c54fdb0df11b667956c294e2d001a)
+02-15 19:07:57.090 31266 31266 F DEBUG   :       #20 pc 000000000006b108  /apex/com.android.runtime/lib64/bionic/libc.so (__libc_init+108) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+
+---------- crash reason: dead object, offset: 66784 (0x104e0), original value: 0xed948004, new value: 0x126b7ffb ----------
+02-15 19:08:10.081 31390 31405 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x20 in tid 31405 (HwBinder:31390_), pid 31390 (hiaiserver)
+02-15 19:08:10.099   676   676 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+02-15 19:08:10.099   676   676 F DEBUG   : Build fingerprint: 'HUAWEI/MRX-AN19/HWMRX:10/HUAWEIMRX-AN19/102.0.0.221C00:user/release-keys'
+02-15 19:08:10.099   676   676 F DEBUG   : Revision: '0'
+02-15 19:08:10.099   676   676 F DEBUG   : ABI: 'arm64'
+02-15 19:08:10.099   676   676 F DEBUG   : Timestamp: 2022-02-15 19:08:10+0800
+02-15 19:08:10.099   676   676 F DEBUG   : pid: 31390, tid: 31405, name: HwBinder:31390_  >>> /vendor/bin/hiaiserver <<<
+02-15 19:08:10.099   676   676 F DEBUG   : uid: 1000
+02-15 19:08:10.099   676   676 F DEBUG   : signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x20
+02-15 19:08:10.100   676   676 F DEBUG   : Cause: null pointer dereference
+02-15 19:08:10.100   676   676 F DEBUG   :     x0  0000007d31efcfc0  x1  0000007d31efcf88  x2  0000007d38c00000  x3  0000000000000002
+02-15 19:08:10.100   676   676 F DEBUG   :     x4  00000000000000f6  x5  0000007d38cf79f8  x6  7475706e695f6573  x7  02127865646e695f
+02-15 19:08:10.100   676   676 F DEBUG   :     x8  0000007d31efcf98  x9  0000000000000000  x10 0000000000000001  x11 0000000000000006
+02-15 19:08:10.100   676   676 F DEBUG   :     x12 756572110a172a00  x13 7475706e695f6573  x14 0000000000000020  x15 aaaaaaaaaaaaaaab
+02-15 19:08:10.100   676   676 F DEBUG   :     x16 0000007d2a26e9a8  x17 0000007d3f987b58  x18 0000007d2dec2000  x19 0000007d38dfb3c0
+02-15 19:08:10.100   676   676 F DEBUG   :     x20 0000007d31efcf98  x21 0000000000000001  x22 0000007d31efd0c0  x23 0000000000000012
+02-15 19:08:10.100   676   676 F DEBUG   :     x24 0000007d38cf7b00  x25 0000007d31efd0c0  x26 0000007d38d4e300  x27 0000007d38a2ec70
+02-15 19:08:10.100   676   676 F DEBUG   :     x28 0000000000000005  x29 0000007d31efcf20
+02-15 19:08:10.100   676   676 F DEBUG   :     sp  0000007d31efcf00  lr  0000007d2a1b09f4  pc  0000007d3f987b70
+02-15 19:08:10.107   676   676 F DEBUG   : 
+02-15 19:08:10.107   676   676 F DEBUG   : backtrace:
+02-15 19:08:10.107   676   676 F DEBUG   :       #00 pc 00000000000b3b70  /vendor/lib64/libgraph.so (ge::ModelSerialize::SerializeTensorDesc(std::__1::shared_ptr<ge::TensorDesc const>)+24) (BuildId: d2a9b3d0cdbbae81ebf61f41d7db8a9d)
+02-15 19:08:10.107   676   676 F DEBUG   :       #01 pc 00000000001219f0  /vendor/lib64/libfusionengine.so (fe::NPUGraphCompiler::AddHiddenLayerDesc(std::__1::shared_ptr<ge::ComputeGraph>, std::__1::shared_ptr<domi::ModelTaskDef>)+928) (BuildId: dbc9423f66df615145e6e5fd568e4469)
+02-15 19:08:10.107   676   676 F DEBUG   :       #02 pc 000000000012070c  /vendor/lib64/libfusionengine.so (fe::NPUGraphCompiler::Compile(ge::CompileOptions const&, std::__1::shared_ptr<ge::ComputeGraph>, std::__1::shared_ptr<ge::CompiledTarget>&, std::__1::shared_ptr<ge::BinObject>&)+932) (BuildId: dbc9423f66df615145e6e5fd568e4469)
+02-15 19:08:10.107   676   676 F DEBUG   :       #03 pc 00000000000b0468  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:08:10.107   676   676 F DEBUG   :       #04 pc 00000000000abb6c  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:08:10.107   676   676 F DEBUG   :       #05 pc 00000000000aab08  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:08:10.107   676   676 F DEBUG   :       #06 pc 00000000000aa57c  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:08:10.107   676   676 F DEBUG   :       #07 pc 00000000000b5760  /vendor/lib64/libhiai_executor.so (ge::OMModelGenerator::GenerateFromBuffer(ge::GenerateOptions const&, ge::BaseBuffer const&, std::__1::shared_ptr<ge::CompiledModel>&)+1052) (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:08:10.107   676   676 F DEBUG   :       #08 pc 0000000000032b4c  /vendor/lib64/libhiai_server.so (ge::ExecutorManager::LoadModel(ge::LoadModelOptions const&, ge::BaseBuffer const&, unsigned int&)+1380) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+02-15 19:08:10.107   676   676 F DEBUG   :       #09 pc 000000000001a890  /vendor/lib64/libhiai_server.so (hiai::AIModelManagerImpl::LoadModelFromMem(hiai::AIModelDescription const&, unsigned int&)+1132) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+02-15 19:08:10.107   676   676 F DEBUG   :       #10 pc 0000000000018fb4  /vendor/lib64/libhiai_server.so (hiai::AIModelManagerImpl::LoadModels(std::__1::vector<hiai::AIModelDescription, std::__1::allocator<hiai::AIModelDescription>> const&)+196) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+02-15 19:08:10.107   676   676 F DEBUG   :       #11 pc 0000000000018794  /vendor/lib64/libhiai_server.so (hiai::AIModelManagerImpl::Init(hiai::AIConfig const&, std::__1::vector<hiai::AIModelDescription, std::__1::allocator<hiai::AIModelDescription>> const&)+76) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+02-15 19:08:10.107   676   676 F DEBUG   :       #12 pc 0000000000052b30  /vendor/bin/hiaiserver (ai::AiModelMngrService::LoadModel(int, int, hiai::AIConfig const&, std::__1::vector<hiai::AIModelDescription, std::__1::allocator<hiai::AIModelDescription>> const&, bool, bool)+1452) (BuildId: 480c54fdb0df11b667956c294e2d001a)
+02-15 19:08:10.107   676   676 F DEBUG   :       #13 pc 00000000000594e8  /vendor/bin/hiaiserver (ai::AiModelMngrService::startModelFromMem2(int, int, android::hardware::hidl_vec<vendor::huawei::hardware::ai::V1_0::ModelBuffer> const&)+1616) (BuildId: 480c54fdb0df11b667956c294e2d001a)
+02-15 19:08:10.107   676   676 F DEBUG   :       #14 pc 000000000006c97c  /vendor/lib64/vendor.huawei.hardware.ai@1.1.so (vendor::huawei::hardware::ai::V1_1::BnHwAiModelMngr::_hidl_startModelFromMem2(android::hidl::base::V1_0::BnHwBase*, android::hardware::Parcel const&, android::hardware::Parcel*, std::__1::function<void (android::hardware::Parcel&)>)+352) (BuildId: 401d2d5fe2bf2a86050ef8f4ab4ffb3f)
+02-15 19:08:10.107   676   676 F DEBUG   :       #15 pc 0000000000016094  /vendor/lib64/vendor.huawei.hardware.ai@3.2.so (vendor::huawei::hardware::ai::V3_2::BnHwAiModelMngr::onTransact(unsigned int, android::hardware::Parcel const&, android::hardware::Parcel*, unsigned int, std::__1::function<void (android::hardware::Parcel&)>)+2724) (BuildId: 8d0033ecc5612c03f0f58d8e15dfa964)
+02-15 19:08:10.107   676   676 F DEBUG   :       #16 pc 00000000000825f4  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::BHwBinder::transact(unsigned int, android::hardware::Parcel const&, android::hardware::Parcel*, unsigned int, std::__1::function<void (android::hardware::Parcel&)>)+68) (BuildId: e118fa494ca0871fdbd553b0452e17cb)
+02-15 19:08:10.107   676   676 F DEBUG   :       #17 pc 0000000000085e88  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::IPCThreadState::getAndExecuteCommand()+1036) (BuildId: e118fa494ca0871fdbd553b0452e17cb)
+02-15 19:08:10.107   676   676 F DEBUG   :       #18 pc 0000000000087518  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::IPCThreadState::joinThreadPool(bool)+152) (BuildId: e118fa494ca0871fdbd553b0452e17cb)
+02-15 19:08:10.107   676   676 F DEBUG   :       #19 pc 0000000000096654  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::PoolThread::threadLoop()+24) (BuildId: e118fa494ca0871fdbd553b0452e17cb)
+02-15 19:08:10.107   676   676 F DEBUG   :       #20 pc 00000000000136d4  /system/lib64/vndk-sp-29/libutils.so (android::Thread::_threadLoop(void*)+288) (BuildId: 38bfce7f86e6c4ef3ceb997e88df0926)
+02-15 19:08:10.107   676   676 F DEBUG   :       #21 pc 00000000000cf7c0  /apex/com.android.runtime/lib64/bionic/libc.so (__pthread_start(void*)+36) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+02-15 19:08:10.107   676   676 F DEBUG   :       #22 pc 00000000000721a8  /apex/com.android.runtime/lib64/bionic/libc.so (__start_thread+64) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+
+---------- crash reason: dead object, offset: 66976 (0x105a0), original value: 0xc040a06, new value: -0xc040a07 ----------
+02-15 19:08:18.064   682  2994 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x20 in tid 2994 (HwBinder:682_4), pid 682 (hiaiserver)
+02-15 19:08:18.084  3272  3272 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+02-15 19:08:18.084  3272  3272 F DEBUG   : Build fingerprint: 'HUAWEI/MRX-AN19/HWMRX:10/HUAWEIMRX-AN19/102.0.0.221C00:user/release-keys'
+02-15 19:08:18.084  3272  3272 F DEBUG   : Revision: '0'
+02-15 19:08:18.084  3272  3272 F DEBUG   : ABI: 'arm64'
+02-15 19:08:18.084  3272  3272 F DEBUG   : Timestamp: 2022-02-15 19:08:18+0800
+02-15 19:08:18.084  3272  3272 F DEBUG   : pid: 682, tid: 2994, name: HwBinder:682_4  >>> /vendor/bin/hiaiserver <<<
+02-15 19:08:18.084  3272  3272 F DEBUG   : uid: 1000
+02-15 19:08:18.084  3272  3272 F DEBUG   : signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x20
+02-15 19:08:18.084  3272  3272 F DEBUG   : Cause: null pointer dereference
+02-15 19:08:18.084  3272  3272 F DEBUG   :     x0  0000007b4f4daca0  x1  0000007b49817d78  x2  0000007b566faff8  x3  0000007b49817d78
+02-15 19:08:18.084  3272  3272 F DEBUG   :     x4  0000007b49817d90  x5  0000007b4f4dac99  x6  726f736e65745f5f  x7  61645f637365645f
+02-15 19:08:18.084  3272  3272 F DEBUG   :     x8  0000007b4f5a9480  x9  0000000000000001  x10 0000007b55280e78  x11 0000000000000001
+02-15 19:08:18.084  3272  3272 F DEBUG   :     x12 0000007b55280e88  x13 5f5f657079745f61  x14 0000000000000020  x15 aaaaaaaaaaaaaaab
+02-15 19:08:18.084  3272  3272 F DEBUG   :     x16 0000007b567be290  x17 0000007b55e050a8  x18 0000007b3a8a6000  x19 0000007b49817e88
+02-15 19:08:18.084  3272  3272 F DEBUG   :     x20 0000000000000000  x21 0000007b564655c1  x22 0000000000007475  x23 0000007b565742b0
+02-15 19:08:18.084  3272  3272 F DEBUG   :     x24 0000007b49817e40  x25 0000007b567bd610  x26 ffffffffffffffff  x27 0000007b567bd600
+02-15 19:08:18.084  3272  3272 F DEBUG   :     x28 0000007b565742b0  x29 0000007b49817df0
+02-15 19:08:18.084  3272  3272 F DEBUG   :     sp  0000007b49817de0  lr  0000007b5679df6c  pc  0000007b5679df6c
+02-15 19:08:18.091  3272  3272 F DEBUG   : 
+02-15 19:08:18.091  3272  3272 F DEBUG   : backtrace:
+02-15 19:08:18.091  3272  3272 F DEBUG   :       #00 pc 00000000000c8f6c  /vendor/lib64/libgraph.so (ge::TensorDesc::TensorDesc(ge::TensorDesc const&)+24) (BuildId: d2a9b3d0cdbbae81ebf61f41d7db8a9d)
+02-15 19:08:18.091  3272  3272 F DEBUG   :       #01 pc 00000000000b4044  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:08:18.091  3272  3272 F DEBUG   :       #02 pc 00000000000ae22c  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:08:18.091  3272  3272 F DEBUG   :       #03 pc 00000000000acbb8  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:08:18.091  3272  3272 F DEBUG   :       #04 pc 00000000000ab7b4  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:08:18.091  3272  3272 F DEBUG   :       #05 pc 00000000000aab08  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:08:18.091  3272  3272 F DEBUG   :       #06 pc 00000000000aa57c  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:08:18.091  3272  3272 F DEBUG   :       #07 pc 00000000000b5760  /vendor/lib64/libhiai_executor.so (ge::OMModelGenerator::GenerateFromBuffer(ge::GenerateOptions const&, ge::BaseBuffer const&, std::__1::shared_ptr<ge::CompiledModel>&)+1052) (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:08:18.091  3272  3272 F DEBUG   :       #08 pc 0000000000032b4c  /vendor/lib64/libhiai_server.so (ge::ExecutorManager::LoadModel(ge::LoadModelOptions const&, ge::BaseBuffer const&, unsigned int&)+1380) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+02-15 19:08:18.091  3272  3272 F DEBUG   :       #09 pc 000000000001a890  /vendor/lib64/libhiai_server.so (hiai::AIModelManagerImpl::LoadModelFromMem(hiai::AIModelDescription const&, unsigned int&)+1132) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+02-15 19:08:18.091  3272  3272 F DEBUG   :       #10 pc 0000000000018fb4  /vendor/lib64/libhiai_server.so (hiai::AIModelManagerImpl::LoadModels(std::__1::vector<hiai::AIModelDescription, std::__1::allocator<hiai::AIModelDescription>> const&)+196) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+02-15 19:08:18.091  3272  3272 F DEBUG   :       #11 pc 0000000000018794  /vendor/lib64/libhiai_server.so (hiai::AIModelManagerImpl::Init(hiai::AIConfig const&, std::__1::vector<hiai::AIModelDescription, std::__1::allocator<hiai::AIModelDescription>> const&)+76) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+02-15 19:08:18.091  3272  3272 F DEBUG   :       #12 pc 0000000000052b30  /vendor/bin/hiaiserver (ai::AiModelMngrService::LoadModel(int, int, hiai::AIConfig const&, std::__1::vector<hiai::AIModelDescription, std::__1::allocator<hiai::AIModelDescription>> const&, bool, bool)+1452) (BuildId: 480c54fdb0df11b667956c294e2d001a)
+02-15 19:08:18.091  3272  3272 F DEBUG   :       #13 pc 00000000000594e8  /vendor/bin/hiaiserver (ai::AiModelMngrService::startModelFromMem2(int, int, android::hardware::hidl_vec<vendor::huawei::hardware::ai::V1_0::ModelBuffer> const&)+1616) (BuildId: 480c54fdb0df11b667956c294e2d001a)
+02-15 19:08:18.091  3272  3272 F DEBUG   :       #14 pc 000000000006c97c  /vendor/lib64/vendor.huawei.hardware.ai@1.1.so (vendor::huawei::hardware::ai::V1_1::BnHwAiModelMngr::_hidl_startModelFromMem2(android::hidl::base::V1_0::BnHwBase*, android::hardware::Parcel const&, android::hardware::Parcel*, std::__1::function<void (android::hardware::Parcel&)>)+352) (BuildId: 401d2d5fe2bf2a86050ef8f4ab4ffb3f)
+02-15 19:08:18.091  3272  3272 F DEBUG   :       #15 pc 0000000000016094  /vendor/lib64/vendor.huawei.hardware.ai@3.2.so (vendor::huawei::hardware::ai::V3_2::BnHwAiModelMngr::onTransact(unsigned int, android::hardware::Parcel const&, android::hardware::Parcel*, unsigned int, std::__1::function<void (android::hardware::Parcel&)>)+2724) (BuildId: 8d0033ecc5612c03f0f58d8e15dfa964)
+02-15 19:08:18.091  3272  3272 F DEBUG   :       #16 pc 00000000000825f4  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::BHwBinder::transact(unsigned int, android::hardware::Parcel const&, android::hardware::Parcel*, unsigned int, std::__1::function<void (android::hardware::Parcel&)>)+68) (BuildId: e118fa494ca0871fdbd553b0452e17cb)
+02-15 19:08:18.091  3272  3272 F DEBUG   :       #17 pc 0000000000085e88  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::IPCThreadState::getAndExecuteCommand()+1036) (BuildId: e118fa494ca0871fdbd553b0452e17cb)
+02-15 19:08:18.091  3272  3272 F DEBUG   :       #18 pc 0000000000087518  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::IPCThreadState::joinThreadPool(bool)+152) (BuildId: e118fa494ca0871fdbd553b0452e17cb)
+02-15 19:08:18.091  3272  3272 F DEBUG   :       #19 pc 0000000000096654  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::PoolThread::threadLoop()+24) (BuildId: e118fa494ca0871fdbd553b0452e17cb)
+02-15 19:08:18.091  3272  3272 F DEBUG   :       #20 pc 00000000000136d4  /system/lib64/vndk-sp-29/libutils.so (android::Thread::_threadLoop(void*)+288) (BuildId: 38bfce7f86e6c4ef3ceb997e88df0926)
+02-15 19:08:18.091  3272  3272 F DEBUG   :       #21 pc 00000000000cf7c0  /apex/com.android.runtime/lib64/bionic/libc.so (__pthread_start(void*)+36) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+02-15 19:08:18.091  3272  3272 F DEBUG   :       #22 pc 00000000000721a8  /apex/com.android.runtime/lib64/bionic/libc.so (__start_thread+64) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+
+---------- crash reason: dead object, offset: 66980 (0x105a4), original value: 0x22101008, new value: 0x41414141 ----------
+02-15 19:08:20.302  3285  3315 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x20 in tid 3315 (HwBinder:3285_2), pid 3285 (hiaiserver)
+02-15 19:08:20.313  3444  3444 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+02-15 19:08:20.313  3444  3444 F DEBUG   : Build fingerprint: 'HUAWEI/MRX-AN19/HWMRX:10/HUAWEIMRX-AN19/102.0.0.221C00:user/release-keys'
+02-15 19:08:20.313  3444  3444 F DEBUG   : Revision: '0'
+02-15 19:08:20.313  3444  3444 F DEBUG   : ABI: 'arm64'
+02-15 19:08:20.313  3444  3444 F DEBUG   : Timestamp: 2022-02-15 19:08:20+0800
+02-15 19:08:20.313  3444  3444 F DEBUG   : pid: 3285, tid: 3315, name: HwBinder:3285_2  >>> /vendor/bin/hiaiserver <<<
+02-15 19:08:20.313  3444  3444 F DEBUG   : uid: 1000
+02-15 19:08:20.313  3444  3444 F DEBUG   : signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x20
+02-15 19:08:20.313  3444  3444 F DEBUG   : Cause: null pointer dereference
+02-15 19:08:20.313  3444  3444 F DEBUG   :     x0  0000007e0c998440  x1  0000007e0b7f9d78  x2  0000007e13328ff8  x3  0000007e0b7f9d78
+02-15 19:08:20.313  3444  3444 F DEBUG   :     x4  0000007e0b7f9d90  x5  0000007e0c998439  x6  726f736e65745f5f  x7  61645f637365645f
+02-15 19:08:20.313  3444  3444 F DEBUG   :     x8  0000007e0c959ca0  x9  0000000000000001  x10 0000007e128ed280  x11 0000000000000000
+02-15 19:08:20.313  3444  3444 F DEBUG   :     x12 0000007e128ed288  x13 5f5f657079745f61  x14 0000000000000020  x15 aaaaaaaaaaaaaaab
+02-15 19:08:20.313  3444  3444 F DEBUG   :     x16 0000007e133ec290  x17 0000007e142ce0a8  x18 0000007e0abf6000  x19 0000007e0b7f9e88
+02-15 19:08:20.313  3444  3444 F DEBUG   :     x20 0000000000000000  x21 0000007e12d5f5c1  x22 0000000000007475  x23 0000007e12e6e2b0
+02-15 19:08:20.313  3444  3444 F DEBUG   :     x24 0000007e0b7f9e40  x25 0000007e133eb610  x26 ffffffffffffffff  x27 0000007e133eb600
+02-15 19:08:20.313  3444  3444 F DEBUG   :     x28 0000007e12e6e2b0  x29 0000007e0b7f9df0
+02-15 19:08:20.313  3444  3444 F DEBUG   :     sp  0000007e0b7f9de0  lr  0000007e133cbf6c  pc  0000007e133cbf6c
+02-15 19:08:20.319  3444  3444 F DEBUG   : 
+02-15 19:08:20.319  3444  3444 F DEBUG   : backtrace:
+02-15 19:08:20.319  3444  3444 F DEBUG   :       #00 pc 00000000000c8f6c  /vendor/lib64/libgraph.so (ge::TensorDesc::TensorDesc(ge::TensorDesc const&)+24) (BuildId: d2a9b3d0cdbbae81ebf61f41d7db8a9d)
+02-15 19:08:20.319  3444  3444 F DEBUG   :       #01 pc 00000000000b4044  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:08:20.319  3444  3444 F DEBUG   :       #02 pc 00000000000ae22c  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:08:20.319  3444  3444 F DEBUG   :       #03 pc 00000000000acbb8  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:08:20.319  3444  3444 F DEBUG   :       #04 pc 00000000000ab7b4  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:08:20.319  3444  3444 F DEBUG   :       #05 pc 00000000000aab08  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:08:20.319  3444  3444 F DEBUG   :       #06 pc 00000000000aa57c  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:08:20.319  3444  3444 F DEBUG   :       #07 pc 00000000000b5760  /vendor/lib64/libhiai_executor.so (ge::OMModelGenerator::GenerateFromBuffer(ge::GenerateOptions const&, ge::BaseBuffer const&, std::__1::shared_ptr<ge::CompiledModel>&)+1052) (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:08:20.319  3444  3444 F DEBUG   :       #08 pc 0000000000032b4c  /vendor/lib64/libhiai_server.so (ge::ExecutorManager::LoadModel(ge::LoadModelOptions const&, ge::BaseBuffer const&, unsigned int&)+1380) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+02-15 19:08:20.319  3444  3444 F DEBUG   :       #09 pc 000000000001a890  /vendor/lib64/libhiai_server.so (hiai::AIModelManagerImpl::LoadModelFromMem(hiai::AIModelDescription const&, unsigned int&)+1132) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+02-15 19:08:20.319  3444  3444 F DEBUG   :       #10 pc 0000000000018fb4  /vendor/lib64/libhiai_server.so (hiai::AIModelManagerImpl::LoadModels(std::__1::vector<hiai::AIModelDescription, std::__1::allocator<hiai::AIModelDescription>> const&)+196) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+02-15 19:08:20.319  3444  3444 F DEBUG   :       #11 pc 0000000000018794  /vendor/lib64/libhiai_server.so (hiai::AIModelManagerImpl::Init(hiai::AIConfig const&, std::__1::vector<hiai::AIModelDescription, std::__1::allocator<hiai::AIModelDescription>> const&)+76) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+02-15 19:08:20.320  3444  3444 F DEBUG   :       #12 pc 0000000000052b30  /vendor/bin/hiaiserver (ai::AiModelMngrService::LoadModel(int, int, hiai::AIConfig const&, std::__1::vector<hiai::AIModelDescription, std::__1::allocator<hiai::AIModelDescription>> const&, bool, bool)+1452) (BuildId: 480c54fdb0df11b667956c294e2d001a)
+02-15 19:08:20.320  3444  3444 F DEBUG   :       #13 pc 00000000000594e8  /vendor/bin/hiaiserver (ai::AiModelMngrService::startModelFromMem2(int, int, android::hardware::hidl_vec<vendor::huawei::hardware::ai::V1_0::ModelBuffer> const&)+1616) (BuildId: 480c54fdb0df11b667956c294e2d001a)
+02-15 19:08:20.320  3444  3444 F DEBUG   :       #14 pc 000000000006c97c  /vendor/lib64/vendor.huawei.hardware.ai@1.1.so (vendor::huawei::hardware::ai::V1_1::BnHwAiModelMngr::_hidl_startModelFromMem2(android::hidl::base::V1_0::BnHwBase*, android::hardware::Parcel const&, android::hardware::Parcel*, std::__1::function<void (android::hardware::Parcel&)>)+352) (BuildId: 401d2d5fe2bf2a86050ef8f4ab4ffb3f)
+02-15 19:08:20.320  3444  3444 F DEBUG   :       #15 pc 0000000000016094  /vendor/lib64/vendor.huawei.hardware.ai@3.2.so (vendor::huawei::hardware::ai::V3_2::BnHwAiModelMngr::onTransact(unsigned int, android::hardware::Parcel const&, android::hardware::Parcel*, unsigned int, std::__1::function<void (android::hardware::Parcel&)>)+2724) (BuildId: 8d0033ecc5612c03f0f58d8e15dfa964)
+02-15 19:08:20.320  3444  3444 F DEBUG   :       #16 pc 00000000000825f4  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::BHwBinder::transact(unsigned int, android::hardware::Parcel const&, android::hardware::Parcel*, unsigned int, std::__1::function<void (android::hardware::Parcel&)>)+68) (BuildId: e118fa494ca0871fdbd553b0452e17cb)
+02-15 19:08:20.320  3444  3444 F DEBUG   :       #17 pc 0000000000085e88  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::IPCThreadState::getAndExecuteCommand()+1036) (BuildId: e118fa494ca0871fdbd553b0452e17cb)
+02-15 19:08:20.320  3444  3444 F DEBUG   :       #18 pc 0000000000087518  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::IPCThreadState::joinThreadPool(bool)+152) (BuildId: e118fa494ca0871fdbd553b0452e17cb)
+02-15 19:08:20.320  3444  3444 F DEBUG   :       #19 pc 0000000000096654  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::PoolThread::threadLoop()+24) (BuildId: e118fa494ca0871fdbd553b0452e17cb)
+02-15 19:08:20.320  3444  3444 F DEBUG   :       #20 pc 00000000000136d4  /system/lib64/vndk-sp-29/libutils.so (android::Thread::_threadLoop(void*)+288) (BuildId: 38bfce7f86e6c4ef3ceb997e88df0926)
+02-15 19:08:20.320  3444  3444 F DEBUG   :       #21 pc 00000000000cf7c0  /apex/com.android.runtime/lib64/bionic/libc.so (__pthread_start(void*)+36) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+02-15 19:08:20.320  3444  3444 F DEBUG   :       #22 pc 00000000000721a8  /apex/com.android.runtime/lib64/bionic/libc.so (__start_thread+64) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+
+---------- crash reason: dead object, offset: 66988 (0x105ac), original value: 0x30435748, new value: 0x0 ----------
+02-15 19:08:23.766  3665  3665 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x20 in tid 3665 (hiaiserver), pid 3665 (hiaiserver)
+02-15 19:08:23.781  3735  3735 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+02-15 19:08:23.781  3735  3735 F DEBUG   : Build fingerprint: 'HUAWEI/MRX-AN19/HWMRX:10/HUAWEIMRX-AN19/102.0.0.221C00:user/release-keys'
+02-15 19:08:23.781  3735  3735 F DEBUG   : Revision: '0'
+02-15 19:08:23.781  3735  3735 F DEBUG   : ABI: 'arm64'
+02-15 19:08:23.781  3735  3735 F DEBUG   : Timestamp: 2022-02-15 19:08:23+0800
+02-15 19:08:23.781  3735  3735 F DEBUG   : pid: 3665, tid: 3665, name: hiaiserver  >>> /vendor/bin/hiaiserver <<<
+02-15 19:08:23.781  3735  3735 F DEBUG   : uid: 1000
+02-15 19:08:23.781  3735  3735 F DEBUG   : signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x20
+02-15 19:08:23.781  3735  3735 F DEBUG   : Cause: null pointer dereference
+02-15 19:08:23.781  3735  3735 F DEBUG   :     x0  000000711ec81f60  x1  0000007fd49820a8  x2  0000007124ff0ff8  x3  0000007fd49820a8
+02-15 19:08:23.781  3735  3735 F DEBUG   :     x4  0000007fd49820c0  x5  000000711ec81f59  x6  726f736e65745f5f  x7  61645f637365645f
+02-15 19:08:23.781  3735  3735 F DEBUG   :     x8  000000711ec2a7c0  x9  0000000000000001  x10 000000712340d678  x11 0000000000000001
+02-15 19:08:23.781  3735  3735 F DEBUG   :     x12 000000712340d688  x13 5f5f657079745f61  x14 0000000000000020  x15 aaaaaaaaaaaaaaab
+02-15 19:08:23.781  3735  3735 F DEBUG   :     x16 00000071250b4290  x17 0000007124a730a8  x18 00000071274f0000  x19 0000007fd49821b8
+02-15 19:08:23.781  3735  3735 F DEBUG   :     x20 0000000000000000  x21 0000007123c9c5c1  x22 0000000000007475  x23 0000007123dab2b0
+02-15 19:08:23.781  3735  3735 F DEBUG   :     x24 0000007fd4982170  x25 00000071250b3610  x26 ffffffffffffffff  x27 00000071250b3600
+02-15 19:08:23.781  3735  3735 F DEBUG   :     x28 0000007123dab2b0  x29 0000007fd4982120
+02-15 19:08:23.781  3735  3735 F DEBUG   :     sp  0000007fd4982110  lr  0000007125093f6c  pc  0000007125093f6c
+02-15 19:08:23.788  3735  3735 F DEBUG   : 
+02-15 19:08:23.788  3735  3735 F DEBUG   : backtrace:
+02-15 19:08:23.788  3735  3735 F DEBUG   :       #00 pc 00000000000c8f6c  /vendor/lib64/libgraph.so (ge::TensorDesc::TensorDesc(ge::TensorDesc const&)+24) (BuildId: d2a9b3d0cdbbae81ebf61f41d7db8a9d)
+02-15 19:08:23.788  3735  3735 F DEBUG   :       #01 pc 00000000000b4044  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:08:23.788  3735  3735 F DEBUG   :       #02 pc 00000000000ae22c  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:08:23.788  3735  3735 F DEBUG   :       #03 pc 00000000000acbb8  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:08:23.788  3735  3735 F DEBUG   :       #04 pc 00000000000ab7b4  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:08:23.788  3735  3735 F DEBUG   :       #05 pc 00000000000aab08  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:08:23.788  3735  3735 F DEBUG   :       #06 pc 00000000000aa57c  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:08:23.788  3735  3735 F DEBUG   :       #07 pc 00000000000b5760  /vendor/lib64/libhiai_executor.so (ge::OMModelGenerator::GenerateFromBuffer(ge::GenerateOptions const&, ge::BaseBuffer const&, std::__1::shared_ptr<ge::CompiledModel>&)+1052) (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+02-15 19:08:23.788  3735  3735 F DEBUG   :       #08 pc 0000000000032b4c  /vendor/lib64/libhiai_server.so (ge::ExecutorManager::LoadModel(ge::LoadModelOptions const&, ge::BaseBuffer const&, unsigned int&)+1380) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+02-15 19:08:23.788  3735  3735 F DEBUG   :       #09 pc 000000000001a890  /vendor/lib64/libhiai_server.so (hiai::AIModelManagerImpl::LoadModelFromMem(hiai::AIModelDescription const&, unsigned int&)+1132) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+02-15 19:08:23.788  3735  3735 F DEBUG   :       #10 pc 0000000000018fb4  /vendor/lib64/libhiai_server.so (hiai::AIModelManagerImpl::LoadModels(std::__1::vector<hiai::AIModelDescription, std::__1::allocator<hiai::AIModelDescription>> const&)+196) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+02-15 19:08:23.788  3735  3735 F DEBUG   :       #11 pc 0000000000018794  /vendor/lib64/libhiai_server.so (hiai::AIModelManagerImpl::Init(hiai::AIConfig const&, std::__1::vector<hiai::AIModelDescription, std::__1::allocator<hiai::AIModelDescription>> const&)+76) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+02-15 19:08:23.788  3735  3735 F DEBUG   :       #12 pc 0000000000052b30  /vendor/bin/hiaiserver (ai::AiModelMngrService::LoadModel(int, int, hiai::AIConfig const&, std::__1::vector<hiai::AIModelDescription, std::__1::allocator<hiai::AIModelDescription>> const&, bool, bool)+1452) (BuildId: 480c54fdb0df11b667956c294e2d001a)
+02-15 19:08:23.788  3735  3735 F DEBUG   :       #13 pc 00000000000594e8  /vendor/bin/hiaiserver (ai::AiModelMngrService::startModelFromMem2(int, int, android::hardware::hidl_vec<vendor::huawei::hardware::ai::V1_0::ModelBuffer> const&)+1616) (BuildId: 480c54fdb0df11b667956c294e2d001a)
+02-15 19:08:23.788  3735  3735 F DEBUG   :       #14 pc 000000000006c97c  /vendor/lib64/vendor.huawei.hardware.ai@1.1.so (vendor::huawei::hardware::ai::V1_1::BnHwAiModelMngr::_hidl_startModelFromMem2(android::hidl::base::V1_0::BnHwBase*, android::hardware::Parcel const&, android::hardware::Parcel*, std::__1::function<void (android::hardware::Parcel&)>)+352) (BuildId: 401d2d5fe2bf2a86050ef8f4ab4ffb3f)
+02-15 19:08:23.788  3735  3735 F DEBUG   :       #15 pc 0000000000016094  /vendor/lib64/vendor.huawei.hardware.ai@3.2.so (vendor::huawei::hardware::ai::V3_2::BnHwAiModelMngr::onTransact(unsigned int, android::hardware::Parcel const&, android::hardware::Parcel*, unsigned int, std::__1::function<void (android::hardware::Parcel&)>)+2724) (BuildId: 8d0033ecc5612c03f0f58d8e15dfa964)
+02-15 19:08:23.788  3735  3735 F DEBUG   :       #16 pc 00000000000825f4  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::BHwBinder::transact(unsigned int, android::hardware::Parcel const&, android::hardware::Parcel*, unsigned int, std::__1::function<void (android::hardware::Parcel&)>)+68) (BuildId: e118fa494ca0871fdbd553b0452e17cb)
+02-15 19:08:23.788  3735  3735 F DEBUG   :       #17 pc 0000000000085e88  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::IPCThreadState::getAndExecuteCommand()+1036) (BuildId: e118fa494ca0871fdbd553b0452e17cb)
+02-15 19:08:23.788  3735  3735 F DEBUG   :       #18 pc 0000000000087518  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::IPCThreadState::joinThreadPool(bool)+152) (BuildId: e118fa494ca0871fdbd553b0452e17cb)
+02-15 19:08:23.788  3735  3735 F DEBUG   :       #19 pc 00000000000b48e8  /vendor/bin/hiaiserver (main+920) (BuildId: 480c54fdb0df11b667956c294e2d001a)
+02-15 19:08:23.788  3735  3735 F DEBUG   :       #20 pc 000000000006b108  /apex/com.android.runtime/lib64/bionic/libc.so (__libc_init+108) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+
