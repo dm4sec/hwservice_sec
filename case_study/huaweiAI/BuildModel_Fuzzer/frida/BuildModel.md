@@ -57,7 +57,7 @@
 6f64aff4e0  00 00 00 00 28 00 00 00 00 00 00 00              ....(.......
 ```
 
-2.2 From the data of `mData`, I infer the prototype of `hiai_model_hidl` as 
+2.2 The prototype of `hiai_model_hidl` is likely to be:
 ```
 |-------------|-------------|
 | hidl_string | hidl_memory |
@@ -67,6 +67,7 @@ or
 |-------------|-------------|-------------|
 | hidl_string | hidl_handle | hidl_string |
 ```
+I prefer the later one for we have to deliver the length of `hidl_memory` if we use the former one, but I can't find it in `mData`.
 
 Such that the layout of the `mData` can be read according to the parameters as:
 ```
@@ -95,11 +96,4 @@ Such that the layout of the `mData` can be read according to the parameters as:
 .| may hiai_model_hidl | hidl_string | native_handle_size | native_handle | fd_array | hidl_string |
 ```
 
-There are 2 elements in the vector, I parse the memory of them as:
-```
-
-```
-and
-```
-
-```
+There are 2 elements in the vector, the first one contains plain text (the model file) while the second one contains binary data (the parameter file). Since our fuzzer does not work well on paint text, we fuzz the second file now.

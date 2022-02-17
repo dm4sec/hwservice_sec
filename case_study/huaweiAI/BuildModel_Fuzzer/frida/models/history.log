@@ -1,0 +1,7 @@
+Finished:
+
+
+In process:
+python3 BuildModel.py --model-file="/sdcard/modelzoo/caffe/deploy.prototxt" --parameter-file="/sdcard/modelzoo/caffe/squeezenet_v1.1.caffemodel" --task-name="squeezenet" --dev-serial="JAM6R20406000226" --model-offset=2000
+
+

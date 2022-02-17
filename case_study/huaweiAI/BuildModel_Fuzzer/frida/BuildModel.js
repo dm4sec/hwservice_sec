@@ -168,7 +168,7 @@ Java.perform(function () {
         var mData_offset = args[2].add(mData_LOC);
         var mData_ptr = mData_offset.readPointer();
 
-        dump_mem(mData_ptr, mDataSize);
+        // dump_mem(mData_ptr, mDataSize);
         // return
 
         /*
@@ -188,8 +188,30 @@ Java.perform(function () {
         var mObjects_offset = args[2].add(mObjects_LOC);
         var mObjects_ptr = mObjects_offset.readPointer();
 
-        // fuzzObject(mData_ptr, mDataSize, mObjects_ptr, mObjectsSize)
-        studyObject(mData_ptr, mDataSize, mObjects_ptr, mObjectsSize)
+        fuzzObject(mData_ptr, mDataSize, mObjects_ptr, mObjectsSize)
+        // studyObject(mData_ptr, mDataSize, mObjects_ptr, mObjectsSize)
+    }
+
+    function dump_native_handle(native_handle_ptr)
+    {
+        dump_mem(native_handle_ptr.add(0x8).readPointer(), native_handle_ptr.add(0x10).readU64());
+
+        var this_fd = native_handle_ptr.add(0x8).readPointer().add(0x0c).readU32();
+        var this_size = native_handle_ptr.add(0x8).readPointer().add(0x18).readU32();
+
+        // console.log("|-[i] this_fd: 0x" + this_fd.toString(16));
+        // console.log("|-[i] this_size: 0x" + this_size.toString(16));
+
+        var map_memory_addr = g_mmap_func(
+            0,
+            this_size,
+            PROT_READ|PROT_WRITE,
+            MAP_SHARED,
+            this_fd,
+            0
+        );
+
+        dump_mem(ptr(map_memory_addr), 0x100)
     }
 
     function studyObject(mData_ptr, mDataSize, mObjects_ptr, mObjectsSize){
@@ -204,21 +226,19 @@ Java.perform(function () {
         dump_mem(mData_ptr.add(0x24c + 8).readPointer(), mData_ptr.add(0x24c + 0x10).readU64());
         dump_mem(mData_ptr.add(0x2c4 + 8).readPointer(), mData_ptr.add(0x2c4 + 0x10).readU64());
 
+        dump_native_handle(mData_ptr.add(0x114))
+        dump_native_handle(mData_ptr.add(0x1b4))
+        dump_native_handle(mData_ptr.add(0x27c))
     }
 
-    function fuzzObject(mData_pos, mDataSize, mObjects_pos, mObjectsSize){
+    function fuzzObject(mData_ptr, mDataSize, mObjects_pos, mObjectsSize){
         // console.log("|-[i] enter fuzzObject")
 
         // dump_mem(mObjects_pos, mObjectsSize * 8);
 
         // go to the `fd` directly.
-        var binder_object_ptr       = mData_pos.add(mObjects_pos.add((mObjectsSize - 2) * 8).readU64()).add(0x8).readPointer();
-        // var binder_object_len       = mData_pos.add(mObjects_pos.add((mObjectsSize - 2) * 8).readU64()).add(0x10).readU32();
+        var binder_object_ptr       = mData_ptr.add(0x1b4).add(0x8).readPointer();
 
-        // console.log(binder_object_ptr);
-        // console.log(binder_object_len);
-
-        // dump_mem(binder_object_ptr, binder_object_len);
         var this_fd = binder_object_ptr.add(0x0c).readU32();
         var this_size = binder_object_ptr.add(0x18).readU32();
 
@@ -233,6 +253,8 @@ Java.perform(function () {
             this_fd,
             0
         );
+
+        // dump_mem(ptr(map_memory_addr), 0x20);
 
         if (g_fuzz_status.seed_index >= genSeed(0).length)
         {
@@ -260,8 +282,6 @@ Java.perform(function () {
             foo.wait();
             // console.log("|-[d] host ready message received, continue.");
         }
-
-        // dump_mem(ptr(map_memory_addr), 0x100);
 
         var fuzzPos = ptr(map_memory_addr).add(g_fuzz_status.offset);
         g_fuzz_status.original_value = fuzzPos.readU32();

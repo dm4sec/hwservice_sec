@@ -20,6 +20,7 @@ log = logging.getLogger(__name__)
 global g_script
 
 g_model_file = None
+g_parameter_file = None
 g_task_name = None
 g_dev_serial = None
 g_model_offset = None
@@ -57,7 +58,7 @@ g_last_offset = [0]
 
 def progress(size, offset):
     g_tqdm.set_postfix(offset = offset, time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
-    g_tqdm.desc = "fuzzing " + g_model_file
+    g_tqdm.desc = "fuzzing " + g_parameter_file
     g_tqdm.total = size
     g_tqdm.update(offset - g_last_offset[0])
     g_last_offset[0] = 0 if size == offset else offset
@@ -147,11 +148,12 @@ def new_round(T):
     while True:
         try:
             p = subprocess.Popen(
-                "adb -s {} shell am start -n {} --es \"task_name\" \"{}\" --es \"model_path\" \"{}\"".format(
+                "adb -s {} shell am start -n {} --es \"task_name\" \"{}\" --es \"model_path\" \"{}\" --es \"parameter_path\" \"{}\"".format(
                     g_dev_serial,
                     "com.huawei.BuildModelFuzzer/.view.ClassifyActivity",
                     g_task_name,
-                    g_model_file
+                    g_model_file,
+                    g_parameter_file,
                 ),
                 shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE
@@ -199,6 +201,8 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--model-file', required=True,
                         help="The model file.")
+    parser.add_argument('--parameter-file', required=True,
+                        help="The parameter file.")
     parser.add_argument('--task-name', required=True,
                         help="Code name of this task, used to name the crash log file.")
     parser.add_argument('--dev-serial', required=True,
@@ -207,8 +211,9 @@ def main():
                         help="Offset of model file.")
 
     args = parser.parse_args()
-    global g_model_file, g_task_name, g_dev_serial, g_model_offset, g_last_relunch
+    global g_model_file, g_parameter_file, g_task_name, g_dev_serial, g_model_offset, g_last_relunch
     g_model_file = args.model_file
+    g_parameter_file = args.parameter_file
     g_task_name = args.task_name
     g_dev_serial = args.dev_serial
     g_model_offset = args.model_offset
