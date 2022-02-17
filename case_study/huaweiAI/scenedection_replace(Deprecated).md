@@ -266,3 +266,4 @@ C: 0x69634 -> 0x73690: android::hardware::writeEmbeddedToParcel(android::hardwar
 
 ### 4 Fuzz
 
+By observation, the `hidl_runModel2` does not trigger any crash, so the project is deprecated.
