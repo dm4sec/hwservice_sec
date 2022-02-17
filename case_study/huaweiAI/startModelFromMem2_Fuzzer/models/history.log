@@ -4,6 +4,9 @@ ml_textsuperresolution_1.om
 FaceDetectionExtddk.om
 FaceDetectionInddk.om
 enhance.om
+cmmole.om
+offline_squeezenet
+HWSR-s_506_506.om
 
 
 In process:
