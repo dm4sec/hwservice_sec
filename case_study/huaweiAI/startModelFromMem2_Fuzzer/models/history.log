@@ -7,9 +7,9 @@ enhance.om
 cmmole.om
 offline_squeezenet
 HWSR-s_506_506.om
+dlsr_color_3968_2976.om
 
 
 In process:
-python3 startModelFromMem2.py --model-file="/sdcard/models/offline_squeezenet" --task-name="offline_squeezenet" --dev-serial="JAM6R20406000226" --model-offset=53564
-
+python3 startModelFromMem2.py --model-file="/sdcard/models/dlsr_color_3968_2976.om" --task-name="dlsr_color_3968_2976" --dev-serial="JAM6R20406000226" --model-offset=317124
 
