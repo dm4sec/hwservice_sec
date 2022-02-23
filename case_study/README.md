@@ -4,6 +4,7 @@ By observing, I find it's a case to case fuzzing for a specific service.
 
 1. `huaweiAI` is used to fuzz [huawei ai service](https://developer.huawei.com/consumer/cn/doc/overview/HUAWEI_HiAI).
 2. `huaweiSurity` is used to fuzz [huawei security service](https://developer.huawei.com/consumer/cn/doc/development/Security-Guides/introduction-0000001051069988).
+3. The AI services on [Google](https://github.com/dm4sec/hwservice_sec/tree/master/case_study/GoogleAI) and [Samsung](https://github.com/dm4sec/hwservice_sec/tree/master/case_study/SamsungAI) are the same, both of which are accessible via [NNAPI](https://developer.android.com/ndk/guides/neuralnetworks?hl=zh_cn). There has been lots of [work](https://android.googlesource.com/platform/external/tensorflow/+/refs/heads/master/tensorflow/security/README.md) in this area.  
 
 # Reference
 

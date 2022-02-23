@@ -4,7 +4,8 @@
 | ----| :----: | :----: | :---- |
 | 6 | 11 | vendor.huawei.hardware.ai@2.1::IModelManagerService_hidl | vendor::huawei::hardware::ai::V2_1::BpHwModelManagerService_hidl::_hidl_BuildModel(android::hardware::IInterface *, android::hardware::details::HidlInstrumentor *, unsigned int, android::hardware::hidl_string const&, unsigned int, android::hardware::hidl_vec\<vendor::huawei::hardware::ai::V2_0::hiai_model_hidl> const&, vendor::huawei::hardware::ai::V2_0::hiai_model_hidl const&, std::__1::function<void ()(unsigned int, int)>)
 
-2. Parse `mData`.
+2. Parse `mData`.  
+When using the [demo in DDK](https://developer.huawei.com/consumer/cn/doc/development/hiai-Library/ddk-download-0000001053590180) (Demo_Soure_Code.rar in HiAI DDK 100.300.010.010), the `hidl_BuildModel` method triggered, which covert `caffe` model to `om` model.  
 2.1 An instance of `mData` is depicted as:
 ```commandline
              0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F  0123456789ABCDEF

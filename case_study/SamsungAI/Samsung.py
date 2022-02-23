@@ -130,7 +130,7 @@ def new_round(T):
     # for app in frida.get_usb_device().enumerate_applications():
     #     print("[i] {}".format(app))
     # clean the env
-    p = subprocess.Popen("adb -s {} shell am force-stop {}".format(g_dev_serial, "com.huawei.BuildModelFuzzer"),
+    p = subprocess.Popen("adb -s {} shell am force-stop {}".format(g_dev_serial, "org.tensorflow.lite.examples.classification"),
                          shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                          stderr=subprocess.PIPE
                          )
@@ -148,7 +148,7 @@ def new_round(T):
             p = subprocess.Popen(
                 "adb -s {} shell am start -n {} --es \"task_name\" \"{}\" --es \"model_path\" \"{}\" --es \"parameter_path\" \"{}\"".format(
                     g_dev_serial,
-                    "com.huawei.BuildModelFuzzer/.view.ClassifyActivity",
+                    "org.tensorflow.lite.examples.classification/.ClassifierActivity",
                     g_task_name,
                     g_model_file,
                     g_parameter_file,
@@ -181,9 +181,9 @@ def new_round(T):
     adb kill-server
     adb usb
     '''
-    session = frida.get_device(g_dev_serial).attach("Gadget")
+    session = frida.get_device(g_dev_serial).attach("TFL Classify")
 
-    JSFile = open('BuildModel.js')
+    JSFile = open('Samsung.js')
     JsCodeFromfile = JSFile.read()
     JsCodeFromfile = JsCodeFromfile.replace("proc_name_AAoAA", "Gadget")
     JsCodeFromfile = JsCodeFromfile.replace("mem_offset_AAoAA", str(g_model_offset))
@@ -216,6 +216,9 @@ def main():
     g_dev_serial = args.dev_serial
     g_model_offset = args.model_offset
     g_last_relunch = args.model_offset
+
+    for proc in frida.get_usb_device().enumerate_processes():
+        print("[i] {}".format(proc))
 
     new_round(True)
     sys.stdin.read()
