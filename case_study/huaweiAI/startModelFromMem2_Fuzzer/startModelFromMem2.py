@@ -49,7 +49,6 @@ def collect_crash_log():
 
     return retMe
 
-
 g_tqdm = tqdm(unit='B',unit_scale=True,unit_divisor=1024,miniters=1)
 g_last_offset = [0]
 
@@ -87,12 +86,14 @@ def on_message(message, data):
             # log.info("on_message_2")
 
             # the client is not well written to exhaust the resource, such that I restart the app per 2000 lunches.
-            if g_model_offset - g_last_relunch == 2000:
+            if g_model_offset - g_last_relunch == 200:
+                g_script.post({'type': 'synchronize',
+                                   'payload': "quit"})
                 g_last_relunch = g_model_offset
                 new_round(True)
             else:
                 g_script.post({'type': 'synchronize',
-                                   'payload': "foo"})
+                                   'payload': "go"})
             # log.info("on_message_3")
 
         if "error" in message["payload"]:
@@ -188,7 +189,14 @@ def new_round(T):
     # print(JsCodeFromfile)
     global g_script
     g_script = session.create_script(JsCodeFromfile)
+    '''
+    try:
+        g_script.off('message', on_message)
+    except:
+        pass
+    '''
     g_script.on('message', on_message)
+    # time.sleep(0.5)
     g_script.load()
     # g_script.unload()
 
@@ -213,6 +221,13 @@ def main():
     g_last_relunch = args.model_offset
 
     new_round(True)
+    '''
+    while(True):
+        try:
+            sys.stdin.read()
+        except:
+            pass
+    '''
     sys.stdin.read()
     # print("NEVER run here.")
 if __name__ == '__main__':

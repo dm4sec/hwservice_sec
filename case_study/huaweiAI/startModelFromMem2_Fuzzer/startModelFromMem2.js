@@ -239,7 +239,16 @@ Java.perform(function () {
             // wait the host to finish it's task.
             // console.log("|-[d] waiting message from host")
             var foo = recv('synchronize', function(value) {
-                // console.log("|-[d] host ready message received, continue.");
+                // console.log(value.payload)
+                if (value.payload == "quit")
+                {
+                    console.log("|-[d] host message `quit` received, quit.");
+                    Interceptor.detachAll();
+                }
+                else if (value.payload == "go")
+                {
+                    // console.log("|-[d] host message `go` received, continue.");
+                }
             });
             foo.wait();
             // console.log("|-[d] host ready message received, continue.");
