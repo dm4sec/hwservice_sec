@@ -1,15 +1,2 @@
-Finished:
-detection.om
-ml_textsuperresolution_1.om
-FaceDetectionExtddk.om
-FaceDetectionInddk.om
-enhance.om
-cmmole.om
-offline_squeezenet
-HWSR-s_506_506.om
-dlsr_color_3968_2976.om
-dlsr_text_tele_wide_3648_2736.om
-
 In process:
-python3 startModelFromMem2.py --model-file="/sdcard/models/SemanticARSeg.om" --task-name="SemanticARSeg" --dev-serial="JAM6R20406000098" --model-offset=790780
-
+python3 startModelFromMem2.py --model-file="/sdcard/models/SemanticARSeg.om" --task-name="SemanticARSeg" --dev-serial="JAM6R20406000226" --model-offset=790780

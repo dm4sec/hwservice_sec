@@ -86,7 +86,7 @@ def on_message(message, data):
             # log.info("on_message_2")
 
             # the client is not well written to exhaust the resource, such that I restart the app per 2000 lunches.
-            if g_model_offset - g_last_relunch == 2000:
+            if g_model_offset - g_last_relunch == 200:
                 g_script.post({'type': 'synchronize',
                                    'payload': "quit"})
                 g_last_relunch = g_model_offset

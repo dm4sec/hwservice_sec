@@ -238,6 +238,8 @@ Java.perform(function () {
 
         // go to the `fd` directly.
         var binder_object_ptr       = mData_ptr.add(0x1b4).add(0x8).readPointer();
+        // var binder_object_ptr       = mData_ptr.add(0x114).add(0x8).readPointer();
+
 
         var this_fd = binder_object_ptr.add(0x0c).readU32();
         var this_size = binder_object_ptr.add(0x18).readU32();
