@@ -1,2 +1,3 @@
 In process:
-python3 startModelFromMem2.py --model-file="/sdcard/models/SemanticARSeg.om" --task-name="SemanticARSeg" --dev-serial="JAM6R20406000226" --model-offset=790780
+python3 startModelFromMem2.py --model-file="/sdcard/models/2012_realtime_4class_6-29.om" --task-name="2012_realtime_4class_6-29" --dev-serial="JAM6R20406000226" --model-offset=2641620
+python3 startModelFromMem2.py --model-file="/sdcard/models/HwFaceAttributes.om" --task-name="HwFaceAttributes" --dev-serial="JAM6R20406000098" --model-offset=566500

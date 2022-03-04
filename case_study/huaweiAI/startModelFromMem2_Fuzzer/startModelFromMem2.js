@@ -119,10 +119,18 @@ Java.perform(function () {
         return false;
         */
         console.warn("|-[!] ExceptionHandler: exception received, details: offset: 0x" + g_fuzz_status.offset.toString(16) + ", original value: 0x" + g_fuzz_status.original_value.toString(16) + ", new value: 0x" + g_fuzz_status.new_value.toString(16));
-        console.warn("|-[!] ExceptionHandler: exception received, error type: " + error.type + ", error address: " + error.address + ", in module: " + new ModuleMap().find(error.address).name);
-        console.warn('|-[!] call stack:\n' +
-            Thread.backtrace(error.context, Backtracer.ACCURATE)
-            .map(DebugSymbol.fromAddress).join('\n') + '\n');
+//        try{
+//            console.warn("|-[!] ExceptionHandler: exception received, error type: " + error.type + ", error address: " + error.address + ", in module: " + new ModuleMap().find(error.address).name);
+//        }
+//        catch(err) {
+//            console.error(err);
+//            Interceptor.detachAll();
+//            return true;
+//        }
+
+//        console.warn('|-[!] call stack:\n' +
+//            Thread.backtrace(error.context, Backtracer.ACCURATE)
+//            .map(DebugSymbol.fromAddress).join('\n') + '\n');
         send("error|" + error + "|" + g_fuzz_status.offset + "|" + g_fuzz_status.original_value + "|" + g_fuzz_status.new_value);
         Interceptor.detachAll();
         return false;

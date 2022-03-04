@@ -59,6 +59,7 @@ def progress(size, offset):
     g_tqdm.update(offset - g_last_offset[0])
     g_last_offset[0] = 0 if size == offset else offset
 
+
 def on_message(message, data):
     global g_model_offset, g_task_name, g_last_relunch
 
@@ -86,7 +87,7 @@ def on_message(message, data):
             # log.info("on_message_2")
 
             # the client is not well written to exhaust the resource, such that I restart the app per 2000 lunches.
-            if g_model_offset - g_last_relunch == 200:
+            if g_model_offset - g_last_relunch == 500:
                 g_script.post({'type': 'synchronize',
                                    'payload': "quit"})
                 g_last_relunch = g_model_offset
