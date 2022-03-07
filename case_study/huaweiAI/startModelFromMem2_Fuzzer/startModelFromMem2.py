@@ -15,7 +15,7 @@ import time
 logging.basicConfig(stream=sys.stdout, format="%(levelname)s: %(asctime)s: %(message)s", level=logging.INFO, datefmt='%a %d %b %Y %H:%M:%S')
 log = logging.getLogger(__name__)
 
-global g_script
+g_script = None
 
 g_model_file = None
 g_task_name = None
@@ -58,7 +58,7 @@ def progress(size, offset):
     g_tqdm.total = size
     g_tqdm.update(offset - g_last_offset[0])
     g_last_offset[0] = 0 if size == offset else offset
-
+    # log.info("fuzzing: {}, offset: {}, restart: {}, percent: {:.2%}".format(g_model_file, offset, g_c_restart, float(offset) / size))
 
 def on_message(message, data):
     global g_model_offset, g_task_name, g_last_relunch
@@ -126,8 +126,10 @@ def on_message(message, data):
             new_round(True)
             # log.info("on_message_5")
 
+g_failed_finding_proc = 0
+
 def new_round(T):
-    global g_dev_serial, g_task_name, g_model_file
+    global g_dev_serial, g_task_name, g_model_file, g_failed_finding_proc
     # for app in frida.get_usb_device().enumerate_applications():
     #     print("[i] {}".format(app))
     # clean the env
@@ -158,13 +160,15 @@ def new_round(T):
             )
             stdout, stderr = p.communicate()
 
-            time.sleep(0.5)
+            time.sleep(10)  # This is very important, or python will crash.
             frida.get_device(g_dev_serial).get_process("Gadget")
             time.sleep(0.5)
             break
         except:
+            g_failed_finding_proc += 1
             pass
 
+    print("[*] failed finding proc: {}.".format(g_failed_finding_proc))
     print("[*] new fuzzing starts from: {} ({}).".format(g_model_offset, hex(g_model_offset)))
 
     # to enable remote session
@@ -229,6 +233,6 @@ def main():
         except:
             pass
     # sys.stdin.read()
-    print("NEVER run here.")
+    print("NEVER run ME.")
 if __name__ == '__main__':
     main()

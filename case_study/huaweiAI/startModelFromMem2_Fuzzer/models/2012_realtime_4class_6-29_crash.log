@@ -198,3 +198,4 @@
 03-03 16:09:35.888 13135 13135 F DEBUG   : backtrace:
 03-03 16:09:35.888 13135 13135 F DEBUG   :       #00 pc 00000000001b3fd8  /data/app/com.huawei.hiaidemoFuzzer-5POR5rLNSyy7efHa2UAdKw==/base.apk
 
+---------- crash reason: Error: access violation accessing 0x64, offset: 2697720 (0x2929f8), original value: 0x0, new value: 0x0 ----------
