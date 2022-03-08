@@ -144,6 +144,7 @@ def new_round(T):
     #     return
 
     time.sleep(0.5)
+    print("[*] new fuzzing starts from: {} ({}).".format(g_model_offset, hex(g_model_offset)))
 
     while True:
         try:
@@ -160,14 +161,24 @@ def new_round(T):
             )
             stdout, stderr = p.communicate()
 
-            time.sleep(0.5)
-            frida.get_device(g_dev_serial).get_process("Gadget")
-            time.sleep(0.5)
+            # time.sleep(0.5)
+            # frida.get_device(g_dev_serial).get_process("Gadget")
+            time.sleep(1)
+            session = frida.get_device(g_dev_serial).attach("Gadget")
+
+            JSFile = open('BuildModel.js')
+            JsCodeFromfile = JSFile.read()
+            JsCodeFromfile = JsCodeFromfile.replace("proc_name_AAoAA", "Gadget")
+            JsCodeFromfile = JsCodeFromfile.replace("mem_offset_AAoAA", str(g_model_offset))
+            # print(JsCodeFromfile)
+            global g_script
+            g_script = session.create_script(JsCodeFromfile)
+            g_script.on('message', on_message)
+            g_script.load()
+            # g_script.unload()
             break
         except:
             pass
-
-    print("[*] new fuzzing starts from: {} ({}).".format(g_model_offset, hex(g_model_offset)))
 
     # to enable remote session
     '''
@@ -183,18 +194,6 @@ def new_round(T):
     adb kill-server
     adb usb
     '''
-    session = frida.get_device(g_dev_serial).attach("Gadget")
-
-    JSFile = open('BuildModel.js')
-    JsCodeFromfile = JSFile.read()
-    JsCodeFromfile = JsCodeFromfile.replace("proc_name_AAoAA", "Gadget")
-    JsCodeFromfile = JsCodeFromfile.replace("mem_offset_AAoAA", str(g_model_offset))
-    # print(JsCodeFromfile)
-    global g_script
-    g_script = session.create_script(JsCodeFromfile)
-    g_script.on('message', on_message)
-    g_script.load()
-    # g_script.unload()
 
 def main():
 

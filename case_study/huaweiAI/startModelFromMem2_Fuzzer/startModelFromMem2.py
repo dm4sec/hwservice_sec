@@ -87,7 +87,7 @@ def on_message(message, data):
             # log.info("on_message_2")
 
             # the client is not well written to exhaust the resource, such that I restart the app per 2000 lunches.
-            if g_model_offset - g_last_relunch == 500:
+            if g_model_offset - g_last_relunch == 700:
                 g_script.post({'type': 'synchronize',
                                    'payload': "quit"})
                 g_last_relunch = g_model_offset
@@ -126,10 +126,11 @@ def on_message(message, data):
             new_round(True)
             # log.info("on_message_5")
 
-g_failed_finding_proc = 0
+g_failed_launch = 0
+g_relaunch = 1
 
 def new_round(T):
-    global g_dev_serial, g_task_name, g_model_file, g_failed_finding_proc
+    global g_dev_serial, g_task_name, g_model_file, g_failed_launch, g_relaunch
     # for app in frida.get_usb_device().enumerate_applications():
     #     print("[i] {}".format(app))
     # clean the env
@@ -146,31 +147,6 @@ def new_round(T):
 
     time.sleep(0.5)
 
-    while True:
-        try:
-            p = subprocess.Popen(
-                "adb -s {} shell am start -n {} --es \"task_name\" \"{}\" --es \"model_path\" \"{}\"".format(
-                    g_dev_serial,
-                    "com.huawei.hiaidemoFuzzer/.view.ClassifyActivity",
-                    g_task_name,
-                    g_model_file
-                ),
-                shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE
-            )
-            stdout, stderr = p.communicate()
-
-            time.sleep(10)  # This is very important, or python will crash.
-            frida.get_device(g_dev_serial).get_process("Gadget")
-            time.sleep(0.5)
-            break
-        except:
-            g_failed_finding_proc += 1
-            pass
-
-    print("[*] failed finding proc: {}.".format(g_failed_finding_proc))
-    print("[*] new fuzzing starts from: {} ({}).".format(g_model_offset, hex(g_model_offset)))
-
     # to enable remote session
     '''
     1. config the `libgadget.config.so` file ?
@@ -185,25 +161,43 @@ def new_round(T):
     adb kill-server
     adb usb
     '''
-    session = frida.get_device(g_dev_serial).attach("Gadget")
+    print("[*] new fuzzing starts from: {} ({}).".format(g_model_offset, hex(g_model_offset)))
 
-    JSFile = open('startModelFromMem2.js')
-    JsCodeFromfile = JSFile.read()
-    JsCodeFromfile = JsCodeFromfile.replace("proc_name_AAoAA", "Gadget")
-    JsCodeFromfile = JsCodeFromfile.replace("mem_offset_AAoAA", str(g_model_offset))
-    # print(JsCodeFromfile)
-    global g_script
-    g_script = session.create_script(JsCodeFromfile)
-    '''
-    try:
-        g_script.off('message', on_message)
-    except:
-        pass
-    '''
-    g_script.on('message', on_message)
-    # time.sleep(0.5)
-    g_script.load()
-    # g_script.unload()
+    while True:
+        print("[*] #{} re-launching, with {} failures.".format(g_relaunch, g_failed_launch))
+        try:
+            p = subprocess.Popen(
+                "adb -s {} shell am start -n {} --es \"task_name\" \"{}\" --es \"model_path\" \"{}\"".format(
+                    g_dev_serial,
+                    "com.huawei.hiaidemoFuzzer/.view.ClassifyActivity",
+                    g_task_name,
+                    g_model_file
+                ),
+                shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE
+            )
+            stdout, stderr = p.communicate()
+
+            time.sleep(1)
+            # frida.get_device(g_dev_serial).get_process("Gadget")
+            session = frida.get_device(g_dev_serial).attach("Gadget")
+
+            JSFile = open('startModelFromMem2.js')
+            JsCodeFromfile = JSFile.read()
+            JsCodeFromfile = JsCodeFromfile.replace("proc_name_AAoAA", "Gadget")
+            JsCodeFromfile = JsCodeFromfile.replace("mem_offset_AAoAA", str(g_model_offset))
+            # print(JsCodeFromfile)
+            global g_script
+            g_script = session.create_script(JsCodeFromfile)
+            g_script.on('message', on_message)
+            # time.sleep(0.5)
+            g_script.load()
+            # g_script.unload()
+            break
+        except:
+            g_failed_launch += 1
+            pass
+    g_relaunch += 1
 
 def main():
 
