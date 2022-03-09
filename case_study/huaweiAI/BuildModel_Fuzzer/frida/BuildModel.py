@@ -24,6 +24,7 @@ g_dev_serial = None
 g_model_offset = None
 
 g_last_relunch = None
+g_dev = None
 
 def collect_crash_log():
     global g_dev_serial, g_task_name
@@ -128,7 +129,7 @@ def on_message(message, data):
             # log.info("on_message_5")
 
 def new_round(T):
-    global g_dev_serial, g_task_name, g_model_file
+    global g_dev_serial, g_task_name, g_model_file, g_dev
     # for app in frida.get_usb_device().enumerate_applications():
     #     print("[i] {}".format(app))
     # clean the env
@@ -164,7 +165,7 @@ def new_round(T):
             # time.sleep(0.5)
             # frida.get_device(g_dev_serial).get_process("Gadget")
             time.sleep(1)
-            session = frida.get_device(g_dev_serial).attach("Gadget")
+            session = g_dev.attach("Gadget")
 
             JSFile = open('BuildModel.js')
             JsCodeFromfile = JSFile.read()
@@ -210,13 +211,15 @@ def main():
                         help="Offset of model file.")
 
     args = parser.parse_args()
-    global g_model_file, g_parameter_file, g_task_name, g_dev_serial, g_model_offset, g_last_relunch
+    global g_model_file, g_parameter_file, g_task_name, g_dev_serial, g_model_offset, g_last_relunch, g_dev
     g_model_file = args.model_file
     g_parameter_file = args.parameter_file
     g_task_name = args.task_name
     g_dev_serial = args.dev_serial
     g_model_offset = args.model_offset
     g_last_relunch = args.model_offset
+
+    g_dev = frida.get_device(args.dev_serial)       # NOTE: should be only one instance, or the host will crash after a large iteration.
 
     new_round(True)
     sys.stdin.read()
