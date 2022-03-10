@@ -727,4 +727,66 @@
 03-04 09:48:54.953  5618  5618 F DEBUG   :       #21 pc 0000000000087518  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::IPCThreadState::joinThreadPool(bool)+152) (BuildId: e118fa494ca0871fdbd553b0452e17cb)
 03-04 09:48:54.953  5618  5618 F DEBUG   :       #22 pc 00000000000b48e8  /vendor/bin/hiaiserver (main+920) (BuildId: 480c54fdb0df11b667956c294e2d001a)
 03-04 09:48:54.953  5618  5618 F DEBUG   :       #23 pc 000000000006b108  /apex/com.android.runtime/lib64/bionic/libc.so (__libc_init+108) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+---------- crash reason: dead object, offset: 1657168 (0x194950), original value: 0x10b3c, new value: 0xffffffff ----------
+03-08 17:16:14.909 27299 27323 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 27323 (HwBinder:27299_), pid 27299 (hiaiserver)
+03-08 17:16:15.426 28128 28128 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+03-08 17:16:15.426 28128 28128 F DEBUG   : Build fingerprint: 'HUAWEI/MRX-AN19/HWMRX:10/HUAWEIMRX-AN19/102.0.0.225C00:user/release-keys'
+03-08 17:16:15.426 28128 28128 F DEBUG   : Revision: '0'
+03-08 17:16:15.426 28128 28128 F DEBUG   : ABI: 'arm64'
+03-08 17:16:15.427 28128 28128 F DEBUG   : Timestamp: 2022-03-08 17:16:15+0800
+03-08 17:16:15.427 28128 28128 F DEBUG   : pid: 27299, tid: 27323, name: HwBinder:27299_  >>> /vendor/bin/hiaiserver <<<
+03-08 17:16:15.427 28128 28128 F DEBUG   : uid: 1000
+03-08 17:16:15.427 28128 28128 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+03-08 17:16:15.427 28128 28128 F DEBUG   : Abort message: 'terminating with uncaught exception of type std::bad_alloc: std::bad_alloc'
+03-08 17:16:15.427 28128 28128 F DEBUG   :     x0  0000000000000000  x1  0000000000006abb  x2  0000000000000006  x3  00000073977f9ae0
+03-08 17:16:15.427 28128 28128 F DEBUG   :     x4  fefefefefefefeff  x5  fefefefefefefeff  x6  fefefefefefefeff  x7  7f7f7f7f7f7f7f7f
+03-08 17:16:15.427 28128 28128 F DEBUG   :     x8  00000000000000f0  x9  2e80bba48a2d4777  x10 0000000000000001  x11 0000000000000000
+03-08 17:16:15.427 28128 28128 F DEBUG   :     x12 fffffff0ffffffdf  x13 0000000062271ede  x14 000d79535d58a49a  x15 0000157e51bff1ea
+03-08 17:16:15.427 28128 28128 F DEBUG   :     x16 000000739fa2aa08  x17 000000739fa0a7c0  x18 0000007396f88000  x19 0000000000006aa3
+03-08 17:16:15.427 28128 28128 F DEBUG   :     x20 0000000000006abb  x21 00000000ffffffff  x22 00000073977f9d30  x23 000000739fa255b0
+03-08 17:16:15.427 28128 28128 F DEBUG   :     x24 00000073977f9c10  x25 00000073977f9c50  x26 0000007398adf2ba  x27 fffffffffffffff0
+03-08 17:16:15.427 28128 28128 F DEBUG   :     x28 0000007398bf4b70  x29 00000073977f9b80
+03-08 17:16:15.427 28128 28128 F DEBUG   :     sp  00000073977f9ac0  lr  000000739f9bf640  pc  000000739f9bf66c
+03-08 17:16:15.437 28128 28128 F DEBUG   : 
+03-08 17:16:15.437 28128 28128 F DEBUG   : backtrace:
+03-08 17:16:15.437 28128 28128 F DEBUG   :       #00 pc 000000000007066c  /apex/com.android.runtime/lib64/bionic/libc.so (abort+160) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+03-08 17:16:15.437 28128 28128 F DEBUG   :       #01 pc 00000000000500fc  /system/lib64/vndk-sp-29/libc++.so (abort_message+232) (BuildId: 4d9b5f81053165d6e71cc4d52e2434c5)
+03-08 17:16:15.437 28128 28128 F DEBUG   :       #02 pc 00000000000502f0  /system/lib64/vndk-sp-29/libc++.so (demangling_terminate_handler()+260) (BuildId: 4d9b5f81053165d6e71cc4d52e2434c5)
+03-08 17:16:15.437 28128 28128 F DEBUG   :       #03 pc 00000000000646c4  /system/lib64/vndk-sp-29/libc++.so (std::__terminate(void (*)())+12) (BuildId: 4d9b5f81053165d6e71cc4d52e2434c5)
+03-08 17:16:15.437 28128 28128 F DEBUG   :       #04 pc 0000000000063da0  /system/lib64/vndk-sp-29/libc++.so (__cxxabiv1::failed_throw(__cxxabiv1::__cxa_exception*)+28) (BuildId: 4d9b5f81053165d6e71cc4d52e2434c5)
+03-08 17:16:15.437 28128 28128 F DEBUG   :       #05 pc 0000000000063cd0  /system/lib64/vndk-sp-29/libc++.so (__cxa_throw+112) (BuildId: 4d9b5f81053165d6e71cc4d52e2434c5)
+03-08 17:16:15.437 28128 28128 F DEBUG   :       #06 pc 0000000000067430  /system/lib64/vndk-sp-29/libc++.so (operator new(unsigned long)+84) (BuildId: 4d9b5f81053165d6e71cc4d52e2434c5)
+03-08 17:16:15.437 28128 28128 F DEBUG   :       #07 pc 00000000000b1ac8  /system/lib64/vndk-sp-29/libc++.so (std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>>::__grow_by_and_replace(unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, char const*)+160) (BuildId: 4d9b5f81053165d6e71cc4d52e2434c5)
+03-08 17:16:15.437 28128 28128 F DEBUG   :       #08 pc 00000000000b19c8  /system/lib64/vndk-sp-29/libc++.so (std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>>::append(char const*, unsigned long)+100) (BuildId: 4d9b5f81053165d6e71cc4d52e2434c5)
+03-08 17:16:15.437 28128 28128 F DEBUG   :       #09 pc 00000000000d5538  /vendor/lib64/libprotobuf-cpp-full.so (google::protobuf::io::CodedInputStream::ReadStringFallback(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>>*, int)+208) (BuildId: 3f18358a6799a41dd523b6f67ce70d70)
+03-08 17:16:15.437 28128 28128 F DEBUG   :       #10 pc 00000000000cbf48  /vendor/lib64/libgraph_proto.so (domi::KernelContext::MergePartialFromCodedStream(google::protobuf::io::CodedInputStream*)+940) (BuildId: 7acb6579532144a949166bdfae962347)
+03-08 17:16:15.437 28128 28128 F DEBUG   :       #11 pc 00000000000ca690  /vendor/lib64/libgraph_proto.so (domi::KernelDef::MergePartialFromCodedStream(google::protobuf::io::CodedInputStream*)+860) (BuildId: 7acb6579532144a949166bdfae962347)
+03-08 17:16:15.437 28128 28128 F DEBUG   :       #12 pc 00000000000c8a40  /vendor/lib64/libgraph_proto.so (domi::TaskDef::MergePartialFromCodedStream(google::protobuf::io::CodedInputStream*)+1340) (BuildId: 7acb6579532144a949166bdfae962347)
+03-08 17:16:15.437 28128 28128 F DEBUG   :       #13 pc 00000000000c5ce0  /vendor/lib64/libgraph_proto.so (domi::ModelTaskDef::MergePartialFromCodedStream(google::protobuf::io::CodedInputStream*)+2376) (BuildId: 7acb6579532144a949166bdfae962347)
+03-08 17:16:15.437 28128 28128 F DEBUG   :       #14 pc 00000000000d0c90  /vendor/lib64/libprotobuf-cpp-full.so (google::protobuf::MessageLite::ParseFromCodedStream(google::protobuf::io::CodedInputStream*)+68) (BuildId: 3f18358a6799a41dd523b6f67ce70d70)
+03-08 17:16:15.437 28128 28128 F DEBUG   :       #15 pc 0000000000009778  /vendor/lib64/libcann_pack.so (npucl::NPUCompiledTarget::ReadProtoFromArray(void const*, int, google::protobuf::Message*)+136) (BuildId: fcb0cbc5edbd4fbb4ecda524f7cd2ff7)
+03-08 17:16:15.437 28128 28128 F DEBUG   :       #16 pc 000000000000985c  /vendor/lib64/libcann_pack.so (npucl::NPUCompiledTarget::UnSerializeModelTask(unsigned char const*, unsigned int)+108) (BuildId: fcb0cbc5edbd4fbb4ecda524f7cd2ff7)
+03-08 17:16:15.437 28128 28128 F DEBUG   :       #17 pc 000000000000a090  /vendor/lib64/libcann_pack.so (npucl::NPUCompiledTarget::UnSerialize(ge::Buffer const&)+228) (BuildId: fcb0cbc5edbd4fbb4ecda524f7cd2ff7)
+03-08 17:16:15.437 28128 28128 F DEBUG   :       #18 pc 000000000000a720  /vendor/lib64/libcann_pack.so (npucl::NPUCompiledTargetSaver::RestoreFromBuffer(ge::Buffer const&, std::__1::shared_ptr<ge::CompiledTarget>&)+108) (BuildId: fcb0cbc5edbd4fbb4ecda524f7cd2ff7)
+03-08 17:16:15.437 28128 28128 F DEBUG   :       #19 pc 000000000007b2ac  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+03-08 17:16:15.437 28128 28128 F DEBUG   :       #20 pc 000000000007bb2c  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+03-08 17:16:15.437 28128 28128 F DEBUG   :       #21 pc 000000000007c6f8  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+03-08 17:16:15.437 28128 28128 F DEBUG   :       #22 pc 000000000007ca88  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+03-08 17:16:15.437 28128 28128 F DEBUG   :       #23 pc 000000000008566c  /vendor/lib64/libhiai_executor.so (ge::ModelGenerator::GenerateFromHcsPartitionModel(ge::GenerateOptions&, ge::BaseBuffer const&, std::__1::shared_ptr<ge::CompiledModel>&)+92) (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+03-08 17:16:15.437 28128 28128 F DEBUG   :       #24 pc 00000000000831e4  /vendor/lib64/libhiai_executor.so (ge::ModelGenerator::GenerateFromBuffer(ge::GenerateOptions&, ge::BaseBuffer const&, std::__1::shared_ptr<ge::CompiledModel>&)+208) (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+03-08 17:16:15.437 28128 28128 F DEBUG   :       #25 pc 0000000000032ae4  /vendor/lib64/libhiai_server.so (ge::ExecutorManager::LoadModel(ge::LoadModelOptions const&, ge::BaseBuffer const&, unsigned int&)+1276) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+03-08 17:16:15.437 28128 28128 F DEBUG   :       #26 pc 000000000001a890  /vendor/lib64/libhiai_server.so (hiai::AIModelManagerImpl::LoadModelFromMem(hiai::AIModelDescription const&, unsigned int&)+1132) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+03-08 17:16:15.437 28128 28128 F DEBUG   :       #27 pc 0000000000018fb4  /vendor/lib64/libhiai_server.so (hiai::AIModelManagerImpl::LoadModels(std::__1::vector<hiai::AIModelDescription, std::__1::allocator<hiai::AIModelDescription>> const&)+196) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+03-08 17:16:15.437 28128 28128 F DEBUG   :       #28 pc 0000000000018794  /vendor/lib64/libhiai_server.so (hiai::AIModelManagerImpl::Init(hiai::AIConfig const&, std::__1::vector<hiai::AIModelDescription, std::__1::allocator<hiai::AIModelDescription>> const&)+76) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+03-08 17:16:15.437 28128 28128 F DEBUG   :       #29 pc 0000000000052b30  /vendor/bin/hiaiserver (ai::AiModelMngrService::LoadModel(int, int, hiai::AIConfig const&, std::__1::vector<hiai::AIModelDescription, std::__1::allocator<hiai::AIModelDescription>> const&, bool, bool)+1452) (BuildId: b0a2f4825a912f13056edf1ff01dae60)
+03-08 17:16:15.437 28128 28128 F DEBUG   :       #30 pc 00000000000594e8  /vendor/bin/hiaiserver (ai::AiModelMngrService::startModelFromMem2(int, int, android::hardware::hidl_vec<vendor::huawei::hardware::ai::V1_0::ModelBuffer> const&)+1616) (BuildId: b0a2f4825a912f13056edf1ff01dae60)
+03-08 17:16:15.437 28128 28128 F DEBUG   :       #31 pc 000000000006c97c  /vendor/lib64/vendor.huawei.hardware.ai@1.1.so (vendor::huawei::hardware::ai::V1_1::BnHwAiModelMngr::_hidl_startModelFromMem2(android::hidl::base::V1_0::BnHwBase*, android::hardware::Parcel const&, android::hardware::Parcel*, std::__1::function<void (android::hardware::Parcel&)>)+352) (BuildId: 469a6a932b6ebb5818104edfaed0404b)
+03-08 17:16:15.437 28128 28128 F DEBUG   :       #32 pc 0000000000016094  /vendor/lib64/vendor.huawei.hardware.ai@3.2.so (vendor::huawei::hardware::ai::V3_2::BnHwAiModelMngr::onTransact(unsigned int, android::hardware::Parcel const&, android::hardware::Parcel*, unsigned int, std::__1::function<void (android::hardware::Parcel&)>)+2724) (BuildId: 3832987ab8a55cd5676b418e067d76af)
+03-08 17:16:15.437 28128 28128 F DEBUG   :       #33 pc 00000000000825f4  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::BHwBinder::transact(unsigned int, android::hardware::Parcel const&, android::hardware::Parcel*, unsigned int, std::__1::function<void (android::hardware::Parcel&)>)+68) (BuildId: 2f8f208736c0724896c75aa52122bd47)
+03-08 17:16:15.437 28128 28128 F DEBUG   :       #34 pc 0000000000085e88  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::IPCThreadState::getAndExecuteCommand()+1036) (BuildId: 2f8f208736c0724896c75aa52122bd47)
+03-08 17:16:15.437 28128 28128 F DEBUG   :       #35 pc 0000000000087518  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::IPCThreadState::joinThreadPool(bool)+152) (BuildId: 2f8f208736c0724896c75aa52122bd47)
+03-08 17:16:15.437 28128 28128 F DEBUG   :       #36 pc 0000000000096654  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::PoolThread::threadLoop()+24) (BuildId: 2f8f208736c0724896c75aa52122bd47)
+03-08 17:16:15.437 28128 28128 F DEBUG   :       #37 pc 00000000000136d4  /system/lib64/vndk-sp-29/libutils.so (android::Thread::_threadLoop(void*)+288) (BuildId: 3a2fb31a219729a41f412d01a4f3dd56)
+03-08 17:16:15.437 28128 28128 F DEBUG   :       #38 pc 00000000000cf7c0  /apex/com.android.runtime/lib64/bionic/libc.so (__pthread_start(void*)+36) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+03-08 17:16:15.437 28128 28128 F DEBUG   :       #39 pc 00000000000721a8  /apex/com.android.runtime/lib64/bionic/libc.so (__start_thread+64) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
 

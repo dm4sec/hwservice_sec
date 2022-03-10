@@ -176,7 +176,7 @@ def new_round(T):
             )
             stdout, stderr = p.communicate()
 
-            time.sleep(1)
+            time.sleep(0.3)
             # frida.get_device(g_dev_serial).get_process("Gadget")
             session = g_dev.attach("Gadget")
 
@@ -215,7 +215,13 @@ def main():
     g_model_offset = args.model_offset
     g_last_relunch = args.model_offset
 
-    g_dev = frida.get_device(args.dev_serial)       # NOTE: should be only one instance, or the host will crash after a large iteration.
+    '''
+    NOTE: there should be only one instance, or the host will crash after a large iteration.
+    e.g., the following code will crash host.
+    for i in range(2000):
+        frida.get_device("JAM6R20406000098")
+    '''
+    g_dev = frida.get_device(args.dev_serial)
 
     new_round(True)
 
