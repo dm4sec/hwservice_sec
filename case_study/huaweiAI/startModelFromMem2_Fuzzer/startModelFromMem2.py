@@ -88,7 +88,7 @@ def on_message(message, data):
             # log.info("on_message_2")
 
             # the client is not well written to exhaust the resource, such that I restart the app per 2000 lunches.
-            if g_model_offset - g_last_relunch == 700:
+            if g_model_offset - g_last_relunch == 200:
                 g_script.post({'type': 'synchronize',
                                    'payload': "quit"})
                 g_last_relunch = g_model_offset
@@ -133,7 +133,7 @@ def new_round(T):
     # for app in frida.get_usb_device().enumerate_applications():
     #     print("[i] {}".format(app))
     # clean the env
-    p = subprocess.Popen("adb -s {} shell am force-stop {}".format(g_dev_serial, "com.huawei.hiaidemoFuzzer"),
+    p = subprocess.Popen("adb -s {} shell am force-stop {}".format(g_dev_serial, "com.huawei.startModelFromMem2Fuzzer"),
                          shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                          stderr=subprocess.PIPE
                          )
@@ -167,7 +167,7 @@ def new_round(T):
             p = subprocess.Popen(
                 "adb -s {} shell am start -n {} --es \"task_name\" \"{}\" --es \"model_path\" \"{}\"".format(
                     g_dev_serial,
-                    "com.huawei.hiaidemoFuzzer/.view.ClassifyActivity",
+                    "com.huawei.startModelFromMem2Fuzzer/.view.ClassifyActivity",
                     g_task_name,
                     g_model_file
                 ),
