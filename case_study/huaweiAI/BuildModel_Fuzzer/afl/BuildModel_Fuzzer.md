@@ -53,6 +53,8 @@ fuzz by using:
 ./afl-fuzz -Q -D -m none -t 10000 -i ../Caffe/squeezenet/seed/weight -o ../Caffe/squeezenet/findings ../tools_for_DDK_100.510.020.010/tools_omg/IR/omg --model ../Caffe/squeezenet/seed/model/deploy.prototxt --weight ../Caffe/squeezenet/seed/weight/squeezenet_v1.1.caffemodel --framework 0 --output ../Caffe/squeezenet/cache/squeezenet
 ./afl-fuzz -Q -D -m none -t 10000 -i ../Caffe/squeezenet/seed/weight -o ../Caffe/squeezenet/findings ../tools_for_DDK_100.510.020.010/tools_omg/IR/omg --model ../Caffe/squeezenet/seed/model/deploy.prototxt --weight @@ --framework 0 --output ../Caffe/squeezenet/cache/squeezenet
 ./afl-fuzz -Q -D -m none -t 10000 -i ../Caffe/squeezenet/seed/model -o ../Caffe/squeezenet/findings ../tools_for_DDK_100.510.020.010/tools_omg/IR/omg --model @@ --weight ../Caffe/squeezenet/seed/weight/squeezenet_v1.1.caffemodel --framework 0 --output ../Caffe/squeezenet/cache/squeezenet
+
+./afl-fuzz -m none -D -t 1000000 -Q -i ../Caffe/squeezenet/seed/weight -o ../Caffe/squeezenet/findings ../tools_for_DDK_100.510.020.010/tools_omg/IR/omg --model /home/demo/Desktop/frida/hwservice_sec/case_study/huaweiAI/BuildModel_Fuzzer/afl/Caffe/squeezenet/seed/model/deploy.prototxt --weight @@ --framework 0 --output /home/demo/Desktop/frida/hwservice_sec/case_study/huaweiAI/BuildModel_Fuzzer/afl/Caffe/squeezenet/cache/squeezenet
 ```
 4.2 for model of `TensorFlow` and tool of `omg`, I use the following command to fuzz.
 ```commandline
@@ -61,6 +63,8 @@ ensure it works by using:
 
 fuzz by using:
 ./afl-fuzz -Q -D -m none -t 10000 -i ../TensorFlow/mobilenet_v2_1_0_224/seed/mobilenet_v2_1_0_224 -o ../TensorFlow/mobilenet_v2_1_0_224/findings ../tools_for_DDK_100.510.020.010/tools_omg/IR/omg --model @@ --framework 3 --output ../TensorFlow/mobilenet_v2_1_0_224/cache/mobilenet_v2 --input_shape "input:1,224,224,3" --out_nodes "MobilenetV2/Predictions/Reshape_1:0"
+
+./afl-fuzz -Q -D -m none -t 1000000 -i ../TensorFlow/mobilenet_v2_1_0_224/seed/mobilenet_v2_1_0_224 -o ../TensorFlow/mobilenet_v2_1_0_224/findings ../tools_for_DDK_100.510.020.010/tools_omg/IR/omg --model @@ --framework 3 --output ../TensorFlow/mobilenet_v2_1_0_224/cache/mobilenet_v2 --input_shape "input:1,224,224,3" --out_nodes "MobilenetV2/Predictions/Reshape_1:0"
 ```
 
 
@@ -71,6 +75,8 @@ verify it works by using:
 
 fuzz by using:
 ./afl-fuzz -Q -D -m none -t 10000 -i ../ONNX/seed -o ../ONNX/findings ../tools_for_DDK_100.510.020.010/tools_omg/IR/omg --model @@  --framework 5 --output ../ONNX/cache/googlenet
+
+./afl-fuzz -Q -D -m none -t 1000000 -i ../ONNX/seed -o ../ONNX/findings ../tools_for_DDK_100.510.020.010/tools_omg/IR/omg --model @@  --framework 5 --output ../ONNX/cache/googlenet
 ```
 
 4.4 for model of `MindSpore` and tool of `omg`, I [download models](https://download.mindspore.cn/model_zoo/) firstly (e.g., [resnext50_lite](https://download.mindspore.cn/model_zoo/official/lite/resnext50_lite/resnext50.mindir)), then use the following command to fuzz.

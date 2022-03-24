@@ -1,3 +1,3 @@
 In process:
-python3 startModelFromMem2.py --model-file="/sdcard/models/mobilenet_v2_1.0_224.om" --task-name="mobilenet_v2_1.0_224" --dev-serial="JAM6R20406000226" --model-offset=459732
-python3 startModelFromMem2.py --model-file="/sdcard/models/deeplab.om" --task-name="deeplab" --dev-serial="JAM6R20406000098" --model-offset=1785692
+python3 startModelFromMem2.py --model-file="/sdcard/models/mobilenet_v2_1.0_224.om" --task-name="mobilenet_v2_1.0_224" --dev-serial="JAM6R20406000226" --model-offset=1075332
+python3 startModelFromMem2.py --model-file="/sdcard/models/deeplab.om" --task-name="deeplab" --dev-serial="JAM6R20406000098" --model-offset=2400092
