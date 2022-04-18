@@ -1,0 +1,548 @@
+03-24 20:50:38.721 22859 22923 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xfbd1e00000010 in tid 22923 (Thread-2), pid 22859 (lFromMem2Fuzzer)
+03-24 20:50:38.769 23006 23006 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+03-24 20:50:38.769 23006 23006 F DEBUG   : Build fingerprint: 'HUAWEI/MRX-AN19/HWMRX:10/HUAWEIMRX-AN19/102.0.0.225C00:user/release-keys'
+03-24 20:50:38.769 23006 23006 F DEBUG   : Revision: '0'
+03-24 20:50:38.769 23006 23006 F DEBUG   : ABI: 'arm64'
+03-24 20:50:38.773 23006 23006 F DEBUG   : Timestamp: 2022-03-24 20:50:38+0800
+03-24 20:50:38.773 23006 23006 F DEBUG   : pid: 22859, tid: 22923, name: Thread-2  >>> com.huawei.startModelFromMem2Fuzzer <<<
+03-24 20:50:38.773 23006 23006 F DEBUG   : uid: 10210
+03-24 20:50:38.773 23006 23006 F DEBUG   : signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xfbd1e00000010
+03-24 20:50:38.773 23006 23006 F DEBUG   :     x0  0000007aca4df788  x1  000fbd1e00000001  x2  0000007aca519800  x3  0000000000000000
+03-24 20:50:38.773 23006 23006 F DEBUG   :     x4  000000000000002c  x5  0000007ae1c90408  x6  0000000000000000  x7  0000000000000000
+03-24 20:50:38.773 23006 23006 F DEBUG   :     x8  000fbd1dffffff98  x9  fffffffffffffff3  x10 0000000000000000  x11 0000000000000001
+03-24 20:50:38.773 23006 23006 F DEBUG   :     x12 0000000101000000  x13 0000000001000000  x14 0000000000000000  x15 0000000000000000
+03-24 20:50:38.773 23006 23006 F DEBUG   :     x16 0000007b66ab1a30  x17 0000007b66aa5f80  x18 0000007a6feba000  x19 0000007aca519800
+03-24 20:50:38.773 23006 23006 F DEBUG   :     x20 0000007aca4df788  x21 000fbd1e00000001  x22 0000000000000000  x23 0000007b66abbe90
+03-24 20:50:38.773 23006 23006 F DEBUG   :     x24 0000000000000000  x25 0000007a70b9c020  x26 0000007aca4c14b0  x27 0000000000000000
+03-24 20:50:38.773 23006 23006 F DEBUG   :     x28 0000007a70b9aff0  x29 0000007a70b9aec0
+03-24 20:50:38.773 23006 23006 F DEBUG   :     sp  0000007a70b9ae90  lr  0000007b66a32484  pc  0000007b66a31f1c
+03-24 20:50:38.852 23006 23006 F DEBUG   : 
+03-24 20:50:38.852 23006 23006 F DEBUG   : backtrace:
+03-24 20:50:38.852 23006 23006 F DEBUG   :       #00 pc 000000000005bf1c  /apex/com.android.runtime/lib64/bionic/libc.so (ifree+88) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+03-24 20:50:38.852 23006 23006 F DEBUG   :       #01 pc 000000000005c480  /apex/com.android.runtime/lib64/bionic/libc.so (je_free+120) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+03-24 20:50:38.852 23006 23006 F DEBUG   :       #02 pc 00000000000f792c  /data/app/com.huawei.startModelFromMem2Fuzzer-qlOUQPLTFY7kP8vnO3hpgg==/base.apk!libhiai.so (offset 0x215a000) (HIAI_MixModel_ReleaseModelTensorInfo+44) (BuildId: f97bec250751b73d3eb6d739cdcedfe9e080fe1a)
+03-24 20:50:38.852 23006 23006 F DEBUG   :       #03 pc 00000000000105a8  /data/app/com.huawei.startModelFromMem2Fuzzer-qlOUQPLTFY7kP8vnO3hpgg==/base.apk!libhiaijni.so (offset 0x39d3000) (Java_com_huawei_startModelFromMem2Fuzzer_utils_ModelManager_unloadModelSync+244) (BuildId: d6221d8c1c60b57acea2cbf0eeeb2cffa2d98b6d)
+03-24 20:50:38.852 23006 23006 F DEBUG   :       #04 pc 0000000000150350  /apex/com.android.runtime/lib64/libart.so (art_quick_generic_jni_trampoline+144) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:38.852 23006 23006 F DEBUG   :       #05 pc 00000000001475b8  /apex/com.android.runtime/lib64/libart.so (art_quick_invoke_static_stub+568) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:38.852 23006 23006 F DEBUG   :       #06 pc 00000000001561d4  /apex/com.android.runtime/lib64/libart.so (art::ArtMethod::Invoke(art::Thread*, unsigned int*, unsigned int, art::JValue*, char const*)+284) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:38.852 23006 23006 F DEBUG   :       #07 pc 00000000002fd900  /apex/com.android.runtime/lib64/libart.so (art::interpreter::ArtInterpreterToCompiledCodeBridge(art::Thread*, art::ArtMethod*, art::ShadowFrame*, unsigned short, art::JValue*)+384) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:38.852 23006 23006 F DEBUG   :       #08 pc 00000000002f8bd0  /apex/com.android.runtime/lib64/libart.so (bool art::interpreter::DoCall<false, false>(art::ArtMethod*, art::Thread*, art::ShadowFrame&, art::Instruction const*, unsigned short, art::JValue*)+912) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:38.852 23006 23006 F DEBUG   :       #09 pc 00000000005ce108  /apex/com.android.runtime/lib64/libart.so (MterpInvokeStatic+368) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:38.852 23006 23006 F DEBUG   :       #10 pc 0000000000141994  /apex/com.android.runtime/lib64/libart.so (mterp_op_invoke_static+20) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:38.852 23006 23006 F DEBUG   :       #11 pc 00000000000123c2  [anon:dalvik-classes2.dex extracted in memory from /data/app/com.huawei.startModelFromMem2Fuzzer-qlOUQPLTFY7kP8vnO3hpgg==/base.apk!classes2.dex] (com.huawei.startModelFromMem2Fuzzer.view.ClassifyActivity$2.run+390)
+03-24 20:50:38.852 23006 23006 F DEBUG   :       #12 pc 00000000005cd060  /apex/com.android.runtime/lib64/libart.so (MterpInvokeInterface+1752) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:38.852 23006 23006 F DEBUG   :       #13 pc 0000000000141a14  /apex/com.android.runtime/lib64/libart.so (mterp_op_invoke_interface+20) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:38.852 23006 23006 F DEBUG   :       #14 pc 00000000000eabdc  /apex/com.android.runtime/javalib/core-oj.jar (java.lang.Thread.run+8)
+03-24 20:50:38.852 23006 23006 F DEBUG   :       #15 pc 00000000002ce22c  /apex/com.android.runtime/lib64/libart.so (_ZN3art11interpreterL7ExecuteEPNS_6ThreadERKNS_20CodeItemDataAccessorERNS_11ShadowFrameENS_6JValueEbb.llvm.10887373532384510885+320) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:38.852 23006 23006 F DEBUG   :       #16 pc 00000000005bc090  /apex/com.android.runtime/lib64/libart.so (artQuickToInterpreterBridge+1012) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:38.852 23006 23006 F DEBUG   :       #17 pc 0000000000150468  /apex/com.android.runtime/lib64/libart.so (art_quick_to_interpreter_bridge+88) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:38.852 23006 23006 F DEBUG   :       #18 pc 0000000000147334  /apex/com.android.runtime/lib64/libart.so (art_quick_invoke_stub+548) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:38.852 23006 23006 F DEBUG   :       #19 pc 00000000001561b4  /apex/com.android.runtime/lib64/libart.so (art::ArtMethod::Invoke(art::Thread*, unsigned int*, unsigned int, art::JValue*, char const*)+252) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:38.852 23006 23006 F DEBUG   :       #20 pc 00000000004d8820  /apex/com.android.runtime/lib64/libart.so (art::(anonymous namespace)::InvokeWithArgArray(art::ScopedObjectAccessAlreadyRunnable const&, art::ArtMethod*, art::(anonymous namespace)::ArgArray*, art::JValue*, char const*)+104) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:38.852 23006 23006 F DEBUG   :       #21 pc 00000000004d98b4  /apex/com.android.runtime/lib64/libart.so (art::InvokeVirtualOrInterfaceWithJValues(art::ScopedObjectAccessAlreadyRunnable const&, _jobject*, _jmethodID*, jvalue const*)+416) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:38.852 23006 23006 F DEBUG   :       #22 pc 000000000051ca8c  /apex/com.android.runtime/lib64/libart.so (art::Thread::CreateCallback(void*)+1232) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:38.852 23006 23006 F DEBUG   :       #23 pc 00000000000cf7c0  /apex/com.android.runtime/lib64/bionic/libc.so (__pthread_start(void*)+36) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+03-24 20:50:38.852 23006 23006 F DEBUG   :       #24 pc 00000000000721a8  /apex/com.android.runtime/lib64/bionic/libc.so (__start_thread+64) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+03-24 20:50:40.500 23024 23071 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xfbd1e00000010 in tid 23071 (Thread-2), pid 23024 (lFromMem2Fuzzer)
+03-24 20:50:40.538 23103 23103 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+03-24 20:50:40.538 23103 23103 F DEBUG   : Build fingerprint: 'HUAWEI/MRX-AN19/HWMRX:10/HUAWEIMRX-AN19/102.0.0.225C00:user/release-keys'
+03-24 20:50:40.538 23103 23103 F DEBUG   : Revision: '0'
+03-24 20:50:40.538 23103 23103 F DEBUG   : ABI: 'arm64'
+03-24 20:50:40.538 23103 23103 F DEBUG   : Timestamp: 2022-03-24 20:50:40+0800
+03-24 20:50:40.538 23103 23103 F DEBUG   : pid: 23024, tid: 23071, name: Thread-2  >>> com.huawei.startModelFromMem2Fuzzer <<<
+03-24 20:50:40.538 23103 23103 F DEBUG   : uid: 10210
+03-24 20:50:40.538 23103 23103 F DEBUG   : signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xfbd1e00000010
+03-24 20:50:40.538 23103 23103 F DEBUG   :     x0  0000007aca509d88  x1  000fbd1e00000001  x2  0000007aca4a1c00  x3  0000000000000000
+03-24 20:50:40.538 23103 23103 F DEBUG   :     x4  000000000000002c  x5  0000007ae1c90410  x6  0000000000000000  x7  0000000000000000
+03-24 20:50:40.538 23103 23103 F DEBUG   :     x8  000fbd1dffffff98  x9  fffffffffffffff3  x10 0000000000000000  x11 0000000000000001
+03-24 20:50:40.538 23103 23103 F DEBUG   :     x12 0000007ad4c084b0  x13 0000000001000000  x14 0000000000000000  x15 0000000000000000
+03-24 20:50:40.538 23103 23103 F DEBUG   :     x16 0000007b66ab1a30  x17 0000007b66aa5f80  x18 0000007a707e6000  x19 0000007aca4a1c00
+03-24 20:50:40.538 23103 23103 F DEBUG   :     x20 0000007aca509d88  x21 000fbd1e00000001  x22 0000000000000000  x23 0000007b66abbe90
+03-24 20:50:40.538 23103 23103 F DEBUG   :     x24 0000000000000000  x25 0000007a70ba0020  x26 0000007ad8f9c4b0  x27 0000000000000000
+03-24 20:50:40.538 23103 23103 F DEBUG   :     x28 0000007a70b9eff0  x29 0000007a70b9eec0
+03-24 20:50:40.538 23103 23103 F DEBUG   :     sp  0000007a70b9ee90  lr  0000007b66a32484  pc  0000007b66a31f1c
+03-24 20:50:40.594 23103 23103 F DEBUG   : 
+03-24 20:50:40.594 23103 23103 F DEBUG   : backtrace:
+03-24 20:50:40.594 23103 23103 F DEBUG   :       #00 pc 000000000005bf1c  /apex/com.android.runtime/lib64/bionic/libc.so (ifree+88) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+03-24 20:50:40.594 23103 23103 F DEBUG   :       #01 pc 000000000005c480  /apex/com.android.runtime/lib64/bionic/libc.so (je_free+120) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+03-24 20:50:40.594 23103 23103 F DEBUG   :       #02 pc 00000000000f792c  /data/app/com.huawei.startModelFromMem2Fuzzer-qlOUQPLTFY7kP8vnO3hpgg==/base.apk!libhiai.so (offset 0x215a000) (HIAI_MixModel_ReleaseModelTensorInfo+44) (BuildId: f97bec250751b73d3eb6d739cdcedfe9e080fe1a)
+03-24 20:50:40.594 23103 23103 F DEBUG   :       #03 pc 00000000000105a8  /data/app/com.huawei.startModelFromMem2Fuzzer-qlOUQPLTFY7kP8vnO3hpgg==/base.apk!libhiaijni.so (offset 0x39d3000) (Java_com_huawei_startModelFromMem2Fuzzer_utils_ModelManager_unloadModelSync+244) (BuildId: d6221d8c1c60b57acea2cbf0eeeb2cffa2d98b6d)
+03-24 20:50:40.594 23103 23103 F DEBUG   :       #04 pc 0000000000150350  /apex/com.android.runtime/lib64/libart.so (art_quick_generic_jni_trampoline+144) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:40.594 23103 23103 F DEBUG   :       #05 pc 00000000001475b8  /apex/com.android.runtime/lib64/libart.so (art_quick_invoke_static_stub+568) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:40.594 23103 23103 F DEBUG   :       #06 pc 00000000001561d4  /apex/com.android.runtime/lib64/libart.so (art::ArtMethod::Invoke(art::Thread*, unsigned int*, unsigned int, art::JValue*, char const*)+284) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:40.594 23103 23103 F DEBUG   :       #07 pc 00000000002fd900  /apex/com.android.runtime/lib64/libart.so (art::interpreter::ArtInterpreterToCompiledCodeBridge(art::Thread*, art::ArtMethod*, art::ShadowFrame*, unsigned short, art::JValue*)+384) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:40.594 23103 23103 F DEBUG   :       #08 pc 00000000002f8bd0  /apex/com.android.runtime/lib64/libart.so (bool art::interpreter::DoCall<false, false>(art::ArtMethod*, art::Thread*, art::ShadowFrame&, art::Instruction const*, unsigned short, art::JValue*)+912) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:40.594 23103 23103 F DEBUG   :       #09 pc 00000000005ce108  /apex/com.android.runtime/lib64/libart.so (MterpInvokeStatic+368) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:40.594 23103 23103 F DEBUG   :       #10 pc 0000000000141994  /apex/com.android.runtime/lib64/libart.so (mterp_op_invoke_static+20) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:40.594 23103 23103 F DEBUG   :       #11 pc 00000000000123c2  [anon:dalvik-classes2.dex extracted in memory from /data/app/com.huawei.startModelFromMem2Fuzzer-qlOUQPLTFY7kP8vnO3hpgg==/base.apk!classes2.dex] (com.huawei.startModelFromMem2Fuzzer.view.ClassifyActivity$2.run+390)
+03-24 20:50:40.594 23103 23103 F DEBUG   :       #12 pc 00000000005cd060  /apex/com.android.runtime/lib64/libart.so (MterpInvokeInterface+1752) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:40.594 23103 23103 F DEBUG   :       #13 pc 0000000000141a14  /apex/com.android.runtime/lib64/libart.so (mterp_op_invoke_interface+20) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:40.594 23103 23103 F DEBUG   :       #14 pc 00000000000eabdc  /apex/com.android.runtime/javalib/core-oj.jar (java.lang.Thread.run+8)
+03-24 20:50:40.594 23103 23103 F DEBUG   :       #15 pc 00000000002ce22c  /apex/com.android.runtime/lib64/libart.so (_ZN3art11interpreterL7ExecuteEPNS_6ThreadERKNS_20CodeItemDataAccessorERNS_11ShadowFrameENS_6JValueEbb.llvm.10887373532384510885+320) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:40.594 23103 23103 F DEBUG   :       #16 pc 00000000005bc090  /apex/com.android.runtime/lib64/libart.so (artQuickToInterpreterBridge+1012) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:40.594 23103 23103 F DEBUG   :       #17 pc 0000000000150468  /apex/com.android.runtime/lib64/libart.so (art_quick_to_interpreter_bridge+88) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:40.594 23103 23103 F DEBUG   :       #18 pc 0000000000147334  /apex/com.android.runtime/lib64/libart.so (art_quick_invoke_stub+548) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:40.594 23103 23103 F DEBUG   :       #19 pc 00000000001561b4  /apex/com.android.runtime/lib64/libart.so (art::ArtMethod::Invoke(art::Thread*, unsigned int*, unsigned int, art::JValue*, char const*)+252) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:40.594 23103 23103 F DEBUG   :       #20 pc 00000000004d8820  /apex/com.android.runtime/lib64/libart.so (art::(anonymous namespace)::InvokeWithArgArray(art::ScopedObjectAccessAlreadyRunnable const&, art::ArtMethod*, art::(anonymous namespace)::ArgArray*, art::JValue*, char const*)+104) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:40.594 23103 23103 F DEBUG   :       #21 pc 00000000004d98b4  /apex/com.android.runtime/lib64/libart.so (art::InvokeVirtualOrInterfaceWithJValues(art::ScopedObjectAccessAlreadyRunnable const&, _jobject*, _jmethodID*, jvalue const*)+416) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:40.594 23103 23103 F DEBUG   :       #22 pc 000000000051ca8c  /apex/com.android.runtime/lib64/libart.so (art::Thread::CreateCallback(void*)+1232) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:40.594 23103 23103 F DEBUG   :       #23 pc 00000000000cf7c0  /apex/com.android.runtime/lib64/bionic/libc.so (__pthread_start(void*)+36) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+03-24 20:50:40.594 23103 23103 F DEBUG   :       #24 pc 00000000000721a8  /apex/com.android.runtime/lib64/bionic/libc.so (__start_thread+64) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+03-24 20:50:42.409 23110 23160 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xfbd1e00000010 in tid 23160 (Thread-2), pid 23110 (lFromMem2Fuzzer)
+03-24 20:50:42.444 23184 23184 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+03-24 20:50:42.445 23184 23184 F DEBUG   : Build fingerprint: 'HUAWEI/MRX-AN19/HWMRX:10/HUAWEIMRX-AN19/102.0.0.225C00:user/release-keys'
+03-24 20:50:42.445 23184 23184 F DEBUG   : Revision: '0'
+03-24 20:50:42.445 23184 23184 F DEBUG   : ABI: 'arm64'
+03-24 20:50:42.445 23184 23184 F DEBUG   : Timestamp: 2022-03-24 20:50:42+0800
+03-24 20:50:42.445 23184 23184 F DEBUG   : pid: 23110, tid: 23160, name: Thread-2  >>> com.huawei.startModelFromMem2Fuzzer <<<
+03-24 20:50:42.445 23184 23184 F DEBUG   : uid: 10210
+03-24 20:50:42.445 23184 23184 F DEBUG   : signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xfbd1e00000010
+03-24 20:50:42.445 23184 23184 F DEBUG   :     x0  0000007aca4d0988  x1  000fbd1e00000001  x2  0000007ae1a97c00  x3  0000000000000000
+03-24 20:50:42.445 23184 23184 F DEBUG   :     x4  000000000000002c  x5  0000007ae1c90408  x6  0000000000000000  x7  0000000000000000
+03-24 20:50:42.445 23184 23184 F DEBUG   :     x8  000fbd1dffffff98  x9  fffffffffffffff3  x10 0000000000000000  x11 0000000000000001
+03-24 20:50:42.445 23184 23184 F DEBUG   :     x12 0000000103000000  x13 0000000001000000  x14 0000000000000000  x15 0000000000000000
+03-24 20:50:42.445 23184 23184 F DEBUG   :     x16 0000007b66ab1a30  x17 0000007b66aa5f80  x18 0000007a6ffc0000  x19 0000007ae1a97c00
+03-24 20:50:42.445 23184 23184 F DEBUG   :     x20 0000007aca4d0988  x21 000fbd1e00000001  x22 0000000000000000  x23 0000007b66abbe90
+03-24 20:50:42.445 23184 23184 F DEBUG   :     x24 0000000000000000  x25 0000007a70ba5020  x26 0000007ae1a960b0  x27 0000000000000000
+03-24 20:50:42.445 23184 23184 F DEBUG   :     x28 0000007a70ba3ff0  x29 0000007a70ba3ec0
+03-24 20:50:42.445 23184 23184 F DEBUG   :     sp  0000007a70ba3e90  lr  0000007b66a32484  pc  0000007b66a31f1c
+03-24 20:50:42.503 23184 23184 F DEBUG   : 
+03-24 20:50:42.503 23184 23184 F DEBUG   : backtrace:
+03-24 20:50:42.504 23184 23184 F DEBUG   :       #00 pc 000000000005bf1c  /apex/com.android.runtime/lib64/bionic/libc.so (ifree+88) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+03-24 20:50:42.504 23184 23184 F DEBUG   :       #01 pc 000000000005c480  /apex/com.android.runtime/lib64/bionic/libc.so (je_free+120) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+03-24 20:50:42.504 23184 23184 F DEBUG   :       #02 pc 00000000000f792c  /data/app/com.huawei.startModelFromMem2Fuzzer-qlOUQPLTFY7kP8vnO3hpgg==/base.apk!libhiai.so (offset 0x215a000) (HIAI_MixModel_ReleaseModelTensorInfo+44) (BuildId: f97bec250751b73d3eb6d739cdcedfe9e080fe1a)
+03-24 20:50:42.504 23184 23184 F DEBUG   :       #03 pc 00000000000105a8  /data/app/com.huawei.startModelFromMem2Fuzzer-qlOUQPLTFY7kP8vnO3hpgg==/base.apk!libhiaijni.so (offset 0x39d3000) (Java_com_huawei_startModelFromMem2Fuzzer_utils_ModelManager_unloadModelSync+244) (BuildId: d6221d8c1c60b57acea2cbf0eeeb2cffa2d98b6d)
+03-24 20:50:42.504 23184 23184 F DEBUG   :       #04 pc 0000000000150350  /apex/com.android.runtime/lib64/libart.so (art_quick_generic_jni_trampoline+144) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:42.504 23184 23184 F DEBUG   :       #05 pc 00000000001475b8  /apex/com.android.runtime/lib64/libart.so (art_quick_invoke_static_stub+568) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:42.504 23184 23184 F DEBUG   :       #06 pc 00000000001561d4  /apex/com.android.runtime/lib64/libart.so (art::ArtMethod::Invoke(art::Thread*, unsigned int*, unsigned int, art::JValue*, char const*)+284) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:42.504 23184 23184 F DEBUG   :       #07 pc 00000000002fd900  /apex/com.android.runtime/lib64/libart.so (art::interpreter::ArtInterpreterToCompiledCodeBridge(art::Thread*, art::ArtMethod*, art::ShadowFrame*, unsigned short, art::JValue*)+384) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:42.504 23184 23184 F DEBUG   :       #08 pc 00000000002f8bd0  /apex/com.android.runtime/lib64/libart.so (bool art::interpreter::DoCall<false, false>(art::ArtMethod*, art::Thread*, art::ShadowFrame&, art::Instruction const*, unsigned short, art::JValue*)+912) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:42.504 23184 23184 F DEBUG   :       #09 pc 00000000005ce108  /apex/com.android.runtime/lib64/libart.so (MterpInvokeStatic+368) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:42.504 23184 23184 F DEBUG   :       #10 pc 0000000000141994  /apex/com.android.runtime/lib64/libart.so (mterp_op_invoke_static+20) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:42.504 23184 23184 F DEBUG   :       #11 pc 00000000000123c2  [anon:dalvik-classes2.dex extracted in memory from /data/app/com.huawei.startModelFromMem2Fuzzer-qlOUQPLTFY7kP8vnO3hpgg==/base.apk!classes2.dex] (com.huawei.startModelFromMem2Fuzzer.view.ClassifyActivity$2.run+390)
+03-24 20:50:42.504 23184 23184 F DEBUG   :       #12 pc 00000000005cd060  /apex/com.android.runtime/lib64/libart.so (MterpInvokeInterface+1752) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:42.504 23184 23184 F DEBUG   :       #13 pc 0000000000141a14  /apex/com.android.runtime/lib64/libart.so (mterp_op_invoke_interface+20) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:42.504 23184 23184 F DEBUG   :       #14 pc 00000000000eabdc  /apex/com.android.runtime/javalib/core-oj.jar (java.lang.Thread.run+8)
+03-24 20:50:42.504 23184 23184 F DEBUG   :       #15 pc 00000000002ce22c  /apex/com.android.runtime/lib64/libart.so (_ZN3art11interpreterL7ExecuteEPNS_6ThreadERKNS_20CodeItemDataAccessorERNS_11ShadowFrameENS_6JValueEbb.llvm.10887373532384510885+320) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:42.504 23184 23184 F DEBUG   :       #16 pc 00000000005bc090  /apex/com.android.runtime/lib64/libart.so (artQuickToInterpreterBridge+1012) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:42.504 23184 23184 F DEBUG   :       #17 pc 0000000000150468  /apex/com.android.runtime/lib64/libart.so (art_quick_to_interpreter_bridge+88) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:42.504 23184 23184 F DEBUG   :       #18 pc 0000000000147334  /apex/com.android.runtime/lib64/libart.so (art_quick_invoke_stub+548) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:42.504 23184 23184 F DEBUG   :       #19 pc 00000000001561b4  /apex/com.android.runtime/lib64/libart.so (art::ArtMethod::Invoke(art::Thread*, unsigned int*, unsigned int, art::JValue*, char const*)+252) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:42.504 23184 23184 F DEBUG   :       #20 pc 00000000004d8820  /apex/com.android.runtime/lib64/libart.so (art::(anonymous namespace)::InvokeWithArgArray(art::ScopedObjectAccessAlreadyRunnable const&, art::ArtMethod*, art::(anonymous namespace)::ArgArray*, art::JValue*, char const*)+104) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:42.504 23184 23184 F DEBUG   :       #21 pc 00000000004d98b4  /apex/com.android.runtime/lib64/libart.so (art::InvokeVirtualOrInterfaceWithJValues(art::ScopedObjectAccessAlreadyRunnable const&, _jobject*, _jmethodID*, jvalue const*)+416) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:42.504 23184 23184 F DEBUG   :       #22 pc 000000000051ca8c  /apex/com.android.runtime/lib64/libart.so (art::Thread::CreateCallback(void*)+1232) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:42.504 23184 23184 F DEBUG   :       #23 pc 00000000000cf7c0  /apex/com.android.runtime/lib64/bionic/libc.so (__pthread_start(void*)+36) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+03-24 20:50:42.504 23184 23184 F DEBUG   :       #24 pc 00000000000721a8  /apex/com.android.runtime/lib64/bionic/libc.so (__start_thread+64) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+03-24 20:50:43.638 23191 23236 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xfbd1e00000010 in tid 23236 (Thread-2), pid 23191 (lFromMem2Fuzzer)
+03-24 20:50:43.676 23260 23260 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+03-24 20:50:43.676 23260 23260 F DEBUG   : Build fingerprint: 'HUAWEI/MRX-AN19/HWMRX:10/HUAWEIMRX-AN19/102.0.0.225C00:user/release-keys'
+03-24 20:50:43.676 23260 23260 F DEBUG   : Revision: '0'
+03-24 20:50:43.676 23260 23260 F DEBUG   : ABI: 'arm64'
+03-24 20:50:43.677 23260 23260 F DEBUG   : Timestamp: 2022-03-24 20:50:43+0800
+03-24 20:50:43.677 23260 23260 F DEBUG   : pid: 23191, tid: 23236, name: Thread-2  >>> com.huawei.startModelFromMem2Fuzzer <<<
+03-24 20:50:43.677 23260 23260 F DEBUG   : uid: 10210
+03-24 20:50:43.677 23260 23260 F DEBUG   : signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xfbd1e00000010
+03-24 20:50:43.677 23260 23260 F DEBUG   :     x0  0000007aca502d88  x1  000fbd1e00000001  x2  0000007aca4d8000  x3  0000000000000000
+03-24 20:50:43.677 23260 23260 F DEBUG   :     x4  000000000000002c  x5  0000007ae1c90410  x6  0000000000000000  x7  0000000000000000
+03-24 20:50:43.677 23260 23260 F DEBUG   :     x8  000fbd1dffffff98  x9  fffffffffffffff3  x10 0000000000000000  x11 0000000000000001
+03-24 20:50:43.677 23260 23260 F DEBUG   :     x12 0000000000000000  x13 0000000001000000  x14 0000000000000000  x15 0000000000000000
+03-24 20:50:43.677 23260 23260 F DEBUG   :     x16 0000007b66ab1a30  x17 0000007b66aa5f80  x18 0000007a700f2000  x19 0000007aca4d8000
+03-24 20:50:43.677 23260 23260 F DEBUG   :     x20 0000007aca502d88  x21 000fbd1e00000001  x22 0000000000000000  x23 0000007b66abbe90
+03-24 20:50:43.677 23260 23260 F DEBUG   :     x24 0000000000000000  x25 0000007a70ba5020  x26 0000007aca4cd8b0  x27 0000000000000000
+03-24 20:50:43.677 23260 23260 F DEBUG   :     x28 0000007a70ba3ff0  x29 0000007a70ba3ec0
+03-24 20:50:43.677 23260 23260 F DEBUG   :     sp  0000007a70ba3e90  lr  0000007b66a32484  pc  0000007b66a31f1c
+03-24 20:50:43.735 23260 23260 F DEBUG   : 
+03-24 20:50:43.735 23260 23260 F DEBUG   : backtrace:
+03-24 20:50:43.735 23260 23260 F DEBUG   :       #00 pc 000000000005bf1c  /apex/com.android.runtime/lib64/bionic/libc.so (ifree+88) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+03-24 20:50:43.735 23260 23260 F DEBUG   :       #01 pc 000000000005c480  /apex/com.android.runtime/lib64/bionic/libc.so (je_free+120) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+03-24 20:50:43.735 23260 23260 F DEBUG   :       #02 pc 00000000000f792c  /data/app/com.huawei.startModelFromMem2Fuzzer-qlOUQPLTFY7kP8vnO3hpgg==/base.apk!libhiai.so (offset 0x215a000) (HIAI_MixModel_ReleaseModelTensorInfo+44) (BuildId: f97bec250751b73d3eb6d739cdcedfe9e080fe1a)
+03-24 20:50:43.735 23260 23260 F DEBUG   :       #03 pc 00000000000105a8  /data/app/com.huawei.startModelFromMem2Fuzzer-qlOUQPLTFY7kP8vnO3hpgg==/base.apk!libhiaijni.so (offset 0x39d3000) (Java_com_huawei_startModelFromMem2Fuzzer_utils_ModelManager_unloadModelSync+244) (BuildId: d6221d8c1c60b57acea2cbf0eeeb2cffa2d98b6d)
+03-24 20:50:43.735 23260 23260 F DEBUG   :       #04 pc 0000000000150350  /apex/com.android.runtime/lib64/libart.so (art_quick_generic_jni_trampoline+144) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:43.735 23260 23260 F DEBUG   :       #05 pc 00000000001475b8  /apex/com.android.runtime/lib64/libart.so (art_quick_invoke_static_stub+568) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:43.735 23260 23260 F DEBUG   :       #06 pc 00000000001561d4  /apex/com.android.runtime/lib64/libart.so (art::ArtMethod::Invoke(art::Thread*, unsigned int*, unsigned int, art::JValue*, char const*)+284) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:43.735 23260 23260 F DEBUG   :       #07 pc 00000000002fd900  /apex/com.android.runtime/lib64/libart.so (art::interpreter::ArtInterpreterToCompiledCodeBridge(art::Thread*, art::ArtMethod*, art::ShadowFrame*, unsigned short, art::JValue*)+384) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:43.735 23260 23260 F DEBUG   :       #08 pc 00000000002f8bd0  /apex/com.android.runtime/lib64/libart.so (bool art::interpreter::DoCall<false, false>(art::ArtMethod*, art::Thread*, art::ShadowFrame&, art::Instruction const*, unsigned short, art::JValue*)+912) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:43.735 23260 23260 F DEBUG   :       #09 pc 00000000005ce108  /apex/com.android.runtime/lib64/libart.so (MterpInvokeStatic+368) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:43.735 23260 23260 F DEBUG   :       #10 pc 0000000000141994  /apex/com.android.runtime/lib64/libart.so (mterp_op_invoke_static+20) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:43.735 23260 23260 F DEBUG   :       #11 pc 00000000000123c2  [anon:dalvik-classes2.dex extracted in memory from /data/app/com.huawei.startModelFromMem2Fuzzer-qlOUQPLTFY7kP8vnO3hpgg==/base.apk!classes2.dex] (com.huawei.startModelFromMem2Fuzzer.view.ClassifyActivity$2.run+390)
+03-24 20:50:43.735 23260 23260 F DEBUG   :       #12 pc 00000000005cd060  /apex/com.android.runtime/lib64/libart.so (MterpInvokeInterface+1752) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:43.735 23260 23260 F DEBUG   :       #13 pc 0000000000141a14  /apex/com.android.runtime/lib64/libart.so (mterp_op_invoke_interface+20) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:43.735 23260 23260 F DEBUG   :       #14 pc 00000000000eabdc  /apex/com.android.runtime/javalib/core-oj.jar (java.lang.Thread.run+8)
+03-24 20:50:43.735 23260 23260 F DEBUG   :       #15 pc 00000000002ce22c  /apex/com.android.runtime/lib64/libart.so (_ZN3art11interpreterL7ExecuteEPNS_6ThreadERKNS_20CodeItemDataAccessorERNS_11ShadowFrameENS_6JValueEbb.llvm.10887373532384510885+320) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:43.735 23260 23260 F DEBUG   :       #16 pc 00000000005bc090  /apex/com.android.runtime/lib64/libart.so (artQuickToInterpreterBridge+1012) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:43.735 23260 23260 F DEBUG   :       #17 pc 0000000000150468  /apex/com.android.runtime/lib64/libart.so (art_quick_to_interpreter_bridge+88) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:43.735 23260 23260 F DEBUG   :       #18 pc 0000000000147334  /apex/com.android.runtime/lib64/libart.so (art_quick_invoke_stub+548) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:43.735 23260 23260 F DEBUG   :       #19 pc 00000000001561b4  /apex/com.android.runtime/lib64/libart.so (art::ArtMethod::Invoke(art::Thread*, unsigned int*, unsigned int, art::JValue*, char const*)+252) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:43.735 23260 23260 F DEBUG   :       #20 pc 00000000004d8820  /apex/com.android.runtime/lib64/libart.so (art::(anonymous namespace)::InvokeWithArgArray(art::ScopedObjectAccessAlreadyRunnable const&, art::ArtMethod*, art::(anonymous namespace)::ArgArray*, art::JValue*, char const*)+104) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:43.735 23260 23260 F DEBUG   :       #21 pc 00000000004d98b4  /apex/com.android.runtime/lib64/libart.so (art::InvokeVirtualOrInterfaceWithJValues(art::ScopedObjectAccessAlreadyRunnable const&, _jobject*, _jmethodID*, jvalue const*)+416) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:43.735 23260 23260 F DEBUG   :       #22 pc 000000000051ca8c  /apex/com.android.runtime/lib64/libart.so (art::Thread::CreateCallback(void*)+1232) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:43.735 23260 23260 F DEBUG   :       #23 pc 00000000000cf7c0  /apex/com.android.runtime/lib64/bionic/libc.so (__pthread_start(void*)+36) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+03-24 20:50:43.735 23260 23260 F DEBUG   :       #24 pc 00000000000721a8  /apex/com.android.runtime/lib64/bionic/libc.so (__start_thread+64) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+03-24 20:50:44.808 23268 23312 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xfbd1e00000010 in tid 23312 (Thread-2), pid 23268 (lFromMem2Fuzzer)
+03-24 20:50:44.847 23367 23367 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+03-24 20:50:44.847 23367 23367 F DEBUG   : Build fingerprint: 'HUAWEI/MRX-AN19/HWMRX:10/HUAWEIMRX-AN19/102.0.0.225C00:user/release-keys'
+03-24 20:50:44.847 23367 23367 F DEBUG   : Revision: '0'
+03-24 20:50:44.847 23367 23367 F DEBUG   : ABI: 'arm64'
+03-24 20:50:44.847 23367 23367 F DEBUG   : Timestamp: 2022-03-24 20:50:44+0800
+03-24 20:50:44.847 23367 23367 F DEBUG   : pid: 23268, tid: 23312, name: Thread-2  >>> com.huawei.startModelFromMem2Fuzzer <<<
+03-24 20:50:44.847 23367 23367 F DEBUG   : uid: 10210
+03-24 20:50:44.847 23367 23367 F DEBUG   : signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xfbd1e00000010
+03-24 20:50:44.847 23367 23367 F DEBUG   :     x0  0000007aca5d0988  x1  000fbd1e00000001  x2  0000007aca4a1c00  x3  0000000000000000
+03-24 20:50:44.847 23367 23367 F DEBUG   :     x4  000000000000002c  x5  0000007ae1c90410  x6  0000000000000000  x7  0000000000000000
+03-24 20:50:44.847 23367 23367 F DEBUG   :     x8  000fbd1dffffff98  x9  fffffffffffffff3  x10 0000000000000000  x11 0000000000000001
+03-24 20:50:44.847 23367 23367 F DEBUG   :     x12 0000007ad4c09230  x13 0000000001000000  x14 0000000000000000  x15 0000000000000000
+03-24 20:50:44.847 23367 23367 F DEBUG   :     x16 0000007b66ab1a30  x17 0000007b66aa5f80  x18 0000007a6faa4000  x19 0000007aca4a1c00
+03-24 20:50:44.847 23367 23367 F DEBUG   :     x20 0000007aca5d0988  x21 000fbd1e00000001  x22 0000000000000000  x23 0000007b66abbe90
+03-24 20:50:44.847 23367 23367 F DEBUG   :     x24 0000000000000000  x25 0000007a70b7c020  x26 0000007aca4a00b0  x27 0000000000000000
+03-24 20:50:44.847 23367 23367 F DEBUG   :     x28 0000007a70b7aff0  x29 0000007a70b7aec0
+03-24 20:50:44.847 23367 23367 F DEBUG   :     sp  0000007a70b7ae90  lr  0000007b66a32484  pc  0000007b66a31f1c
+03-24 20:50:44.908 23367 23367 F DEBUG   : 
+03-24 20:50:44.908 23367 23367 F DEBUG   : backtrace:
+03-24 20:50:44.908 23367 23367 F DEBUG   :       #00 pc 000000000005bf1c  /apex/com.android.runtime/lib64/bionic/libc.so (ifree+88) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+03-24 20:50:44.908 23367 23367 F DEBUG   :       #01 pc 000000000005c480  /apex/com.android.runtime/lib64/bionic/libc.so (je_free+120) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+03-24 20:50:44.908 23367 23367 F DEBUG   :       #02 pc 00000000000f792c  /data/app/com.huawei.startModelFromMem2Fuzzer-qlOUQPLTFY7kP8vnO3hpgg==/base.apk!libhiai.so (offset 0x215a000) (HIAI_MixModel_ReleaseModelTensorInfo+44) (BuildId: f97bec250751b73d3eb6d739cdcedfe9e080fe1a)
+03-24 20:50:44.908 23367 23367 F DEBUG   :       #03 pc 00000000000105a8  /data/app/com.huawei.startModelFromMem2Fuzzer-qlOUQPLTFY7kP8vnO3hpgg==/base.apk!libhiaijni.so (offset 0x39d3000) (Java_com_huawei_startModelFromMem2Fuzzer_utils_ModelManager_unloadModelSync+244) (BuildId: d6221d8c1c60b57acea2cbf0eeeb2cffa2d98b6d)
+03-24 20:50:44.908 23367 23367 F DEBUG   :       #04 pc 0000000000150350  /apex/com.android.runtime/lib64/libart.so (art_quick_generic_jni_trampoline+144) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:44.908 23367 23367 F DEBUG   :       #05 pc 00000000001475b8  /apex/com.android.runtime/lib64/libart.so (art_quick_invoke_static_stub+568) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:44.908 23367 23367 F DEBUG   :       #06 pc 00000000001561d4  /apex/com.android.runtime/lib64/libart.so (art::ArtMethod::Invoke(art::Thread*, unsigned int*, unsigned int, art::JValue*, char const*)+284) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:44.908 23367 23367 F DEBUG   :       #07 pc 00000000002fd900  /apex/com.android.runtime/lib64/libart.so (art::interpreter::ArtInterpreterToCompiledCodeBridge(art::Thread*, art::ArtMethod*, art::ShadowFrame*, unsigned short, art::JValue*)+384) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:44.908 23367 23367 F DEBUG   :       #08 pc 00000000002f8bd0  /apex/com.android.runtime/lib64/libart.so (bool art::interpreter::DoCall<false, false>(art::ArtMethod*, art::Thread*, art::ShadowFrame&, art::Instruction const*, unsigned short, art::JValue*)+912) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:44.908 23367 23367 F DEBUG   :       #09 pc 00000000005ce108  /apex/com.android.runtime/lib64/libart.so (MterpInvokeStatic+368) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:44.908 23367 23367 F DEBUG   :       #10 pc 0000000000141994  /apex/com.android.runtime/lib64/libart.so (mterp_op_invoke_static+20) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:44.908 23367 23367 F DEBUG   :       #11 pc 00000000000123c2  [anon:dalvik-classes2.dex extracted in memory from /data/app/com.huawei.startModelFromMem2Fuzzer-qlOUQPLTFY7kP8vnO3hpgg==/base.apk!classes2.dex] (com.huawei.startModelFromMem2Fuzzer.view.ClassifyActivity$2.run+390)
+03-24 20:50:44.908 23367 23367 F DEBUG   :       #12 pc 00000000005cd060  /apex/com.android.runtime/lib64/libart.so (MterpInvokeInterface+1752) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:44.908 23367 23367 F DEBUG   :       #13 pc 0000000000141a14  /apex/com.android.runtime/lib64/libart.so (mterp_op_invoke_interface+20) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:44.908 23367 23367 F DEBUG   :       #14 pc 00000000000eabdc  /apex/com.android.runtime/javalib/core-oj.jar (java.lang.Thread.run+8)
+03-24 20:50:44.908 23367 23367 F DEBUG   :       #15 pc 00000000002ce22c  /apex/com.android.runtime/lib64/libart.so (_ZN3art11interpreterL7ExecuteEPNS_6ThreadERKNS_20CodeItemDataAccessorERNS_11ShadowFrameENS_6JValueEbb.llvm.10887373532384510885+320) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:44.908 23367 23367 F DEBUG   :       #16 pc 00000000005bc090  /apex/com.android.runtime/lib64/libart.so (artQuickToInterpreterBridge+1012) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:44.908 23367 23367 F DEBUG   :       #17 pc 0000000000150468  /apex/com.android.runtime/lib64/libart.so (art_quick_to_interpreter_bridge+88) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:44.908 23367 23367 F DEBUG   :       #18 pc 0000000000147334  /apex/com.android.runtime/lib64/libart.so (art_quick_invoke_stub+548) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:44.908 23367 23367 F DEBUG   :       #19 pc 00000000001561b4  /apex/com.android.runtime/lib64/libart.so (art::ArtMethod::Invoke(art::Thread*, unsigned int*, unsigned int, art::JValue*, char const*)+252) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:44.908 23367 23367 F DEBUG   :       #20 pc 00000000004d8820  /apex/com.android.runtime/lib64/libart.so (art::(anonymous namespace)::InvokeWithArgArray(art::ScopedObjectAccessAlreadyRunnable const&, art::ArtMethod*, art::(anonymous namespace)::ArgArray*, art::JValue*, char const*)+104) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:44.908 23367 23367 F DEBUG   :       #21 pc 00000000004d98b4  /apex/com.android.runtime/lib64/libart.so (art::InvokeVirtualOrInterfaceWithJValues(art::ScopedObjectAccessAlreadyRunnable const&, _jobject*, _jmethodID*, jvalue const*)+416) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:44.908 23367 23367 F DEBUG   :       #22 pc 000000000051ca8c  /apex/com.android.runtime/lib64/libart.so (art::Thread::CreateCallback(void*)+1232) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:44.908 23367 23367 F DEBUG   :       #23 pc 00000000000cf7c0  /apex/com.android.runtime/lib64/bionic/libc.so (__pthread_start(void*)+36) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+03-24 20:50:44.908 23367 23367 F DEBUG   :       #24 pc 00000000000721a8  /apex/com.android.runtime/lib64/bionic/libc.so (__start_thread+64) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+03-24 20:50:46.002 23377 23419 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xfbd1e00000010 in tid 23419 (Thread-2), pid 23377 (lFromMem2Fuzzer)
+03-24 20:50:46.043 23446 23446 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+03-24 20:50:46.043 23446 23446 F DEBUG   : Build fingerprint: 'HUAWEI/MRX-AN19/HWMRX:10/HUAWEIMRX-AN19/102.0.0.225C00:user/release-keys'
+03-24 20:50:46.043 23446 23446 F DEBUG   : Revision: '0'
+03-24 20:50:46.043 23446 23446 F DEBUG   : ABI: 'arm64'
+03-24 20:50:46.043 23446 23446 F DEBUG   : Timestamp: 2022-03-24 20:50:46+0800
+03-24 20:50:46.043 23446 23446 F DEBUG   : pid: 23377, tid: 23419, name: Thread-2  >>> com.huawei.startModelFromMem2Fuzzer <<<
+03-24 20:50:46.043 23446 23446 F DEBUG   : uid: 10210
+03-24 20:50:46.043 23446 23446 F DEBUG   : signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xfbd1e00000010
+03-24 20:50:46.043 23446 23446 F DEBUG   :     x0  0000007aca4df988  x1  000fbd1e00000001  x2  0000007aca4f7800  x3  0000000000000000
+03-24 20:50:46.043 23446 23446 F DEBUG   :     x4  000000000000002c  x5  0000007ae1c90408  x6  0000000000000000  x7  0000000000000000
+03-24 20:50:46.043 23446 23446 F DEBUG   :     x8  000fbd1dffffff98  x9  fffffffffffffff3  x10 0000000000000000  x11 0000000000000001
+03-24 20:50:46.043 23446 23446 F DEBUG   :     x12 0000000000000000  x13 0000000001000000  x14 0000000000000000  x15 0000000000000000
+03-24 20:50:46.043 23446 23446 F DEBUG   :     x16 0000007b66ab1a30  x17 0000007b66aa5f80  x18 0000007a70204000  x19 0000007aca4f7800
+03-24 20:50:46.043 23446 23446 F DEBUG   :     x20 0000007aca4df988  x21 000fbd1e00000001  x22 0000000000000000  x23 0000007b66abbe90
+03-24 20:50:46.043 23446 23446 F DEBUG   :     x24 0000000000000000  x25 0000007a70b9e020  x26 0000007aca4c14b0  x27 0000000000000000
+03-24 20:50:46.043 23446 23446 F DEBUG   :     x28 0000007a70b9cff0  x29 0000007a70b9cec0
+03-24 20:50:46.043 23446 23446 F DEBUG   :     sp  0000007a70b9ce90  lr  0000007b66a32484  pc  0000007b66a31f1c
+03-24 20:50:46.101 23446 23446 F DEBUG   : 
+03-24 20:50:46.101 23446 23446 F DEBUG   : backtrace:
+03-24 20:50:46.102 23446 23446 F DEBUG   :       #00 pc 000000000005bf1c  /apex/com.android.runtime/lib64/bionic/libc.so (ifree+88) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+03-24 20:50:46.102 23446 23446 F DEBUG   :       #01 pc 000000000005c480  /apex/com.android.runtime/lib64/bionic/libc.so (je_free+120) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+03-24 20:50:46.102 23446 23446 F DEBUG   :       #02 pc 00000000000f792c  /data/app/com.huawei.startModelFromMem2Fuzzer-qlOUQPLTFY7kP8vnO3hpgg==/base.apk!libhiai.so (offset 0x215a000) (HIAI_MixModel_ReleaseModelTensorInfo+44) (BuildId: f97bec250751b73d3eb6d739cdcedfe9e080fe1a)
+03-24 20:50:46.102 23446 23446 F DEBUG   :       #03 pc 00000000000105a8  /data/app/com.huawei.startModelFromMem2Fuzzer-qlOUQPLTFY7kP8vnO3hpgg==/base.apk!libhiaijni.so (offset 0x39d3000) (Java_com_huawei_startModelFromMem2Fuzzer_utils_ModelManager_unloadModelSync+244) (BuildId: d6221d8c1c60b57acea2cbf0eeeb2cffa2d98b6d)
+03-24 20:50:46.102 23446 23446 F DEBUG   :       #04 pc 0000000000150350  /apex/com.android.runtime/lib64/libart.so (art_quick_generic_jni_trampoline+144) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:46.102 23446 23446 F DEBUG   :       #05 pc 00000000001475b8  /apex/com.android.runtime/lib64/libart.so (art_quick_invoke_static_stub+568) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:46.102 23446 23446 F DEBUG   :       #06 pc 00000000001561d4  /apex/com.android.runtime/lib64/libart.so (art::ArtMethod::Invoke(art::Thread*, unsigned int*, unsigned int, art::JValue*, char const*)+284) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:46.102 23446 23446 F DEBUG   :       #07 pc 00000000002fd900  /apex/com.android.runtime/lib64/libart.so (art::interpreter::ArtInterpreterToCompiledCodeBridge(art::Thread*, art::ArtMethod*, art::ShadowFrame*, unsigned short, art::JValue*)+384) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:46.102 23446 23446 F DEBUG   :       #08 pc 00000000002f8bd0  /apex/com.android.runtime/lib64/libart.so (bool art::interpreter::DoCall<false, false>(art::ArtMethod*, art::Thread*, art::ShadowFrame&, art::Instruction const*, unsigned short, art::JValue*)+912) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:46.102 23446 23446 F DEBUG   :       #09 pc 00000000005ce108  /apex/com.android.runtime/lib64/libart.so (MterpInvokeStatic+368) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:46.102 23446 23446 F DEBUG   :       #10 pc 0000000000141994  /apex/com.android.runtime/lib64/libart.so (mterp_op_invoke_static+20) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:46.102 23446 23446 F DEBUG   :       #11 pc 00000000000123c2  [anon:dalvik-classes2.dex extracted in memory from /data/app/com.huawei.startModelFromMem2Fuzzer-qlOUQPLTFY7kP8vnO3hpgg==/base.apk!classes2.dex] (com.huawei.startModelFromMem2Fuzzer.view.ClassifyActivity$2.run+390)
+03-24 20:50:46.102 23446 23446 F DEBUG   :       #12 pc 00000000005cd060  /apex/com.android.runtime/lib64/libart.so (MterpInvokeInterface+1752) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:46.102 23446 23446 F DEBUG   :       #13 pc 0000000000141a14  /apex/com.android.runtime/lib64/libart.so (mterp_op_invoke_interface+20) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:46.102 23446 23446 F DEBUG   :       #14 pc 00000000000eabdc  /apex/com.android.runtime/javalib/core-oj.jar (java.lang.Thread.run+8)
+03-24 20:50:46.102 23446 23446 F DEBUG   :       #15 pc 00000000002ce22c  /apex/com.android.runtime/lib64/libart.so (_ZN3art11interpreterL7ExecuteEPNS_6ThreadERKNS_20CodeItemDataAccessorERNS_11ShadowFrameENS_6JValueEbb.llvm.10887373532384510885+320) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:46.102 23446 23446 F DEBUG   :       #16 pc 00000000005bc090  /apex/com.android.runtime/lib64/libart.so (artQuickToInterpreterBridge+1012) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:46.102 23446 23446 F DEBUG   :       #17 pc 0000000000150468  /apex/com.android.runtime/lib64/libart.so (art_quick_to_interpreter_bridge+88) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:46.102 23446 23446 F DEBUG   :       #18 pc 0000000000147334  /apex/com.android.runtime/lib64/libart.so (art_quick_invoke_stub+548) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:46.102 23446 23446 F DEBUG   :       #19 pc 00000000001561b4  /apex/com.android.runtime/lib64/libart.so (art::ArtMethod::Invoke(art::Thread*, unsigned int*, unsigned int, art::JValue*, char const*)+252) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:46.102 23446 23446 F DEBUG   :       #20 pc 00000000004d8820  /apex/com.android.runtime/lib64/libart.so (art::(anonymous namespace)::InvokeWithArgArray(art::ScopedObjectAccessAlreadyRunnable const&, art::ArtMethod*, art::(anonymous namespace)::ArgArray*, art::JValue*, char const*)+104) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:46.102 23446 23446 F DEBUG   :       #21 pc 00000000004d98b4  /apex/com.android.runtime/lib64/libart.so (art::InvokeVirtualOrInterfaceWithJValues(art::ScopedObjectAccessAlreadyRunnable const&, _jobject*, _jmethodID*, jvalue const*)+416) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:46.102 23446 23446 F DEBUG   :       #22 pc 000000000051ca8c  /apex/com.android.runtime/lib64/libart.so (art::Thread::CreateCallback(void*)+1232) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:50:46.102 23446 23446 F DEBUG   :       #23 pc 00000000000cf7c0  /apex/com.android.runtime/lib64/bionic/libc.so (__pthread_start(void*)+36) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+03-24 20:50:46.102 23446 23446 F DEBUG   :       #24 pc 00000000000721a8  /apex/com.android.runtime/lib64/bionic/libc.so (__start_thread+64) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+03-24 20:51:01.860 23496 23538 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xfbd1e00000010 in tid 23538 (Thread-2), pid 23496 (lFromMem2Fuzzer)
+03-24 20:51:01.896 23614 23614 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+03-24 20:51:01.896 23614 23614 F DEBUG   : Build fingerprint: 'HUAWEI/MRX-AN19/HWMRX:10/HUAWEIMRX-AN19/102.0.0.225C00:user/release-keys'
+03-24 20:51:01.896 23614 23614 F DEBUG   : Revision: '0'
+03-24 20:51:01.896 23614 23614 F DEBUG   : ABI: 'arm64'
+03-24 20:51:01.897 23614 23614 F DEBUG   : Timestamp: 2022-03-24 20:51:01+0800
+03-24 20:51:01.897 23614 23614 F DEBUG   : pid: 23496, tid: 23538, name: Thread-2  >>> com.huawei.startModelFromMem2Fuzzer <<<
+03-24 20:51:01.897 23614 23614 F DEBUG   : uid: 10210
+03-24 20:51:01.897 23614 23614 F DEBUG   : signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xfbd1e00000010
+03-24 20:51:01.897 23614 23614 F DEBUG   :     x0  0000007aca4e8b88  x1  000fbd1e00000001  x2  0000007aca4b6c00  x3  0000000000000000
+03-24 20:51:01.897 23614 23614 F DEBUG   :     x4  000000000000002c  x5  0000007ae1c90410  x6  0000000000000000  x7  0000000000000000
+03-24 20:51:01.897 23614 23614 F DEBUG   :     x8  000fbd1dffffff98  x9  fffffffffffffff3  x10 0000000000000000  x11 0000000000000001
+03-24 20:51:01.897 23614 23614 F DEBUG   :     x12 0000000000000000  x13 0000000001000000  x14 0000000000000000  x15 0000000000000000
+03-24 20:51:01.897 23614 23614 F DEBUG   :     x16 0000007b66ab1a30  x17 0000007b66aa5f80  x18 0000007a6fac0000  x19 0000007aca4b6c00
+03-24 20:51:01.897 23614 23614 F DEBUG   :     x20 0000007aca4e8b88  x21 000fbd1e00000001  x22 0000000000000000  x23 0000007b66abbe90
+03-24 20:51:01.897 23614 23614 F DEBUG   :     x24 0000000000000000  x25 0000007a70ba1020  x26 0000007aca4b34b0  x27 0000000000000000
+03-24 20:51:01.897 23614 23614 F DEBUG   :     x28 0000007a70b9fff0  x29 0000007a70b9fec0
+03-24 20:51:01.897 23614 23614 F DEBUG   :     sp  0000007a70b9fe90  lr  0000007b66a32484  pc  0000007b66a31f1c
+03-24 20:51:01.951 23614 23614 F DEBUG   : 
+03-24 20:51:01.951 23614 23614 F DEBUG   : backtrace:
+03-24 20:51:01.951 23614 23614 F DEBUG   :       #00 pc 000000000005bf1c  /apex/com.android.runtime/lib64/bionic/libc.so (ifree+88) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+03-24 20:51:01.951 23614 23614 F DEBUG   :       #01 pc 000000000005c480  /apex/com.android.runtime/lib64/bionic/libc.so (je_free+120) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+03-24 20:51:01.951 23614 23614 F DEBUG   :       #02 pc 00000000000f792c  /data/app/com.huawei.startModelFromMem2Fuzzer-qlOUQPLTFY7kP8vnO3hpgg==/base.apk!libhiai.so (offset 0x215a000) (HIAI_MixModel_ReleaseModelTensorInfo+44) (BuildId: f97bec250751b73d3eb6d739cdcedfe9e080fe1a)
+03-24 20:51:01.951 23614 23614 F DEBUG   :       #03 pc 00000000000105a8  /data/app/com.huawei.startModelFromMem2Fuzzer-qlOUQPLTFY7kP8vnO3hpgg==/base.apk!libhiaijni.so (offset 0x39d3000) (Java_com_huawei_startModelFromMem2Fuzzer_utils_ModelManager_unloadModelSync+244) (BuildId: d6221d8c1c60b57acea2cbf0eeeb2cffa2d98b6d)
+03-24 20:51:01.951 23614 23614 F DEBUG   :       #04 pc 0000000000150350  /apex/com.android.runtime/lib64/libart.so (art_quick_generic_jni_trampoline+144) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:51:01.951 23614 23614 F DEBUG   :       #05 pc 00000000001475b8  /apex/com.android.runtime/lib64/libart.so (art_quick_invoke_static_stub+568) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:51:01.951 23614 23614 F DEBUG   :       #06 pc 00000000001561d4  /apex/com.android.runtime/lib64/libart.so (art::ArtMethod::Invoke(art::Thread*, unsigned int*, unsigned int, art::JValue*, char const*)+284) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:51:01.951 23614 23614 F DEBUG   :       #07 pc 00000000002fd900  /apex/com.android.runtime/lib64/libart.so (art::interpreter::ArtInterpreterToCompiledCodeBridge(art::Thread*, art::ArtMethod*, art::ShadowFrame*, unsigned short, art::JValue*)+384) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:51:01.951 23614 23614 F DEBUG   :       #08 pc 00000000002f8bd0  /apex/com.android.runtime/lib64/libart.so (bool art::interpreter::DoCall<false, false>(art::ArtMethod*, art::Thread*, art::ShadowFrame&, art::Instruction const*, unsigned short, art::JValue*)+912) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:51:01.951 23614 23614 F DEBUG   :       #09 pc 00000000005ce108  /apex/com.android.runtime/lib64/libart.so (MterpInvokeStatic+368) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:51:01.951 23614 23614 F DEBUG   :       #10 pc 0000000000141994  /apex/com.android.runtime/lib64/libart.so (mterp_op_invoke_static+20) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:51:01.951 23614 23614 F DEBUG   :       #11 pc 00000000000123c2  [anon:dalvik-classes2.dex extracted in memory from /data/app/com.huawei.startModelFromMem2Fuzzer-qlOUQPLTFY7kP8vnO3hpgg==/base.apk!classes2.dex] (com.huawei.startModelFromMem2Fuzzer.view.ClassifyActivity$2.run+390)
+03-24 20:51:01.951 23614 23614 F DEBUG   :       #12 pc 00000000005cd060  /apex/com.android.runtime/lib64/libart.so (MterpInvokeInterface+1752) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:51:01.951 23614 23614 F DEBUG   :       #13 pc 0000000000141a14  /apex/com.android.runtime/lib64/libart.so (mterp_op_invoke_interface+20) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:51:01.951 23614 23614 F DEBUG   :       #14 pc 00000000000eabdc  /apex/com.android.runtime/javalib/core-oj.jar (java.lang.Thread.run+8)
+03-24 20:51:01.951 23614 23614 F DEBUG   :       #15 pc 00000000002ce22c  /apex/com.android.runtime/lib64/libart.so (_ZN3art11interpreterL7ExecuteEPNS_6ThreadERKNS_20CodeItemDataAccessorERNS_11ShadowFrameENS_6JValueEbb.llvm.10887373532384510885+320) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:51:01.951 23614 23614 F DEBUG   :       #16 pc 00000000005bc090  /apex/com.android.runtime/lib64/libart.so (artQuickToInterpreterBridge+1012) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:51:01.951 23614 23614 F DEBUG   :       #17 pc 0000000000150468  /apex/com.android.runtime/lib64/libart.so (art_quick_to_interpreter_bridge+88) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:51:01.951 23614 23614 F DEBUG   :       #18 pc 0000000000147334  /apex/com.android.runtime/lib64/libart.so (art_quick_invoke_stub+548) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:51:01.951 23614 23614 F DEBUG   :       #19 pc 00000000001561b4  /apex/com.android.runtime/lib64/libart.so (art::ArtMethod::Invoke(art::Thread*, unsigned int*, unsigned int, art::JValue*, char const*)+252) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:51:01.951 23614 23614 F DEBUG   :       #20 pc 00000000004d8820  /apex/com.android.runtime/lib64/libart.so (art::(anonymous namespace)::InvokeWithArgArray(art::ScopedObjectAccessAlreadyRunnable const&, art::ArtMethod*, art::(anonymous namespace)::ArgArray*, art::JValue*, char const*)+104) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:51:01.951 23614 23614 F DEBUG   :       #21 pc 00000000004d98b4  /apex/com.android.runtime/lib64/libart.so (art::InvokeVirtualOrInterfaceWithJValues(art::ScopedObjectAccessAlreadyRunnable const&, _jobject*, _jmethodID*, jvalue const*)+416) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:51:01.951 23614 23614 F DEBUG   :       #22 pc 000000000051ca8c  /apex/com.android.runtime/lib64/libart.so (art::Thread::CreateCallback(void*)+1232) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:51:01.951 23614 23614 F DEBUG   :       #23 pc 00000000000cf7c0  /apex/com.android.runtime/lib64/bionic/libc.so (__pthread_start(void*)+36) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+03-24 20:51:01.951 23614 23614 F DEBUG   :       #24 pc 00000000000721a8  /apex/com.android.runtime/lib64/bionic/libc.so (__start_thread+64) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+03-24 20:51:09.177 23660 23704 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xfbd1e00000010 in tid 23704 (Thread-2), pid 23660 (lFromMem2Fuzzer)
+03-24 20:51:09.212 23728 23728 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+03-24 20:51:09.212 23728 23728 F DEBUG   : Build fingerprint: 'HUAWEI/MRX-AN19/HWMRX:10/HUAWEIMRX-AN19/102.0.0.225C00:user/release-keys'
+03-24 20:51:09.212 23728 23728 F DEBUG   : Revision: '0'
+03-24 20:51:09.212 23728 23728 F DEBUG   : ABI: 'arm64'
+03-24 20:51:09.212 23728 23728 F DEBUG   : Timestamp: 2022-03-24 20:51:09+0800
+03-24 20:51:09.212 23728 23728 F DEBUG   : pid: 23660, tid: 23704, name: Thread-2  >>> com.huawei.startModelFromMem2Fuzzer <<<
+03-24 20:51:09.212 23728 23728 F DEBUG   : uid: 10210
+03-24 20:51:09.212 23728 23728 F DEBUG   : signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xfbd1e00000010
+03-24 20:51:09.212 23728 23728 F DEBUG   :     x0  0000007aca502f88  x1  000fbd1e00000001  x2  0000007ae1a96000  x3  0000000000000000
+03-24 20:51:09.212 23728 23728 F DEBUG   :     x4  000000000000002c  x5  0000007ae1c90410  x6  0000000000000000  x7  0000000000000000
+03-24 20:51:09.212 23728 23728 F DEBUG   :     x8  000fbd1dffffff98  x9  fffffffffffffff3  x10 0000000000000000  x11 0000000000000001
+03-24 20:51:09.212 23728 23728 F DEBUG   :     x12 0000000000000000  x13 0000000001000000  x14 0000000000000000  x15 0000000000000000
+03-24 20:51:09.212 23728 23728 F DEBUG   :     x16 0000007b66ab1a30  x17 0000007b66aa5f80  x18 0000007a70400000  x19 0000007ae1a96000
+03-24 20:51:09.212 23728 23728 F DEBUG   :     x20 0000007aca502f88  x21 000fbd1e00000001  x22 0000000000000000  x23 0000007b66abbe90
+03-24 20:51:09.212 23728 23728 F DEBUG   :     x24 0000000000000000  x25 0000007a70b85020  x26 0000007ae1bfb4b0  x27 0000000000000000
+03-24 20:51:09.212 23728 23728 F DEBUG   :     x28 0000007a70b83ff0  x29 0000007a70b83ec0
+03-24 20:51:09.212 23728 23728 F DEBUG   :     sp  0000007a70b83e90  lr  0000007b66a32484  pc  0000007b66a31f1c
+03-24 20:51:09.268 23728 23728 F DEBUG   : 
+03-24 20:51:09.268 23728 23728 F DEBUG   : backtrace:
+03-24 20:51:09.268 23728 23728 F DEBUG   :       #00 pc 000000000005bf1c  /apex/com.android.runtime/lib64/bionic/libc.so (ifree+88) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+03-24 20:51:09.268 23728 23728 F DEBUG   :       #01 pc 000000000005c480  /apex/com.android.runtime/lib64/bionic/libc.so (je_free+120) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+03-24 20:51:09.268 23728 23728 F DEBUG   :       #02 pc 00000000000f792c  /data/app/com.huawei.startModelFromMem2Fuzzer-qlOUQPLTFY7kP8vnO3hpgg==/base.apk!libhiai.so (offset 0x215a000) (HIAI_MixModel_ReleaseModelTensorInfo+44) (BuildId: f97bec250751b73d3eb6d739cdcedfe9e080fe1a)
+03-24 20:51:09.268 23728 23728 F DEBUG   :       #03 pc 00000000000105a8  /data/app/com.huawei.startModelFromMem2Fuzzer-qlOUQPLTFY7kP8vnO3hpgg==/base.apk!libhiaijni.so (offset 0x39d3000) (Java_com_huawei_startModelFromMem2Fuzzer_utils_ModelManager_unloadModelSync+244) (BuildId: d6221d8c1c60b57acea2cbf0eeeb2cffa2d98b6d)
+03-24 20:51:09.268 23728 23728 F DEBUG   :       #04 pc 0000000000150350  /apex/com.android.runtime/lib64/libart.so (art_quick_generic_jni_trampoline+144) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:51:09.268 23728 23728 F DEBUG   :       #05 pc 00000000001475b8  /apex/com.android.runtime/lib64/libart.so (art_quick_invoke_static_stub+568) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:51:09.268 23728 23728 F DEBUG   :       #06 pc 00000000001561d4  /apex/com.android.runtime/lib64/libart.so (art::ArtMethod::Invoke(art::Thread*, unsigned int*, unsigned int, art::JValue*, char const*)+284) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:51:09.268 23728 23728 F DEBUG   :       #07 pc 00000000002fd900  /apex/com.android.runtime/lib64/libart.so (art::interpreter::ArtInterpreterToCompiledCodeBridge(art::Thread*, art::ArtMethod*, art::ShadowFrame*, unsigned short, art::JValue*)+384) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:51:09.268 23728 23728 F DEBUG   :       #08 pc 00000000002f8bd0  /apex/com.android.runtime/lib64/libart.so (bool art::interpreter::DoCall<false, false>(art::ArtMethod*, art::Thread*, art::ShadowFrame&, art::Instruction const*, unsigned short, art::JValue*)+912) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:51:09.268 23728 23728 F DEBUG   :       #09 pc 00000000005ce108  /apex/com.android.runtime/lib64/libart.so (MterpInvokeStatic+368) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:51:09.268 23728 23728 F DEBUG   :       #10 pc 0000000000141994  /apex/com.android.runtime/lib64/libart.so (mterp_op_invoke_static+20) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:51:09.268 23728 23728 F DEBUG   :       #11 pc 00000000000123c2  [anon:dalvik-classes2.dex extracted in memory from /data/app/com.huawei.startModelFromMem2Fuzzer-qlOUQPLTFY7kP8vnO3hpgg==/base.apk!classes2.dex] (com.huawei.startModelFromMem2Fuzzer.view.ClassifyActivity$2.run+390)
+03-24 20:51:09.268 23728 23728 F DEBUG   :       #12 pc 00000000005cd060  /apex/com.android.runtime/lib64/libart.so (MterpInvokeInterface+1752) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:51:09.268 23728 23728 F DEBUG   :       #13 pc 0000000000141a14  /apex/com.android.runtime/lib64/libart.so (mterp_op_invoke_interface+20) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:51:09.268 23728 23728 F DEBUG   :       #14 pc 00000000000eabdc  /apex/com.android.runtime/javalib/core-oj.jar (java.lang.Thread.run+8)
+03-24 20:51:09.268 23728 23728 F DEBUG   :       #15 pc 00000000002ce22c  /apex/com.android.runtime/lib64/libart.so (_ZN3art11interpreterL7ExecuteEPNS_6ThreadERKNS_20CodeItemDataAccessorERNS_11ShadowFrameENS_6JValueEbb.llvm.10887373532384510885+320) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:51:09.268 23728 23728 F DEBUG   :       #16 pc 00000000005bc090  /apex/com.android.runtime/lib64/libart.so (artQuickToInterpreterBridge+1012) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:51:09.268 23728 23728 F DEBUG   :       #17 pc 0000000000150468  /apex/com.android.runtime/lib64/libart.so (art_quick_to_interpreter_bridge+88) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:51:09.268 23728 23728 F DEBUG   :       #18 pc 0000000000147334  /apex/com.android.runtime/lib64/libart.so (art_quick_invoke_stub+548) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:51:09.268 23728 23728 F DEBUG   :       #19 pc 00000000001561b4  /apex/com.android.runtime/lib64/libart.so (art::ArtMethod::Invoke(art::Thread*, unsigned int*, unsigned int, art::JValue*, char const*)+252) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:51:09.268 23728 23728 F DEBUG   :       #20 pc 00000000004d8820  /apex/com.android.runtime/lib64/libart.so (art::(anonymous namespace)::InvokeWithArgArray(art::ScopedObjectAccessAlreadyRunnable const&, art::ArtMethod*, art::(anonymous namespace)::ArgArray*, art::JValue*, char const*)+104) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:51:09.268 23728 23728 F DEBUG   :       #21 pc 00000000004d98b4  /apex/com.android.runtime/lib64/libart.so (art::InvokeVirtualOrInterfaceWithJValues(art::ScopedObjectAccessAlreadyRunnable const&, _jobject*, _jmethodID*, jvalue const*)+416) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:51:09.268 23728 23728 F DEBUG   :       #22 pc 000000000051ca8c  /apex/com.android.runtime/lib64/libart.so (art::Thread::CreateCallback(void*)+1232) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 20:51:09.268 23728 23728 F DEBUG   :       #23 pc 00000000000cf7c0  /apex/com.android.runtime/lib64/bionic/libc.so (__pthread_start(void*)+36) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+03-24 20:51:09.268 23728 23728 F DEBUG   :       #24 pc 00000000000721a8  /apex/com.android.runtime/lib64/bionic/libc.so (__start_thread+64) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+03-24 20:54:23.498 23802 23950 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x74532f67600740 in tid 23950 (Thread-2), pid 23802 (lFromMem2Fuzzer)
+03-24 20:54:23.518 24046 24046 F libc    : failed to exec crash_dump helper: Operation not permitted
+03-24 20:54:23.528 23802 23950 F libc    : crash_dump helper failed to exec
+03-24 21:14:04.868 25799 25917 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xfbd1e00000010 in tid 25917 (Thread-2), pid 25799 (lFromMem2Fuzzer)
+03-24 21:14:04.910 26306 26306 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+03-24 21:14:04.910 26306 26306 F DEBUG   : Build fingerprint: 'HUAWEI/MRX-AN19/HWMRX:10/HUAWEIMRX-AN19/102.0.0.225C00:user/release-keys'
+03-24 21:14:04.910 26306 26306 F DEBUG   : Revision: '0'
+03-24 21:14:04.910 26306 26306 F DEBUG   : ABI: 'arm64'
+03-24 21:14:04.910 26306 26306 F DEBUG   : Timestamp: 2022-03-24 21:14:04+0800
+03-24 21:14:04.910 26306 26306 F DEBUG   : pid: 25799, tid: 25917, name: Thread-2  >>> com.huawei.startModelFromMem2Fuzzer <<<
+03-24 21:14:04.910 26306 26306 F DEBUG   : uid: 10210
+03-24 21:14:04.910 26306 26306 F DEBUG   : signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xfbd1e00000010
+03-24 21:14:04.910 26306 26306 F DEBUG   :     x0  0000007aca467488  x1  000fbd1e00000001  x2  0000007aca4bdc00  x3  0000000000000000
+03-24 21:14:04.910 26306 26306 F DEBUG   :     x4  00000000000000cb  x5  0000007ae1c00958  x6  0000000000000000  x7  0000000000000000
+03-24 21:14:04.910 26306 26306 F DEBUG   :     x8  000fbd1dffffff98  x9  fffffffffffffff3  x10 0000000000000000  x11 0000000000000001
+03-24 21:14:04.910 26306 26306 F DEBUG   :     x12 0000000106000000  x13 0000000001000000  x14 0000000000000000  x15 0000000000000000
+03-24 21:14:04.910 26306 26306 F DEBUG   :     x16 0000007b66ab1a30  x17 0000007b66aa5f80  x18 0000007a6b996000  x19 0000007aca4bdc00
+03-24 21:14:04.910 26306 26306 F DEBUG   :     x20 0000007aca467488  x21 000fbd1e00000001  x22 0000000000000000  x23 0000007b66abbe90
+03-24 21:14:04.910 26306 26306 F DEBUG   :     x24 0000000000000000  x25 0000007a750fe020  x26 0000007aca4bc0b0  x27 0000000000000000
+03-24 21:14:04.910 26306 26306 F DEBUG   :     x28 0000007a750fccd0  x29 0000007a750fcba0
+03-24 21:14:04.910 26306 26306 F DEBUG   :     sp  0000007a750fcb70  lr  0000007b66a32484  pc  0000007b66a31f1c
+03-24 21:14:04.967 26306 26306 F DEBUG   : 
+03-24 21:14:04.967 26306 26306 F DEBUG   : backtrace:
+03-24 21:14:04.967 26306 26306 F DEBUG   :       #00 pc 000000000005bf1c  /apex/com.android.runtime/lib64/bionic/libc.so (ifree+88) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+03-24 21:14:04.967 26306 26306 F DEBUG   :       #01 pc 000000000005c480  /apex/com.android.runtime/lib64/bionic/libc.so (je_free+120) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+03-24 21:14:04.967 26306 26306 F DEBUG   :       #02 pc 00000000000f792c  /data/app/com.huawei.startModelFromMem2Fuzzer-eQBO4D5-7JOMKsxWMcAKAA==/base.apk!libhiai.so (offset 0x215a000) (HIAI_MixModel_ReleaseModelTensorInfo+44) (BuildId: f97bec250751b73d3eb6d739cdcedfe9e080fe1a)
+03-24 21:14:04.967 26306 26306 F DEBUG   :       #03 pc 00000000000105a8  /data/app/com.huawei.startModelFromMem2Fuzzer-eQBO4D5-7JOMKsxWMcAKAA==/base.apk!libhiaijni.so (offset 0x4c9000) (Java_com_huawei_startModelFromMem2Fuzzer_utils_ModelManager_unloadModelSync+244) (BuildId: d6221d8c1c60b57acea2cbf0eeeb2cffa2d98b6d)
+03-24 21:14:04.967 26306 26306 F DEBUG   :       #04 pc 0000000000150350  /apex/com.android.runtime/lib64/libart.so (art_quick_generic_jni_trampoline+144) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 21:14:04.967 26306 26306 F DEBUG   :       #05 pc 00000000001475b8  /apex/com.android.runtime/lib64/libart.so (art_quick_invoke_static_stub+568) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 21:14:04.967 26306 26306 F DEBUG   :       #06 pc 00000000001561d4  /apex/com.android.runtime/lib64/libart.so (art::ArtMethod::Invoke(art::Thread*, unsigned int*, unsigned int, art::JValue*, char const*)+284) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 21:14:04.967 26306 26306 F DEBUG   :       #07 pc 00000000002fd900  /apex/com.android.runtime/lib64/libart.so (art::interpreter::ArtInterpreterToCompiledCodeBridge(art::Thread*, art::ArtMethod*, art::ShadowFrame*, unsigned short, art::JValue*)+384) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 21:14:04.967 26306 26306 F DEBUG   :       #08 pc 00000000002f8bd0  /apex/com.android.runtime/lib64/libart.so (bool art::interpreter::DoCall<false, false>(art::ArtMethod*, art::Thread*, art::ShadowFrame&, art::Instruction const*, unsigned short, art::JValue*)+912) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 21:14:04.967 26306 26306 F DEBUG   :       #09 pc 000000000030614c  /apex/com.android.runtime/lib64/libart.so (void art::interpreter::ExecuteSwitchImplCpp<false, false>(art::interpreter::SwitchImplContext*)+14964) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 21:14:04.967 26306 26306 F DEBUG   :       #10 pc 0000000000152bd8  /apex/com.android.runtime/lib64/libart.so (ExecuteSwitchImplAsm+8) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 21:14:04.967 26306 26306 F DEBUG   :       #11 pc 000000000001223c  [anon:dalvik-classes2.dex extracted in memory from /data/app/com.huawei.startModelFromMem2Fuzzer-eQBO4D5-7JOMKsxWMcAKAA==/base.apk!classes2.dex] (com.huawei.startModelFromMem2Fuzzer.view.ClassifyActivity$2.run)
+03-24 21:14:04.967 26306 26306 F DEBUG   :       #12 pc 00000000002ce338  /apex/com.android.runtime/lib64/libart.so (_ZN3art11interpreterL7ExecuteEPNS_6ThreadERKNS_20CodeItemDataAccessorERNS_11ShadowFrameENS_6JValueEbb.llvm.10887373532384510885+588) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 21:14:04.967 26306 26306 F DEBUG   :       #13 pc 00000000002d4328  /apex/com.android.runtime/lib64/libart.so (art::interpreter::ArtInterpreterToInterpreterBridge(art::Thread*, art::CodeItemDataAccessor const&, art::ShadowFrame*, art::JValue*)+204) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 21:14:04.967 26306 26306 F DEBUG   :       #14 pc 00000000002f8bb4  /apex/com.android.runtime/lib64/libart.so (bool art::interpreter::DoCall<false, false>(art::ArtMethod*, art::Thread*, art::ShadowFrame&, art::Instruction const*, unsigned short, art::JValue*)+884) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 21:14:04.967 26306 26306 F DEBUG   :       #15 pc 0000000000307574  /apex/com.android.runtime/lib64/libart.so (void art::interpreter::ExecuteSwitchImplCpp<false, false>(art::interpreter::SwitchImplContext*)+20124) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 21:14:04.967 26306 26306 F DEBUG   :       #16 pc 0000000000152bd8  /apex/com.android.runtime/lib64/libart.so (ExecuteSwitchImplAsm+8) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 21:14:04.967 26306 26306 F DEBUG   :       #17 pc 00000000000eabd4  /apex/com.android.runtime/javalib/core-oj.jar (java.lang.Thread.run)
+03-24 21:14:04.967 26306 26306 F DEBUG   :       #18 pc 00000000002ce338  /apex/com.android.runtime/lib64/libart.so (_ZN3art11interpreterL7ExecuteEPNS_6ThreadERKNS_20CodeItemDataAccessorERNS_11ShadowFrameENS_6JValueEbb.llvm.10887373532384510885+588) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 21:14:04.967 26306 26306 F DEBUG   :       #19 pc 00000000005bc090  /apex/com.android.runtime/lib64/libart.so (artQuickToInterpreterBridge+1012) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 21:14:04.967 26306 26306 F DEBUG   :       #20 pc 0000000000150468  /apex/com.android.runtime/lib64/libart.so (art_quick_to_interpreter_bridge+88) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 21:14:04.967 26306 26306 F DEBUG   :       #21 pc 0000000000147334  /apex/com.android.runtime/lib64/libart.so (art_quick_invoke_stub+548) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 21:14:04.967 26306 26306 F DEBUG   :       #22 pc 00000000001561b4  /apex/com.android.runtime/lib64/libart.so (art::ArtMethod::Invoke(art::Thread*, unsigned int*, unsigned int, art::JValue*, char const*)+252) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 21:14:04.967 26306 26306 F DEBUG   :       #23 pc 00000000004d8820  /apex/com.android.runtime/lib64/libart.so (art::(anonymous namespace)::InvokeWithArgArray(art::ScopedObjectAccessAlreadyRunnable const&, art::ArtMethod*, art::(anonymous namespace)::ArgArray*, art::JValue*, char const*)+104) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 21:14:04.967 26306 26306 F DEBUG   :       #24 pc 00000000004d98b4  /apex/com.android.runtime/lib64/libart.so (art::InvokeVirtualOrInterfaceWithJValues(art::ScopedObjectAccessAlreadyRunnable const&, _jobject*, _jmethodID*, jvalue const*)+416) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 21:14:04.967 26306 26306 F DEBUG   :       #25 pc 000000000051ca8c  /apex/com.android.runtime/lib64/libart.so (art::Thread::CreateCallback(void*)+1232) (BuildId: 08543716770b195bd10fafbe11bb5052)
+03-24 21:14:04.967 26306 26306 F DEBUG   :       #26 pc 00000000000cf7c0  /apex/com.android.runtime/lib64/bionic/libc.so (__pthread_start(void*)+36) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+03-24 21:14:04.967 26306 26306 F DEBUG   :       #27 pc 00000000000721a8  /apex/com.android.runtime/lib64/bionic/libc.so (__start_thread+64) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+
+---------- crash reason: dead object, offset: 20480 (0x5000), original value: 0x60a081a, new value: -0x60a081b ----------
+03-24 21:27:38.353 12234 14455 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x20 in tid 14455 (HwBinder:12234_), pid 12234 (hiaiserver)
+03-24 21:27:38.379 19634 19634 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+03-24 21:27:38.379 19634 19634 F DEBUG   : Build fingerprint: 'HUAWEI/MRX-AN19/HWMRX:10/HUAWEIMRX-AN19/102.0.0.225C00:user/release-keys'
+03-24 21:27:38.379 19634 19634 F DEBUG   : Revision: '0'
+03-24 21:27:38.379 19634 19634 F DEBUG   : ABI: 'arm64'
+03-24 21:27:38.379 19634 19634 F DEBUG   : Timestamp: 2022-03-24 21:27:38+0800
+03-24 21:27:38.379 19634 19634 F DEBUG   : pid: 12234, tid: 14455, name: HwBinder:12234_  >>> /vendor/bin/hiaiserver <<<
+03-24 21:27:38.379 19634 19634 F DEBUG   : uid: 1000
+03-24 21:27:38.379 19634 19634 F DEBUG   : signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x20
+03-24 21:27:38.379 19634 19634 F DEBUG   : Cause: null pointer dereference
+03-24 21:27:38.379 19634 19634 F DEBUG   :     x0  00000070c227a0e0  x1  00000070b2c86d78  x2  00000070c23ab468  x3  0000000000000002
+03-24 21:27:38.379 19634 19634 F DEBUG   :     x4  0000000000000000  x5  00000070b2c86c88  x6  726f736e65745f5f  x7  61645f637365645f
+03-24 21:27:38.379 19634 19634 F DEBUG   :     x8  00000070c20ebc80  x9  0000000000000001  x10 00000000ffffffff  x11 0000000000000000
+03-24 21:27:38.379 19634 19634 F DEBUG   :     x12 0000001679dfbc02  x13 0000000000001b40  x14 0000000000000020  x15 aaaaaaaaaaaaaaab
+03-24 21:27:38.379 19634 19634 F DEBUG   :     x16 00000070c7530290  x17 00000070c72510a8  x18 00000070aa504000  x19 00000070b2c86e88
+03-24 21:27:38.379 19634 19634 F DEBUG   :     x20 0000000000000000  x21 00000070c8f655c1  x22 0000000000007475  x23 00000070c90742b0
+03-24 21:27:38.379 19634 19634 F DEBUG   :     x24 00000070b2c86e40  x25 00000070c752f610  x26 ffffffffffffffff  x27 00000070c752f600
+03-24 21:27:38.379 19634 19634 F DEBUG   :     x28 00000070c90742b0  x29 00000070b2c86df0
+03-24 21:27:38.379 19634 19634 F DEBUG   :     sp  00000070b2c86de0  lr  00000070c750ff6c  pc  00000070c750ff6c
+03-24 21:27:38.390 19634 19634 F DEBUG   : 
+03-24 21:27:38.390 19634 19634 F DEBUG   : backtrace:
+03-24 21:27:38.391 19634 19634 F DEBUG   :       #00 pc 00000000000c8f6c  /vendor/lib64/libgraph.so (ge::TensorDesc::TensorDesc(ge::TensorDesc const&)+24) (BuildId: d2a9b3d0cdbbae81ebf61f41d7db8a9d)
+03-24 21:27:38.391 19634 19634 F DEBUG   :       #01 pc 00000000000b4044  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+03-24 21:27:38.391 19634 19634 F DEBUG   :       #02 pc 00000000000ae22c  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+03-24 21:27:38.391 19634 19634 F DEBUG   :       #03 pc 00000000000acbb8  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+03-24 21:27:38.391 19634 19634 F DEBUG   :       #04 pc 00000000000ab7b4  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+03-24 21:27:38.391 19634 19634 F DEBUG   :       #05 pc 00000000000aab08  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+03-24 21:27:38.391 19634 19634 F DEBUG   :       #06 pc 00000000000aa57c  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+03-24 21:27:38.391 19634 19634 F DEBUG   :       #07 pc 00000000000b5760  /vendor/lib64/libhiai_executor.so (ge::OMModelGenerator::GenerateFromBuffer(ge::GenerateOptions const&, ge::BaseBuffer const&, std::__1::shared_ptr<ge::CompiledModel>&)+1052) (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+03-24 21:27:38.391 19634 19634 F DEBUG   :       #08 pc 0000000000032b4c  /vendor/lib64/libhiai_server.so (ge::ExecutorManager::LoadModel(ge::LoadModelOptions const&, ge::BaseBuffer const&, unsigned int&)+1380) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+03-24 21:27:38.391 19634 19634 F DEBUG   :       #09 pc 000000000001a890  /vendor/lib64/libhiai_server.so (hiai::AIModelManagerImpl::LoadModelFromMem(hiai::AIModelDescription const&, unsigned int&)+1132) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+03-24 21:27:38.391 19634 19634 F DEBUG   :       #10 pc 0000000000018fb4  /vendor/lib64/libhiai_server.so (hiai::AIModelManagerImpl::LoadModels(std::__1::vector<hiai::AIModelDescription, std::__1::allocator<hiai::AIModelDescription>> const&)+196) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+03-24 21:27:38.391 19634 19634 F DEBUG   :       #11 pc 0000000000018794  /vendor/lib64/libhiai_server.so (hiai::AIModelManagerImpl::Init(hiai::AIConfig const&, std::__1::vector<hiai::AIModelDescription, std::__1::allocator<hiai::AIModelDescription>> const&)+76) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+03-24 21:27:38.391 19634 19634 F DEBUG   :       #12 pc 0000000000052b30  /vendor/bin/hiaiserver (ai::AiModelMngrService::LoadModel(int, int, hiai::AIConfig const&, std::__1::vector<hiai::AIModelDescription, std::__1::allocator<hiai::AIModelDescription>> const&, bool, bool)+1452) (BuildId: b0a2f4825a912f13056edf1ff01dae60)
+03-24 21:27:38.391 19634 19634 F DEBUG   :       #13 pc 00000000000594e8  /vendor/bin/hiaiserver (ai::AiModelMngrService::startModelFromMem2(int, int, android::hardware::hidl_vec<vendor::huawei::hardware::ai::V1_0::ModelBuffer> const&)+1616) (BuildId: b0a2f4825a912f13056edf1ff01dae60)
+03-24 21:27:38.391 19634 19634 F DEBUG   :       #14 pc 000000000006c97c  /vendor/lib64/vendor.huawei.hardware.ai@1.1.so (vendor::huawei::hardware::ai::V1_1::BnHwAiModelMngr::_hidl_startModelFromMem2(android::hidl::base::V1_0::BnHwBase*, android::hardware::Parcel const&, android::hardware::Parcel*, std::__1::function<void (android::hardware::Parcel&)>)+352) (BuildId: 469a6a932b6ebb5818104edfaed0404b)
+03-24 21:27:38.391 19634 19634 F DEBUG   :       #15 pc 0000000000016094  /vendor/lib64/vendor.huawei.hardware.ai@3.2.so (vendor::huawei::hardware::ai::V3_2::BnHwAiModelMngr::onTransact(unsigned int, android::hardware::Parcel const&, android::hardware::Parcel*, unsigned int, std::__1::function<void (android::hardware::Parcel&)>)+2724) (BuildId: 3832987ab8a55cd5676b418e067d76af)
+03-24 21:27:38.391 19634 19634 F DEBUG   :       #16 pc 00000000000825f4  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::BHwBinder::transact(unsigned int, android::hardware::Parcel const&, android::hardware::Parcel*, unsigned int, std::__1::function<void (android::hardware::Parcel&)>)+68) (BuildId: 2f8f208736c0724896c75aa52122bd47)
+03-24 21:27:38.391 19634 19634 F DEBUG   :       #17 pc 0000000000085e88  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::IPCThreadState::getAndExecuteCommand()+1036) (BuildId: 2f8f208736c0724896c75aa52122bd47)
+03-24 21:27:38.391 19634 19634 F DEBUG   :       #18 pc 0000000000087518  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::IPCThreadState::joinThreadPool(bool)+152) (BuildId: 2f8f208736c0724896c75aa52122bd47)
+03-24 21:27:38.391 19634 19634 F DEBUG   :       #19 pc 0000000000096654  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::PoolThread::threadLoop()+24) (BuildId: 2f8f208736c0724896c75aa52122bd47)
+03-24 21:27:38.391 19634 19634 F DEBUG   :       #20 pc 00000000000136d4  /system/lib64/vndk-sp-29/libutils.so (android::Thread::_threadLoop(void*)+288) (BuildId: 3a2fb31a219729a41f412d01a4f3dd56)
+03-24 21:27:38.391 19634 19634 F DEBUG   :       #21 pc 00000000000cf7c0  /apex/com.android.runtime/lib64/bionic/libc.so (__pthread_start(void*)+36) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+03-24 21:27:38.391 19634 19634 F DEBUG   :       #22 pc 00000000000721a8  /apex/com.android.runtime/lib64/bionic/libc.so (__start_thread+64) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+
+---------- crash reason: dead object, offset: 20488 (0x5008), original value: 0x7220180, new value: 0x41414141 ----------
+03-24 21:27:39.947 19646 19646 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x20 in tid 19646 (hiaiserver), pid 19646 (hiaiserver)
+03-24 21:27:39.959 19793 19793 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+03-24 21:27:39.959 19793 19793 F DEBUG   : Build fingerprint: 'HUAWEI/MRX-AN19/HWMRX:10/HUAWEIMRX-AN19/102.0.0.225C00:user/release-keys'
+03-24 21:27:39.959 19793 19793 F DEBUG   : Revision: '0'
+03-24 21:27:39.959 19793 19793 F DEBUG   : ABI: 'arm64'
+03-24 21:27:39.959 19793 19793 F DEBUG   : Timestamp: 2022-03-24 21:27:39+0800
+03-24 21:27:39.959 19793 19793 F DEBUG   : pid: 19646, tid: 19646, name: hiaiserver  >>> /vendor/bin/hiaiserver <<<
+03-24 21:27:39.959 19793 19793 F DEBUG   : uid: 1000
+03-24 21:27:39.959 19793 19793 F DEBUG   : signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x20
+03-24 21:27:39.959 19793 19793 F DEBUG   : Cause: null pointer dereference
+03-24 21:27:39.959 19793 19793 F DEBUG   :     x0  000000767a7bdb00  x1  0000007fda91c778  x2  000000767f00d068  x3  0000000000000002
+03-24 21:27:39.959 19793 19793 F DEBUG   :     x4  0000000000000000  x5  0000007fda91c688  x6  726f736e65745f5f  x7  61645f637365645f
+03-24 21:27:39.959 19793 19793 F DEBUG   :     x8  000000767a7f3a60  x9  0000000000000001  x10 00000000ffffffff  x11 0000000000000000
+03-24 21:27:39.959 19793 19793 F DEBUG   :     x12 0000000000009ac5  x13 0000000000006c00  x14 0000000000000020  x15 aaaaaaaaaaaaaaab
+03-24 21:27:39.959 19793 19793 F DEBUG   :     x16 000000767faee290  x17 000000767ff1d0a8  x18 0000007682f08000  x19 0000007fda91c888
+03-24 21:27:39.959 19793 19793 F DEBUG   :     x20 0000000000000000  x21 00000076808a25c1  x22 0000000000007475  x23 00000076809b12b0
+03-24 21:27:39.959 19793 19793 F DEBUG   :     x24 0000007fda91c840  x25 000000767faed610  x26 ffffffffffffffff  x27 000000767faed600
+03-24 21:27:39.959 19793 19793 F DEBUG   :     x28 00000076809b12b0  x29 0000007fda91c7f0
+03-24 21:27:39.959 19793 19793 F DEBUG   :     sp  0000007fda91c7e0  lr  000000767facdf6c  pc  000000767facdf6c
+03-24 21:27:39.966 19793 19793 F DEBUG   : 
+03-24 21:27:39.966 19793 19793 F DEBUG   : backtrace:
+03-24 21:27:39.966 19793 19793 F DEBUG   :       #00 pc 00000000000c8f6c  /vendor/lib64/libgraph.so (ge::TensorDesc::TensorDesc(ge::TensorDesc const&)+24) (BuildId: d2a9b3d0cdbbae81ebf61f41d7db8a9d)
+03-24 21:27:39.966 19793 19793 F DEBUG   :       #01 pc 00000000000b4044  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+03-24 21:27:39.966 19793 19793 F DEBUG   :       #02 pc 00000000000ae22c  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+03-24 21:27:39.966 19793 19793 F DEBUG   :       #03 pc 00000000000acbb8  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+03-24 21:27:39.966 19793 19793 F DEBUG   :       #04 pc 00000000000ab7b4  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+03-24 21:27:39.966 19793 19793 F DEBUG   :       #05 pc 00000000000aab08  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+03-24 21:27:39.966 19793 19793 F DEBUG   :       #06 pc 00000000000aa57c  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+03-24 21:27:39.966 19793 19793 F DEBUG   :       #07 pc 00000000000b5760  /vendor/lib64/libhiai_executor.so (ge::OMModelGenerator::GenerateFromBuffer(ge::GenerateOptions const&, ge::BaseBuffer const&, std::__1::shared_ptr<ge::CompiledModel>&)+1052) (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+03-24 21:27:39.966 19793 19793 F DEBUG   :       #08 pc 0000000000032b4c  /vendor/lib64/libhiai_server.so (ge::ExecutorManager::LoadModel(ge::LoadModelOptions const&, ge::BaseBuffer const&, unsigned int&)+1380) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+03-24 21:27:39.966 19793 19793 F DEBUG   :       #09 pc 000000000001a890  /vendor/lib64/libhiai_server.so (hiai::AIModelManagerImpl::LoadModelFromMem(hiai::AIModelDescription const&, unsigned int&)+1132) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+03-24 21:27:39.966 19793 19793 F DEBUG   :       #10 pc 0000000000018fb4  /vendor/lib64/libhiai_server.so (hiai::AIModelManagerImpl::LoadModels(std::__1::vector<hiai::AIModelDescription, std::__1::allocator<hiai::AIModelDescription>> const&)+196) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+03-24 21:27:39.966 19793 19793 F DEBUG   :       #11 pc 0000000000018794  /vendor/lib64/libhiai_server.so (hiai::AIModelManagerImpl::Init(hiai::AIConfig const&, std::__1::vector<hiai::AIModelDescription, std::__1::allocator<hiai::AIModelDescription>> const&)+76) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+03-24 21:27:39.966 19793 19793 F DEBUG   :       #12 pc 0000000000052b30  /vendor/bin/hiaiserver (ai::AiModelMngrService::LoadModel(int, int, hiai::AIConfig const&, std::__1::vector<hiai::AIModelDescription, std::__1::allocator<hiai::AIModelDescription>> const&, bool, bool)+1452) (BuildId: b0a2f4825a912f13056edf1ff01dae60)
+03-24 21:27:39.966 19793 19793 F DEBUG   :       #13 pc 00000000000594e8  /vendor/bin/hiaiserver (ai::AiModelMngrService::startModelFromMem2(int, int, android::hardware::hidl_vec<vendor::huawei::hardware::ai::V1_0::ModelBuffer> const&)+1616) (BuildId: b0a2f4825a912f13056edf1ff01dae60)
+03-24 21:27:39.966 19793 19793 F DEBUG   :       #14 pc 000000000006c97c  /vendor/lib64/vendor.huawei.hardware.ai@1.1.so (vendor::huawei::hardware::ai::V1_1::BnHwAiModelMngr::_hidl_startModelFromMem2(android::hidl::base::V1_0::BnHwBase*, android::hardware::Parcel const&, android::hardware::Parcel*, std::__1::function<void (android::hardware::Parcel&)>)+352) (BuildId: 469a6a932b6ebb5818104edfaed0404b)
+03-24 21:27:39.966 19793 19793 F DEBUG   :       #15 pc 0000000000016094  /vendor/lib64/vendor.huawei.hardware.ai@3.2.so (vendor::huawei::hardware::ai::V3_2::BnHwAiModelMngr::onTransact(unsigned int, android::hardware::Parcel const&, android::hardware::Parcel*, unsigned int, std::__1::function<void (android::hardware::Parcel&)>)+2724) (BuildId: 3832987ab8a55cd5676b418e067d76af)
+03-24 21:27:39.966 19793 19793 F DEBUG   :       #16 pc 00000000000825f4  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::BHwBinder::transact(unsigned int, android::hardware::Parcel const&, android::hardware::Parcel*, unsigned int, std::__1::function<void (android::hardware::Parcel&)>)+68) (BuildId: 2f8f208736c0724896c75aa52122bd47)
+03-24 21:27:39.966 19793 19793 F DEBUG   :       #17 pc 0000000000085e88  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::IPCThreadState::getAndExecuteCommand()+1036) (BuildId: 2f8f208736c0724896c75aa52122bd47)
+03-24 21:27:39.966 19793 19793 F DEBUG   :       #18 pc 0000000000087518  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::IPCThreadState::joinThreadPool(bool)+152) (BuildId: 2f8f208736c0724896c75aa52122bd47)
+03-24 21:27:39.966 19793 19793 F DEBUG   :       #19 pc 00000000000b48e8  /vendor/bin/hiaiserver (main+920) (BuildId: b0a2f4825a912f13056edf1ff01dae60)
+03-24 21:27:39.966 19793 19793 F DEBUG   :       #20 pc 000000000006b108  /apex/com.android.runtime/lib64/bionic/libc.so (__libc_init+108) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+
+---------- crash reason: dead object, offset: 20492 (0x500c), original value: 0x4831434e, new value: 0x0 ----------
+03-24 21:27:44.054 19902 19910 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x20 in tid 19910 (HwBinder:19902_), pid 19902 (hiaiserver)
+03-24 21:27:44.072 19936 19936 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+03-24 21:27:44.072 19936 19936 F DEBUG   : Build fingerprint: 'HUAWEI/MRX-AN19/HWMRX:10/HUAWEIMRX-AN19/102.0.0.225C00:user/release-keys'
+03-24 21:27:44.072 19936 19936 F DEBUG   : Revision: '0'
+03-24 21:27:44.072 19936 19936 F DEBUG   : ABI: 'arm64'
+03-24 21:27:44.072 19936 19936 F DEBUG   : Timestamp: 2022-03-24 21:27:44+0800
+03-24 21:27:44.072 19936 19936 F DEBUG   : pid: 19902, tid: 19910, name: HwBinder:19902_  >>> /vendor/bin/hiaiserver <<<
+03-24 21:27:44.072 19936 19936 F DEBUG   : uid: 1000
+03-24 21:27:44.072 19936 19936 F DEBUG   : signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x20
+03-24 21:27:44.072 19936 19936 F DEBUG   : Cause: null pointer dereference
+03-24 21:27:44.072 19936 19936 F DEBUG   :     x0  00000072690b2a40  x1  0000007267cfcd78  x2  000000726d8eb068  x3  0000000000000002
+03-24 21:27:44.072 19936 19936 F DEBUG   :     x4  0000000000000000  x5  0000007267cfcc88  x6  726f736e65745f5f  x7  61645f637365645f
+03-24 21:27:44.072 19936 19936 F DEBUG   :     x8  00000072691f4de0  x9  0000000000000001  x10 00000000ffffffff  x11 0000000000000000
+03-24 21:27:44.072 19936 19936 F DEBUG   :     x12 0000000000005998  x13 0000000000002940  x14 0000000000000020  x15 aaaaaaaaaaaaaaab
+03-24 21:27:44.072 19936 19936 F DEBUG   :     x16 000000727002a290  x17 000000726f7920a8  x18 0000007267392000  x19 0000007267cfce88
+03-24 21:27:44.072 19936 19936 F DEBUG   :     x20 0000000000000000  x21 000000726e4a45c1  x22 0000000000007475  x23 000000726e5b32b0
+03-24 21:27:44.072 19936 19936 F DEBUG   :     x24 0000007267cfce40  x25 0000007270029610  x26 ffffffffffffffff  x27 0000007270029600
+03-24 21:27:44.072 19936 19936 F DEBUG   :     x28 000000726e5b32b0  x29 0000007267cfcdf0
+03-24 21:27:44.072 19936 19936 F DEBUG   :     sp  0000007267cfcde0  lr  0000007270009f6c  pc  0000007270009f6c
+03-24 21:27:44.079 19936 19936 F DEBUG   : 
+03-24 21:27:44.079 19936 19936 F DEBUG   : backtrace:
+03-24 21:27:44.079 19936 19936 F DEBUG   :       #00 pc 00000000000c8f6c  /vendor/lib64/libgraph.so (ge::TensorDesc::TensorDesc(ge::TensorDesc const&)+24) (BuildId: d2a9b3d0cdbbae81ebf61f41d7db8a9d)
+03-24 21:27:44.079 19936 19936 F DEBUG   :       #01 pc 00000000000b4044  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+03-24 21:27:44.079 19936 19936 F DEBUG   :       #02 pc 00000000000ae22c  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+03-24 21:27:44.079 19936 19936 F DEBUG   :       #03 pc 00000000000acbb8  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+03-24 21:27:44.079 19936 19936 F DEBUG   :       #04 pc 00000000000ab7b4  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+03-24 21:27:44.079 19936 19936 F DEBUG   :       #05 pc 00000000000aab08  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+03-24 21:27:44.079 19936 19936 F DEBUG   :       #06 pc 00000000000aa57c  /vendor/lib64/libhiai_executor.so (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+03-24 21:27:44.079 19936 19936 F DEBUG   :       #07 pc 00000000000b5760  /vendor/lib64/libhiai_executor.so (ge::OMModelGenerator::GenerateFromBuffer(ge::GenerateOptions const&, ge::BaseBuffer const&, std::__1::shared_ptr<ge::CompiledModel>&)+1052) (BuildId: ca52f23246f4bcdca3d8f95220427e4e)
+03-24 21:27:44.079 19936 19936 F DEBUG   :       #08 pc 0000000000032b4c  /vendor/lib64/libhiai_server.so (ge::ExecutorManager::LoadModel(ge::LoadModelOptions const&, ge::BaseBuffer const&, unsigned int&)+1380) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+03-24 21:27:44.079 19936 19936 F DEBUG   :       #09 pc 000000000001a890  /vendor/lib64/libhiai_server.so (hiai::AIModelManagerImpl::LoadModelFromMem(hiai::AIModelDescription const&, unsigned int&)+1132) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+03-24 21:27:44.079 19936 19936 F DEBUG   :       #10 pc 0000000000018fb4  /vendor/lib64/libhiai_server.so (hiai::AIModelManagerImpl::LoadModels(std::__1::vector<hiai::AIModelDescription, std::__1::allocator<hiai::AIModelDescription>> const&)+196) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+03-24 21:27:44.079 19936 19936 F DEBUG   :       #11 pc 0000000000018794  /vendor/lib64/libhiai_server.so (hiai::AIModelManagerImpl::Init(hiai::AIConfig const&, std::__1::vector<hiai::AIModelDescription, std::__1::allocator<hiai::AIModelDescription>> const&)+76) (BuildId: 9e821c0de2c487f8e644fcfe3ebe1094)
+03-24 21:27:44.079 19936 19936 F DEBUG   :       #12 pc 0000000000052b30  /vendor/bin/hiaiserver (ai::AiModelMngrService::LoadModel(int, int, hiai::AIConfig const&, std::__1::vector<hiai::AIModelDescription, std::__1::allocator<hiai::AIModelDescription>> const&, bool, bool)+1452) (BuildId: b0a2f4825a912f13056edf1ff01dae60)
+03-24 21:27:44.079 19936 19936 F DEBUG   :       #13 pc 00000000000594e8  /vendor/bin/hiaiserver (ai::AiModelMngrService::startModelFromMem2(int, int, android::hardware::hidl_vec<vendor::huawei::hardware::ai::V1_0::ModelBuffer> const&)+1616) (BuildId: b0a2f4825a912f13056edf1ff01dae60)
+03-24 21:27:44.079 19936 19936 F DEBUG   :       #14 pc 000000000006c97c  /vendor/lib64/vendor.huawei.hardware.ai@1.1.so (vendor::huawei::hardware::ai::V1_1::BnHwAiModelMngr::_hidl_startModelFromMem2(android::hidl::base::V1_0::BnHwBase*, android::hardware::Parcel const&, android::hardware::Parcel*, std::__1::function<void (android::hardware::Parcel&)>)+352) (BuildId: 469a6a932b6ebb5818104edfaed0404b)
+03-24 21:27:44.079 19936 19936 F DEBUG   :       #15 pc 0000000000016094  /vendor/lib64/vendor.huawei.hardware.ai@3.2.so (vendor::huawei::hardware::ai::V3_2::BnHwAiModelMngr::onTransact(unsigned int, android::hardware::Parcel const&, android::hardware::Parcel*, unsigned int, std::__1::function<void (android::hardware::Parcel&)>)+2724) (BuildId: 3832987ab8a55cd5676b418e067d76af)
+03-24 21:27:44.079 19936 19936 F DEBUG   :       #16 pc 00000000000825f4  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::BHwBinder::transact(unsigned int, android::hardware::Parcel const&, android::hardware::Parcel*, unsigned int, std::__1::function<void (android::hardware::Parcel&)>)+68) (BuildId: 2f8f208736c0724896c75aa52122bd47)
+03-24 21:27:44.080 19936 19936 F DEBUG   :       #17 pc 0000000000085e88  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::IPCThreadState::getAndExecuteCommand()+1036) (BuildId: 2f8f208736c0724896c75aa52122bd47)
+03-24 21:27:44.080 19936 19936 F DEBUG   :       #18 pc 0000000000087518  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::IPCThreadState::joinThreadPool(bool)+152) (BuildId: 2f8f208736c0724896c75aa52122bd47)
+03-24 21:27:44.080 19936 19936 F DEBUG   :       #19 pc 0000000000096654  /system/lib64/vndk-sp-29/libhidlbase.so (android::hardware::PoolThread::threadLoop()+24) (BuildId: 2f8f208736c0724896c75aa52122bd47)
+03-24 21:27:44.080 19936 19936 F DEBUG   :       #20 pc 00000000000136d4  /system/lib64/vndk-sp-29/libutils.so (android::Thread::_threadLoop(void*)+288) (BuildId: 3a2fb31a219729a41f412d01a4f3dd56)
+03-24 21:27:44.080 19936 19936 F DEBUG   :       #21 pc 00000000000cf7c0  /apex/com.android.runtime/lib64/bionic/libc.so (__pthread_start(void*)+36) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+03-24 21:27:44.080 19936 19936 F DEBUG   :       #22 pc 00000000000721a8  /apex/com.android.runtime/lib64/bionic/libc.so (__start_thread+64) (BuildId: b91c775ccc9b0556e91bc575a2511cd0)
+
