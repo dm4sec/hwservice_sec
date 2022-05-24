@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.huawei.startModelFromMem2Fuzzer.view.ClassifyActivity">
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="12dp"
+        app:cardElevation="20dp"
+        app:cardUseCompatPadding="false">
+
+        <LinearLayout
+            android:id="@+id/ll_up"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+
+            <Button
+                android:id="@+id/btn_classify"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_margin="12dp"
+                android:layout_weight="1.0"
+                android:background="@drawable/classify"
+                android:gravity="center"
+                android:text="@string/classifier"
+                android:textSize="20dp"
+                android:textColor="@color/cardview_light_background"
+                android:textAllCaps="false"
+                android:textStyle="bold" />
+
+
+            <Button
+                android:id="@+id/btn_detect"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_margin="12dp"
+                android:layout_weight="1.0"
+                android:background="@drawable/detector"
+                android:gravity="center"
+                android:textAlignment="gravity"
+                android:text="@string/detector"
+                android:textAllCaps="false"
+                android:textSize="20dp"
+                android:textColor="@color/cardview_light_background"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/btn_segment"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_margin="12dp"
+                android:layout_weight="1.0"
+                android:background="@drawable/segmentation"
+                android:gravity="center"
+                android:text="@string/segmentation"
+                android:textSize="20dp"
+                android:textColor="@color/cardview_light_background"
+                android:textAllCaps="false"
+                android:textStyle="bold" />
+
+
+        </LinearLayout>
+
+    </android.support.v7.widget.CardView>
+
+</LinearLayout>

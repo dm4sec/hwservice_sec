@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">startModelFromMem2Fuzzer</string>
+    <string name="classifier">分类器</string>
+    <string name="detector">检测器</string>
+    <string name="segmentation">图像分割</string>
+
+
+    <string name="sync_classify">同步分类</string>
+    <string name="async_classify">异步分类</string>
+</resources>

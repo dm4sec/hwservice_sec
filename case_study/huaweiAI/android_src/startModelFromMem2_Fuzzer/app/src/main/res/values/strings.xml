@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">startModelFromMem2Fuzzer</string>
+    <string name="classifier">Classifier</string>
+    <string name="detector">Detector</string>
+    <string name="segmentation">Segmentation</string>
+
+
+    <string name="sync_classify">SyncClassify</string>
+    <string name="async_classify">AsyncClassify</string>
+</resources>
