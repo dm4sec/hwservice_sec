@@ -1,0 +1,3 @@
+ninja: Entering directory `/Users/fy/AndroidStudioProjects/MyNative/app/.cxx/Debug/4e2v2g3r/arm64-v8a'
+[1/2] Building CXX object CMakeFiles/mynative.dir/native-lib.cpp.o
+[2/2] Linking CXX shared library /Users/fy/AndroidStudioProjects/MyNative/app/build/intermediates/cxx/Debug/4e2v2g3r/obj/arm64-v8a/libmynative.so

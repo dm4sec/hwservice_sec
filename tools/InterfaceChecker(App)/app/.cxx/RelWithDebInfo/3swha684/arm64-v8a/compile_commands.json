@@ -1,0 +1,12 @@
+[
+{
+  "directory": "/Users/fy/AndroidStudioProjects/MyNative/app/.cxx/RelWithDebInfo/3swha684/arm64-v8a",
+  "command": "/Users/fy/Library/Android/sdk/ndk/21.4.7075529/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=aarch64-none-linux-android23 --gcc-toolchain=/Users/fy/Library/Android/sdk/ndk/21.4.7075529/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/fy/Library/Android/sdk/ndk/21.4.7075529/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -Dmynative_EXPORTS -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -O2 -g -DNDEBUG -fPIC -o CMakeFiles/mynative.dir/native-lib.cpp.o -c /Users/fy/AndroidStudioProjects/MyNative/app/src/main/cpp/native-lib.cpp",
+  "file": "/Users/fy/AndroidStudioProjects/MyNative/app/src/main/cpp/native-lib.cpp"
+},
+{
+  "directory": "/Users/fy/AndroidStudioProjects/MyNative/app/.cxx/RelWithDebInfo/3swha684/arm64-v8a",
+  "command": "/Users/fy/Library/Android/sdk/ndk/21.4.7075529/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=aarch64-none-linux-android23 --gcc-toolchain=/Users/fy/Library/Android/sdk/ndk/21.4.7075529/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/fy/Library/Android/sdk/ndk/21.4.7075529/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -Dmynative_EXPORTS -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -O2 -g -DNDEBUG -fPIC -o CMakeFiles/mynative.dir/tinyxml2.cpp.o -c /Users/fy/AndroidStudioProjects/MyNative/app/src/main/cpp/tinyxml2.cpp",
+  "file": "/Users/fy/AndroidStudioProjects/MyNative/app/src/main/cpp/tinyxml2.cpp"
+}
+]

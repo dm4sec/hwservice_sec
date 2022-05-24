@@ -1,0 +1,3 @@
+/Users/fy/AndroidStudioProjects/MyNative/app/.cxx/RelWithDebInfo/3swha684/arm64-v8a/CMakeFiles/rebuild_cache.dir
+/Users/fy/AndroidStudioProjects/MyNative/app/.cxx/RelWithDebInfo/3swha684/arm64-v8a/CMakeFiles/edit_cache.dir
+/Users/fy/AndroidStudioProjects/MyNative/app/.cxx/RelWithDebInfo/3swha684/arm64-v8a/CMakeFiles/mynative.dir
